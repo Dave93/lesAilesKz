@@ -53,6 +53,13 @@ const Header: FC<{
   const [mobMenuOpen, setMobMenuOpen] = useState(false)
   const { t: tr } = useTranslation('common')
   const [configData, setConfigData] = useState({} as any)
+  const [channelName, setChannelName] = useState('chopar')
+
+
+  const getChannel = async () => {
+    const channelData = await defaultChannel()
+    setChannelName(channelData.name)
+  }
 
   const fetchConfig = async () => {
     let configData
@@ -75,6 +82,7 @@ const Header: FC<{
   }
 
   useEffect(() => {
+    getChannel()
     fetchConfig()
     return
   }, [])
@@ -100,7 +108,7 @@ const Header: FC<{
 
             <HeaderMenu menuItems={menu} />
             <div className="flex items-center">
-              <CartWithNoSSR />
+              <CartWithNoSSR channelName={channelName} />
               <div className="md:hidden flex">
                 <MenuIcon
                   className="cursor-pointer h-5 text-secondary w-5 mr-[21px] md:mr-0"
