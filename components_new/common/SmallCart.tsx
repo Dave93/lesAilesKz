@@ -43,7 +43,13 @@ const errors: Errors = {
 
 let otpTimerRef: NodeJS.Timeout
 
-const SmallCart: FC = () => {
+type SmallCartProps = {
+  channelName: any
+}
+
+const SmallCart: FC<SmallCartProps> = ({
+  channelName,
+}) => {
   const { t: tr } = useTranslation('common')
 
   const router = useRouter()
