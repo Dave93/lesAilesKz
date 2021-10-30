@@ -56,6 +56,7 @@ module.exports =
         dest: 'public',
         disable: prod ? false : true,
       },
+      swcMinify: true,
     })
   )
 // )

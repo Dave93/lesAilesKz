@@ -13,6 +13,7 @@ import UserProfileDropDown from './UserProfileDropDown'
 import Input from 'react-phone-number-input/input'
 import { useRouter } from 'next/router'
 import getConfig from 'next/config'
+import Image from 'next/image'
 
 axios.defaults.withCredentials = true
 const { publicRuntimeConfig } = getConfig()
@@ -44,6 +45,7 @@ const SignInButton: FC = () => {
   const [isShowPasswordForm, setIsShowPasswordForm] = useState(false)
   const [otpShowCode, setOtpShowCode] = useState(0)
   const [showUserName, setShowUserName] = useState(false)
+  const [showLangsAndAuthModal, setShowLangsAndAuthModal] = useState(false)
 
   const {
     user,
@@ -52,6 +54,14 @@ const SignInButton: FC = () => {
     openSignInModal,
     closeSignInModal,
   } = useUI()
+
+  const openLangsAndAuthModal = () => {
+    setShowLangsAndAuthModal(true)
+  }
+
+  const closeLangsAndAuthModal = () => {
+    setShowLangsAndAuthModal(false)
+  }
 
   const otpTime = useRef(0)
 
@@ -247,12 +257,61 @@ const SignInButton: FC = () => {
       )}
       {!user && (
         <>
-          <button
-            className="md:bg-gray-200 bg-yellow px-8 py-1 rounded-full text-secondary outline-none focus:outline-none mb-5 md:mb-0 ml-1 md:ml-0 font-bold md:font-normal"
-            onClick={openModal}
-          >
-            {tr('signIn')}
-          </button>
+          <div className="relative">
+            <button
+              className="px-3 py-2 flex focus:outline-none items-center md:bg-gray-100 outline-none rounded-lg border border-grey"
+              onClick={openLangsAndAuthModal}
+            >
+              <Image src="/profile.svg" width="17" height="21" />
+            </button>
+            <Transition appear show={showLangsAndAuthModal} as={Fragment}>
+              <Dialog
+                as="div"
+                className="absolute inset-0 z-50 overflow-y-auto"
+                onClose={closeLangsAndAuthModal}
+                initialFocus={authButtonRef}
+              >
+                <div className="min-h-screen px-4 text-center">
+                  <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                    <Dialog.Overlay className="fixed mt-24 inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+                  </Transition.Child>
+
+                  {/* This element is to trick the browser into centering the modal contents. */}
+                  <span
+                    className="inline-block h-screen align-middle"
+                    aria-hidden="true"
+                  >
+                    &#8203;
+                  </span>
+                  <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0 scale-95"
+                    enterTo="opacity-100 scale-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100 scale-100"
+                    leaveTo="opacity-0 scale-95"
+                  >
+                    <div className="absolute top-0 align-middle inline-block overflow-hidden w-full">
+                      <div className="md:inline-flex my-8 items-start">
+                        <div className="bg-white inline-block overflow-hidden md:px-40 px-6 py-10 rounded-2xl shadow-xl text-center transform transition-all max-w-2xl">
+                          sfasdf
+                        </div>
+                      </div>
+                    </div>
+                  </Transition.Child>
+                </div>
+              </Dialog>
+            </Transition>
+          </div>
           <Transition appear show={showSignInModal} as={Fragment}>
             <Dialog
               as="div"

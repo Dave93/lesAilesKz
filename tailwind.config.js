@@ -43,7 +43,7 @@ module.exports = {
         DEFAULT: '#FAAF04',
         dark: '#FAAF04',
       },
-      primary: '#F7C563',
+      primary: '#fc004a',
       secondary: '#2F5E8E',
       blue: '#3D6B9A',
     },

@@ -28,7 +28,13 @@ import parsePhoneNumber from 'libphonenumber-js'
 import { faTelegram } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useRouter } from 'next/router'
+import dynamic from 'next/dynamic'
 const { publicRuntimeConfig } = getConfig()
+
+const CartWithNoSSR = dynamic(
+  () => import('@components_new/common/SmallCart'),
+  { ssr: false }
+)
 
 const Header: FC<{
   menu: Array<APILinkItem>
@@ -88,57 +94,29 @@ const Header: FC<{
                 </a>
               </Link>
             </div>
-            {menuOpen ? (
-              <div className="flex items-center">
-                <HeaderMenu menuItems={menu} />
-                <LanguageDropDown />
-                <XIcon
-                  className="cursor-pointer h-5 text-secondary w-5"
-                  onClick={() => setMenuOpen(false)}
+            <div className=" md:flex hidden">
+              <SetLocation />
+            </div>
+
+            <HeaderMenu menuItems={menu} />
+            <div className="flex items-center">
+              <CartWithNoSSR />
+              <div className="md:hidden flex">
+                <MenuIcon
+                  className="cursor-pointer h-5 text-secondary w-5 mr-[21px] md:mr-0"
+                  onClick={() => setMobMenuOpen(true)}
                 />
               </div>
-            ) : (
-              <>
-                <div className="w-1/3 md:flex hidden">
-                  <SetLocation />
-                </div>
-                <div className="md:flex hidden">
-                  <a
-                    href="https://telegram.me/Chopar_bot"
-                    target="_blank"
-                    className="text-blue flex items-center"
-                  >
-                    <FontAwesomeIcon
-                      className="fa-2x mx-2 w-8 h-8"
-                      size="xs"
-                      icon={faTelegram}
-                    />{' '}
-                    @chopar_bot
-                  </a>
-                </div>
-                <div className="flex items-center">
-                  <div className="md:flex hidden">
-                    <HeaderPhone />
-                    <ChooseCityDropDown />
-                    <div className="mx-2">
-                      <SignInButton />
-                    </div>
-                  </div>
-                  <div className="hidden md:flex">
-                    <MenuIcon
-                      className="cursor-pointer h-5 text-secondary w-5 mr-[21px] md:mr-0"
-                      onClick={() => setMenuOpen(true)}
-                    />
-                  </div>
-                  <div className="md:hidden flex">
-                    <MenuIcon
-                      className="cursor-pointer h-5 text-secondary w-5 mr-[21px] md:mr-0"
-                      onClick={() => setMobMenuOpen(true)}
-                    />
-                  </div>
-                </div>
-              </>
-            )}
+            </div>
+            <SignInButton />
+
+            {/* <div className="flex items-center">
+              <LanguageDropDown />
+              <XIcon
+                className="cursor-pointer h-5 text-secondary w-5"
+                onClick={() => setMenuOpen(false)}
+              />
+            </div> */}
           </div>
         </div>
         {mobMenuOpen && (
