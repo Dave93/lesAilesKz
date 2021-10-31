@@ -48,7 +48,7 @@ const UserProfileDropDown: FC = () => {
           >
             <Menu.Items
               static
-              className="absolute bg-white divide-gray-100 divide-y focus:outline-none mt-2 origin-top-right right-0 ring-1 ring-black ring-opacity-5 overflow-hidden rounded-2xl shadow-lg z-20"
+              className="absolute bg-white divide-gray-100 divide-y focus:outline-none mt-12 origin-top-right right-0 ring-1 ring-black ring-opacity-5 overflow-hidden rounded-2xl shadow-lg z-20"
             >
               {items.map((item) => {
                 let href = `${item.href}`

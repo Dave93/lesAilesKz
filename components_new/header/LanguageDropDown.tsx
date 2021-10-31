@@ -30,16 +30,30 @@ const LanguageDropDown: FC = () => {
     })
   }
   return (
-    <>
+    <div>
       <a
-        className="bg-white focus:outline-none font-medium inline-flex justify-center outline-none px-4 py-2 text-secondary text-sm no-underline items-center"
+        className={`${
+          locale == 'ru' ? 'bg-primary text-white' : ''
+        } font-medium hover:bg-primary  hover:text-white inline-flex items-center mx-8 px-3 py-1 rounded-full`}
         href={`/${locale}${pathname}`}
-        onClick={(e) => changeLang(e, locale == 'uz' ? 'ru' : 'uz')}
+        onClick={(e) => changeLang(e, 'ru')}
       >
-        {locales[keyTyped]({})}{' '}
-        <span className="ml-1.5">{localeLabel[keyTypedLabel]}</span>
+        <Ru className="w-4 h-4 rounded-full" />
+        <span className="ml-1.5">{localeLabel.ru}</span>
       </a>
-    </>
+      <a
+        className={`${
+          locale == 'uz' ? 'bg-primary text-white' : ''
+        } font-medium hover:bg-primary hover:text-white inline-flex items-center mx-8 px-3 py-1 rounded-full`}
+        href={`/${locale}${pathname}`}
+        onClick={(e) => changeLang(e, 'uz')}
+      >
+        <div className="w-4 h-4 overflow-hidden rounded-full">
+          <Uz className="w-6 p-0 block" />
+        </div>
+        <span className="ml-1.5">{localeLabel.uz}</span>
+      </a>
+    </div>
   )
 }
 

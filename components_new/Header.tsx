@@ -56,7 +56,6 @@ const Header: FC<{
   const [configData, setConfigData] = useState({} as any)
   const [channelName, setChannelName] = useState('chopar')
 
-
   const getChannel = async () => {
     const channelData = await defaultChannel()
     setChannelName(channelData.name)

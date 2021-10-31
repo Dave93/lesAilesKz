@@ -91,6 +91,7 @@ export interface State {
   cities: City[] | null
   activeCity: City | null
   showSignInModal: boolean
+  overlay: boolean
 }
 
 const initialState = {
@@ -105,6 +106,7 @@ const initialState = {
   cities: null,
   activeCity: activeCity,
   showSignInModal: false,
+  overlay: false,
 }
 
 type Action =
@@ -159,6 +161,12 @@ type Action =
     }
   | {
       type: 'CLOSE_SIGNIN_MODAL'
+    }
+  | {
+      type: 'SHOW_OVERLAY'
+    }
+  | {
+      type: 'HIDE_OVERLAY'
     }
 
 type MODAL_VIEWS =
@@ -288,6 +296,18 @@ function uiReducer(state: State, action: Action) {
         showSignInModal: false,
       }
     }
+    case 'SHOW_OVERLAY': {
+      return {
+        ...state,
+        overlay: true,
+      }
+    }
+    case 'HIDE_OVERLAY': {
+      return {
+        ...state,
+        overlay: false,
+      }
+    }
   }
 }
 
@@ -385,6 +405,9 @@ export const UIProvider: FC<UIProviderProps> = (props) => {
     [dispatch]
   )
 
+  const showOverlay = useCallback(() => dispatch({ type: 'SHOW_OVERLAY'}), [dispatch])
+  const hideOverlay = useCallback(() => dispatch({ type: 'HIDE_OVERLAY'}), [dispatch])
+
   const value = useMemo(
     () => ({
       ...state,
@@ -405,6 +428,8 @@ export const UIProvider: FC<UIProviderProps> = (props) => {
       setActiveCity,
       openSignInModal,
       closeSignInModal,
+      showOverlay,
+      hideOverlay,
     }),
     [state]
   )

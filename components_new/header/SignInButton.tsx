@@ -14,6 +14,8 @@ import Input from 'react-phone-number-input/input'
 import { useRouter } from 'next/router'
 import getConfig from 'next/config'
 import Image from 'next/image'
+import { createPopper } from '@popperjs/core'
+import LanguageDropDown from './LanguageDropDown'
 
 axios.defaults.withCredentials = true
 const { publicRuntimeConfig } = getConfig()
@@ -45,7 +47,9 @@ const SignInButton: FC = () => {
   const [isShowPasswordForm, setIsShowPasswordForm] = useState(false)
   const [otpShowCode, setOtpShowCode] = useState(0)
   const [showUserName, setShowUserName] = useState(false)
-  const [showLangsAndAuthModal, setShowLangsAndAuthModal] = useState(false)
+  const [popoverShow, setPopoverShow] = React.useState(false)
+  const btnRef = useRef<any>(null)
+  const popoverRef = useRef<any>(null)
 
   const {
     user,
@@ -53,15 +57,10 @@ const SignInButton: FC = () => {
     showSignInModal,
     openSignInModal,
     closeSignInModal,
+    showOverlay,
+    hideOverlay,
   } = useUI()
 
-  const openLangsAndAuthModal = () => {
-    setShowLangsAndAuthModal(true)
-  }
-
-  const closeLangsAndAuthModal = () => {
-    setShowLangsAndAuthModal(false)
-  }
 
   const otpTime = useRef(0)
 
@@ -248,6 +247,18 @@ const SignInButton: FC = () => {
     reset(newFields)
   }
 
+  const openPopover = () => {
+    showOverlay()
+    createPopper(btnRef.current, popoverRef.current, {
+      placement: 'bottom'
+    })
+    setPopoverShow(true)
+  }
+  const closePopover = () => {
+    hideOverlay()
+    setPopoverShow(false)
+  }
+
   return (
     <>
       {user && (
@@ -258,59 +269,41 @@ const SignInButton: FC = () => {
       {!user && (
         <>
           <div className="relative">
-            <button
-              className="px-3 py-2 flex focus:outline-none items-center md:bg-gray-100 outline-none rounded-lg border border-grey"
-              onClick={openLangsAndAuthModal}
-            >
-              <Image src="/profile.svg" width="17" height="21" />
-            </button>
-            <Transition appear show={showLangsAndAuthModal} as={Fragment}>
-              <Dialog
-                as="div"
-                className="absolute inset-0 z-50 overflow-y-auto"
-                onClose={closeLangsAndAuthModal}
-                initialFocus={authButtonRef}
-              >
-                <div className="min-h-screen px-4 text-center">
-                  <Transition.Child
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                  >
-                    <Dialog.Overlay className="fixed mt-24 inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-                  </Transition.Child>
-
-                  {/* This element is to trick the browser into centering the modal contents. */}
-                  <span
-                    className="inline-block h-screen align-middle"
-                    aria-hidden="true"
-                  >
-                    &#8203;
-                  </span>
-                  <Transition.Child
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0 scale-95"
-                    enterTo="opacity-100 scale-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100 scale-100"
-                    leaveTo="opacity-0 scale-95"
-                  >
-                    <div className="absolute top-0 align-middle inline-block overflow-hidden w-full">
-                      <div className="md:inline-flex my-8 items-start">
-                        <div className="bg-white inline-block overflow-hidden md:px-40 px-6 py-10 rounded-2xl shadow-xl text-center transform transition-all max-w-2xl">
-                          sfasdf
-                        </div>
-                      </div>
+            <div className="flex flex-wrap">
+              <div className="w-full text-center">
+                <button
+                  className="px-3 py-2 flex focus:outline-none items-center md:bg-gray-100 outline-none rounded-lg border border-grey"
+                  type="button"
+                  onClick={() => {
+                    popoverShow ? closePopover() : openPopover()
+                  }}
+                  ref={btnRef}
+                >
+                  <Image src="/profile.svg" width="17" height="21" />
+                </button>
+                <div
+                  className={
+                    (popoverShow ? '' : 'hidden ') +
+                    'z-50 transform translate-x-0 inset-x-auto'
+                  }
+                  ref={popoverRef}
+                >
+                  <div>
+                    <div className="bg-white mt-8 overflow-hidden p-3 rounded-2xl text-center w-max">
+                      <LanguageDropDown />
+                      <button
+                        className="bg-green-500 rounded-xl w-full text-white py-4 mt-5"
+                        onClick={() => {
+                          openModal()
+                        }}
+                      >
+                        Войти
+                      </button>
                     </div>
-                  </Transition.Child>
+                  </div>
                 </div>
-              </Dialog>
-            </Transition>
+              </div>
+            </div>
           </div>
           <Transition appear show={showSignInModal} as={Fragment}>
             <Dialog
@@ -350,7 +343,13 @@ const SignInButton: FC = () => {
                 >
                   <div className="align-middle inline-block overflow-hidden w-full">
                     <div className="md:inline-flex my-8 items-start">
-                      <div className="align-middle bg-white inline-block overflow-hidden md:px-40 px-6 py-10 rounded-2xl shadow-xl text-center transform transition-all max-w-2xl">
+                      <div className="align-middle bg-white inline-block overflow-hidden md:px-16 px-6 py-10 rounded-2xl shadow-xl text-center transform transition-all max-w-2xl">
+                        <button
+                          className="absolute focus:outline-none hidden md:block outline-none right-4 text-gray-500 top-5 transform"
+                          onClick={closeModal}
+                        >
+                          <XIcon className=" cursor-pointer w-4 h-4" />
+                        </button>
                         <Dialog.Title as="h3" className="leading-6 text-3xl">
                           {tr('auth')}
                         </Dialog.Title>
@@ -378,18 +377,18 @@ const SignInButton: FC = () => {
                                 <OtpInput
                                   value={otpCode}
                                   onChange={handleOtpChange}
-                                  inputStyle={`${styles.digitField} border border-yellow w-16 rounded-3xl h-12 outline-none focus:outline-none text-center`}
+                                  inputStyle={`${styles.digitField} border border-primary w-16 rounded-3xl h-12 outline-none focus:outline-none text-center`}
                                   isInputNum={true}
                                   containerStyle="grid grid-cols-4 gap-1.5 justify-center"
                                   numInputs={4}
                                 />
                                 {otpShowCode > 0 ? (
-                                  <div className="text-xs text-yellow mt-3">
+                                  <div className="text-xs text-primary mt-3">
                                     {otpTimerText}
                                   </div>
                                 ) : (
                                   <button
-                                    className="text-xs text-yellow mt-3 outline-none focus:outline-none border-b border-yellow pb-0.5"
+                                    className="text-xs text-primary mt-3 outline-none focus:outline-none border-b border-primary pb-0.5"
                                     onClick={(e) => getNewCode(e)}
                                   >
                                     {tr('get_code_again')}
@@ -398,9 +397,9 @@ const SignInButton: FC = () => {
                               </div>
                               <div className="mt-10">
                                 <button
-                                  className={`py-3 px-20 text-white font-bold text-xl text-center rounded-full w-full outline-none focus:outline-none ${
+                                  className={`py-3 px-20 text-white font-bold text-xl text-center rounded-xl w-full outline-none focus:outline-none ${
                                     otpCode.length >= 4
-                                      ? 'bg-yellow'
+                                      ? 'bg-primary'
                                       : 'bg-gray-400'
                                   }`}
                                   disabled={otpCode.length < 4}
@@ -453,7 +452,7 @@ const SignInButton: FC = () => {
                                         international
                                         withCountryCallingCode
                                         value={value}
-                                        className="border border-yellow focus:outline-none outline-none px-6 py-3 rounded-full text-sm w-full"
+                                        className="border border-primary focus:outline-none outline-none px-6 py-3 rounded-full text-sm w-full"
                                         onChange={(e: any) => onChange(e)}
                                         onKeyDown={(e: any) => {
                                           if (e.key == 'Enter') {
@@ -492,7 +491,7 @@ const SignInButton: FC = () => {
                                     <input
                                       type="text"
                                       {...register('name')}
-                                      className="border border-yellow focus:outline-none outline-none px-6 py-3 rounded-full text-sm w-full"
+                                      className="border border-primary focus:outline-none outline-none px-6 py-3 rounded-full text-sm w-full"
                                     />
                                     {authName && (
                                       <button
@@ -509,9 +508,9 @@ const SignInButton: FC = () => {
                               )}
                               <div className="mt-10">
                                 <button
-                                  className={`py-3 md:px-20 text-white font-bold text-xl text-center rounded-full w-full outline-none focus:outline-none ${
+                                  className={`py-3 md:px-20 text-white font-bold text-xl text-center rounded-xl w-full outline-none focus:outline-none ${
                                     formState.isValid
-                                      ? 'bg-yellow'
+                                      ? 'bg-primary'
                                       : 'bg-gray-400'
                                   }`}
                                   disabled={!formState.isValid}
@@ -549,7 +548,7 @@ const SignInButton: FC = () => {
                               <a
                                 href="/privacy"
                                 onClick={showPrivacy}
-                                className="text-yellow block"
+                                className="text-primary block"
                                 target="_blank"
                               >
                                 пользовательского соглашения
@@ -558,12 +557,6 @@ const SignInButton: FC = () => {
                           </>
                         )}
                       </div>
-                      <button
-                        className="text-white outline-none focus:outline-none transform hidden md:block"
-                        onClick={closeModal}
-                      >
-                        <XIcon className="text-white cursor-pointer w-10 h-10" />
-                      </button>
                     </div>
                   </div>
                 </Transition.Child>

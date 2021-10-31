@@ -38,6 +38,7 @@ import { parsePhoneNumber } from 'libphonenumber-js'
 import { Dialog, Transition } from '@headlessui/react'
 import Cookies from 'js-cookie'
 import CityModal from './CityModal'
+import Overlay from './Overlay'
 const { publicRuntimeConfig } = getConfig()
 
 interface Props {
@@ -124,13 +125,15 @@ const Layout: FC<Props> = ({
           <main
             className={`${
               cleanBackground == true ? 'bg-gray-100' : ''
-            } flex-grow md:pb-14`}
+            } flex-grow md:pb-14 relative`}
           >
             {pathname == '/[city]' ? (
               children
             ) : (
               <div className="container mx-auto">{children}</div>
             )}
+
+            <Overlay />
           </main>
           <footer className="text-white md:flex flex-col flex">
             <div className="hidden md:flex justify-center">

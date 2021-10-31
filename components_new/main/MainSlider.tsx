@@ -68,7 +68,7 @@ const MainSlider: FC = () => {
                           <img
                             src={item.asset[0].link}
                             width={1160}
-                            height={320}
+                            height={340}
                             data-href={item.link}
                             className="hidden md:flex "
                           />
@@ -93,7 +93,7 @@ const MainSlider: FC = () => {
                           <img
                             src={item.asset[0].link}
                             width={1160}
-                            height={320}
+                            height={340}
                           />
                         </div>
                         <div className="md:hidden flex">
@@ -115,8 +115,8 @@ const MainSlider: FC = () => {
             ))}
             <ViewportSlot>
               <div className="md:hidden flicking-pagination justify-center flex"></div>
-              <span className="flicking-arrow-prev is-circle hidden md:block"></span>
-              <span className="flicking-arrow-next is-circle hidden md:block"></span>
+              <span className="flicking-arrow-prev  hidden md:block"></span>
+              <span className="flicking-arrow-next  hidden md:block"></span>
             </ViewportSlot>
           </Flicking>
         </>
