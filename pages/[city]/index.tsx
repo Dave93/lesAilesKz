@@ -203,7 +203,9 @@ export default function Home({
 
   return (
     <>
-      <MainSlider />
+      <div className="container mx-auto">
+        <MainSlider />
+        </div>
       <div className="lg:hidden mx-8 my-5">
         <MobSetLocation />
       </div>

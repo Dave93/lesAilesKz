@@ -22,7 +22,9 @@ const MainSlider: FC = () => {
     new Fade('', 0.4),
     new AutoPlay({ duration: 3000, direction: 'NEXT', stopOnHover: false }),
     new Pagination({ type: 'bullet' }),
-    new Arrow(),
+    new Arrow({
+      parentEl: typeof window !== 'undefined' ? document.body : null,
+    }),
   ]
   const sliderRef = createRef<Flicking>()
 
@@ -49,7 +51,7 @@ const MainSlider: FC = () => {
       {sliders && sliders.length > 0 && (
         <>
           <Flicking
-            align="center"
+            align="prev"
             circular={true}
             defaultIndex={defaultIndex}
             plugins={plugins}
@@ -57,6 +59,7 @@ const MainSlider: FC = () => {
             renderOnlyVisible={true}
             autoResize={true}
             autoInit={true}
+            panelsPerView={1}
           >
             {sliders.map((item: any) => (
               <div className="panel max-w-full mr-6" key={item.id}>
@@ -115,10 +118,18 @@ const MainSlider: FC = () => {
             ))}
             <ViewportSlot>
               <div className="md:hidden flicking-pagination justify-center flex"></div>
-              <span className="flicking-arrow-prev  hidden md:block"></span>
-              <span className="flicking-arrow-next  hidden md:block"></span>
+              {typeof window === 'undefined' && (
+                <>
+                  <span className="flicking-arrow-prev is-outside hidden md:block"></span>
+                  <span className="flicking-arrow-next is-outside  hidden md:block"></span>
+                </>
+              )}
             </ViewportSlot>
+            {/* <span className="flicking-arrow-prev is-outside hidden md:block"></span>
+            <span className="flicking-arrow-next is-outside  hidden md:block"></span> */}
           </Flicking>
+          <span className="flicking-arrow-prev is-outside hidden md:block"></span>
+          <span className="flicking-arrow-next is-outside  hidden md:block"></span>
         </>
       )}
 

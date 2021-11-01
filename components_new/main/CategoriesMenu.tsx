@@ -26,46 +26,27 @@ const CategoriesMenu: FC<{ categories: any[]; channelName: string }> = ({
     <div
       className={`${
         fixed
-          ? 'fixed left-0 m-auto right-0 top-0 z-30 bg-secondary w-full shadow-lg'
-          : ''
+          ? 'bg-white fixed flex md:overflow-x-visible overflow-x-scroll top-0 w-full z-30'
+          : 'mt-10'
       }`}
     >
-      <div className="container flex items-center m-auto overflow-x-scroll sm:overflow-x-hidden md:overflow-x-visible">
-        {fixed && (
-          <Link to="header" spy={true} smooth={true}>
-            <span className="md:flex mr-16 cursor-pointer hidden">
-              <Image
-                src="/assets/categories_logo.png"
-                width="44"
-                height="44"
-                unoptimized={true}
-              />
-            </span>
-          </Link>
-        )}
-        <div
-          className={`${
-            fixed
-              ? ' flex h-14 items-center justify-evenly md:w-full'
-              : 'bg-white flex h-14 items-center justify-between md:px-36 md:rounded-xl shadow-lg md:w-full'
-          } `}
-        >
+      <div className="container  flex items-center m-auto overflow-x-scroll sm:overflow-x-hidden md:overflow-x-visible">
+        <div className="flex h-14 items-center md:w-full space-x-4">
           {categories.map((item: any) => {
             return (
               <div
-                className={`${
-                  fixed ? 'text-white' : 'text-secondary'
-                } font-bold text-base text-center  cursor-pointer uppercase min-w-max px-4`}
+                className="text-black text-lg text-center  cursor-pointer min-w-max bg-gray-200 rounded-lg"
                 key={item.id}
               >
                 <Link
                   to={`productSection_${item.id}`}
                   spy={true}
                   smooth={true}
-                  activeClass="text-yellow"
+                  activeClass="bg-gray-500 text-white rounded-lg"
                   offset={-100}
+                  className=""
                 >
-                  <span>
+                  <span className="p-3  block">
                     {item?.attribute_data?.name[channelName][locale || 'ru']}
                   </span>
                 </Link>

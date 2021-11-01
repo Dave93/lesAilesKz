@@ -1,0 +1,8 @@
+.flicking-viewport {
+    overflow: visible;
+}
+
+.flicking-arrow-prev::before, .flicking-arrow-prev::after, .flicking-arrow-next::before, .flicking-arrow-next::after {
+    background-color: #FC004A;
+    border-radius: 20px;
+}

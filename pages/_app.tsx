@@ -5,6 +5,9 @@ import 'keen-slider/keen-slider.min.css'
 import 'react-toastify/dist/ReactToastify.css'
 import '@egjs/flicking-plugins/dist/arrow.css'
 
+
+import '@assets/flicking.css'
+
 import { FC, useEffect } from 'react'
 import type { AppProps } from 'next/app'
 import { Head } from '@components/common'
