@@ -4,6 +4,8 @@ import 'keen-slider/keen-slider.min.css'
 
 import 'react-toastify/dist/ReactToastify.css'
 import '@egjs/flicking-plugins/dist/arrow.css'
+import 'simplebar/dist/simplebar.min.css'
+import '@assets/simplebar.css'
 
 
 import '@assets/flicking.css'
