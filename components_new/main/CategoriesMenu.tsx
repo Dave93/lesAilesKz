@@ -27,7 +27,7 @@ const CategoriesMenu: FC<{ categories: any[]; channelName: string }> = ({
       className={`${
         fixed
           ? 'bg-white fixed flex md:overflow-x-visible overflow-x-scroll top-0 w-full z-30'
-          : 'mt-10'
+          : 'mt-8'
       }`}
     >
       <div className="container  flex items-center m-auto overflow-x-scroll sm:overflow-x-hidden md:overflow-x-visible">
@@ -35,20 +35,20 @@ const CategoriesMenu: FC<{ categories: any[]; channelName: string }> = ({
           {categories.map((item: any) => {
             return (
               <div
-                className="text-black text-lg text-center  cursor-pointer min-w-max bg-gray-200 rounded-lg"
+                className="text-black text-lg text-center  cursor-pointer min-w-max  bg-gray-200 rounded-lg"
                 key={item.id}
               >
                 <Link
                   to={`productSection_${item.id}`}
                   spy={true}
                   smooth={true}
-                  activeClass="bg-gray-500 text-white rounded-lg"
+                  activeClass="text-primary rounded-lg"
                   offset={-100}
                   className=""
                 >
-                  <span className="p-3  block">
+                  <div className="p-3 leading-4">
                     {item?.attribute_data?.name[channelName][locale || 'ru']}
-                  </span>
+                  </div>
                 </Link>
               </div>
             )
