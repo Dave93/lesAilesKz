@@ -24,6 +24,7 @@ import Input from 'react-phone-number-input/input'
 import styles from './SmallCartMobile.module.css'
 import { createPopper } from '@popperjs/core'
 import Hashids from 'hashids'
+import SimpleBar from 'simplebar-react'
 
 const { publicRuntimeConfig } = getConfig()
 let webAddress = publicRuntimeConfig.apiUrl
@@ -451,7 +452,7 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
       <div
         className={
           (popoverShow ? '' : 'hidden ') +
-          'z-50 transform translate-x-0 inset-x-auto'
+          'z-50 transform translate-x-0 inset-x-auto w-72'
         }
         ref={popoverRef}
       >
@@ -480,7 +481,7 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
           </div>
         )}
         {!isEmpty && (
-          <div className="grid grid-cols-1 divide-y border-b overflow-y-auto  bg-white p-5 rounded-2xl ">
+          <div className="divide-y border-b bg-white p-5 rounded-2xl">
             <div className="flex  text-xl items-center justify-between mb-9">
               <div className="flex">
                 Корзина
@@ -494,10 +495,10 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
               </button>
             </div>
 
-            <div className="max-h-80 overflow-auto">
+            <SimpleBar style={{ maxHeight: 320 }}>
               {data &&
                 data?.lineItems.map((lineItem: any) => (
-                  <div key={lineItem.id} className="py-3">
+                  <div key={lineItem.id} className="py-3 pr-2">
                     <div>
                       {lineItem.child &&
                       lineItem.child.length &&
@@ -617,7 +618,7 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
                     </div>
                   </div>
                 ))}
-            </div>
+            </SimpleBar>
             {!isEmpty && (
               <div className="flex items-center justify-between pt-4">
                 <div className="text-sm">{tr('basket_order_price')}</div>
