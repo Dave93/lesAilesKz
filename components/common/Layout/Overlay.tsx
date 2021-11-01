@@ -7,7 +7,7 @@ const Overlay: FC = () => {
       <>
         {overlay && (
           <div
-            className="absolute bg-gray-500 h-full opacity-75 top-0 w-full z-10"
+            className="absolute bg-gray-500 h-full opacity-75 -top-3 w-full z-10"
             // onClick={hideOverlay}
           ></div>
         )}

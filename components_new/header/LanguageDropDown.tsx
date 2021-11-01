@@ -34,7 +34,7 @@ const LanguageDropDown: FC = () => {
       <a
         className={`${
           locale == 'ru' ? 'bg-primary text-white' : ''
-        } font-medium hover:bg-primary  hover:text-white inline-flex items-center mx-8 px-3 py-1 rounded-full`}
+        } font-medium hover:bg-primary  hover:text-white inline-flex items-center mx-8 px-3 py-1 rounded-lg border border-gray-200`}
         href={`/${locale}${pathname}`}
         onClick={(e) => changeLang(e, 'ru')}
       >
@@ -44,7 +44,7 @@ const LanguageDropDown: FC = () => {
       <a
         className={`${
           locale == 'uz' ? 'bg-primary text-white' : ''
-        } font-medium hover:bg-primary hover:text-white inline-flex items-center mx-8 px-3 py-1 rounded-full`}
+        } font-medium hover:bg-primary hover:text-white inline-flex items-center mx-8 px-3 py-1 rounded-lg border border-gray-200`}
         href={`/${locale}${pathname}`}
         onClick={(e) => changeLang(e, 'uz')}
       >

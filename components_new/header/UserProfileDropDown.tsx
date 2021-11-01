@@ -1,23 +1,44 @@
-import { Fragment, FC, memo, ReactEventHandler } from 'react'
+import React, { Fragment, FC, memo, ReactEventHandler, useRef } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import menuItems from '@commerce/data/profileMenu'
 import useTranslation from 'next-translate/useTranslation'
 import { useUI } from '@components/ui/context'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import LanguageDropDown from './LanguageDropDown'
+import { createPopper } from '@popperjs/core'
+import { ChevronRightIcon } from '@heroicons/react/solid'
+import { UserCircleIcon } from '@heroicons/react/outline'
 
 const UserProfileDropDown: FC = () => {
   const { t: tr } = useTranslation('common')
   const router = useRouter()
   const { locale, pathname } = router
+  const [popoverShow, setPopoverShow] = React.useState(false)
+  const btnRef = useRef<any>(null)
+  const popoverRef = useRef<any>(null)
+  console.log(router)
 
-  const { user, setUserData, activeCity } = useUI()
+  const { user, setUserData, activeCity, showOverlay, hideOverlay, overlay } =
+    useUI()
   let items = menuItems.map((item) => {
     return {
       ...item,
       name: tr(item.langCode),
     }
   })
+
+  const openPopover = () => {
+    showOverlay()
+    createPopper(btnRef.current, popoverRef.current, {
+      placement: 'bottom',
+    })
+    setPopoverShow(true)
+  }
+  const closePopover = () => {
+    hideOverlay()
+    setPopoverShow(false)
+  }
 
   const logout = (e: React.SyntheticEvent<EventTarget>) => {
     e.preventDefault()
@@ -26,61 +47,69 @@ const UserProfileDropDown: FC = () => {
     setUserData(null)
   }
 
+  const goTo = (link: string) => {
+    closePopover()
+    router.push(link, undefined, {
+      locale
+    })
+  }
+
   return (
-    <Menu as="div" className="relative inline-block text-left">
-      {({ open }) => (
-        <>
-          <div>
-            <Menu.Button className="bg-gray-200 px-8 py-1 rounded-full text-secondary outline-none focus:outline-none mb-5 md:mb-0">
-              {user.user.name}
-            </Menu.Button>
-          </div>
+    <>
+      <div>
+        <button
+          onClick={() => {
+            popoverShow ? closePopover() : openPopover()
+          }}
+          className="bg-gray-200 px-8 outline-none focus:outline-none mb-5 md:mb-0 py-2 rounded-xl"
+        >
+          {user.user.name}
+        </button>
+      </div>
+      <div
+        className={
+          popoverShow
+            ? 'z-20 rounded-2xl p-3 mt-8 right-0 bg-white absolute'
+            : 'hidden '
+        }
+      >
+        <div className="flex items-center ml-5">
+          <UserCircleIcon className="h-10 w-10 text-gray-400" />
+          <div className="text-lg ml-5">{user.user.name}</div>
+        </div>
+        {items.map((item) => {
+          let href = `${item.href}`
 
-          <Transition
-            show={open}
-            as={Fragment}
-            enter="transition ease-out duration-100"
-            enterFrom="transform opacity-0 scale-95"
-            enterTo="transform opacity-100 scale-100"
-            leave="transition ease-in duration-75"
-            leaveFrom="transform opacity-100 scale-100"
-            leaveTo="transform opacity-0 scale-95"
+          if (href.indexOf('http') < 0) {
+            href = `/${activeCity.slug}${item.href}`
+          }
+
+          return (
+            <a onClick={() => goTo(href)}>
+              <div className="cursor-pointer flex items-center py-4 px-5 justify-between">
+                <div className="flex items-center">
+                  <img src={item.icon} />
+                  <div className="ml-3">{item.name}</div>
+                </div>
+                <div>
+                  <ChevronRightIcon className=" w-5 text-blue-500" />
+                </div>
+              </div>
+            </a>
+          )
+        })}
+
+        <div className="bg-white mt-8 overflow-hidden rounded-2xl text-center w-max">
+          <LanguageDropDown />
+          <button
+            className="bg-gray-200 rounded-xl w-full text-gray-400 py-4 mt-5"
+            onClick={logout}
           >
-            <Menu.Items
-              static
-              className="absolute bg-white divide-gray-100 divide-y focus:outline-none mt-12 origin-top-right right-0 ring-1 ring-black ring-opacity-5 overflow-hidden rounded-2xl shadow-lg z-20"
-            >
-              {items.map((item) => {
-                let href = `${item.href}`
-
-                if (href.indexOf('http') < 0) {
-                  href = `/${activeCity.slug}${item.href}`
-                }
-
-                return (
-                  <Menu.Item key={item.href}>
-                    {href == `/${activeCity.slug}/profile/logout` ? (
-                      <span
-                        className="block px-4 py-2 text-sm cursor-pointer text-secondary hover:text-white hover:bg-secondary"
-                        onClick={logout}
-                      >
-                        {item.name}
-                      </span>
-                    ) : (
-                      <Link href={href} locale={locale} prefetch={false}>
-                        <a className="block px-4 py-2 text-sm cursor-pointer text-secondary hover:text-white hover:bg-secondary">
-                          {item.name}
-                        </a>
-                      </Link>
-                    )}
-                  </Menu.Item>
-                )
-              })}
-            </Menu.Items>
-          </Transition>
-        </>
-      )}
-    </Menu>
+            Выйти
+          </button>
+        </div>
+      </div>
+    </>
   )
 }
 

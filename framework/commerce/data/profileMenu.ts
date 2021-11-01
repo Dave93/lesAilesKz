@@ -12,9 +12,16 @@ const menuItems: profileMenuItem[] = [
   //   icon: '/bonuses.png',
   //   langCode: 'profile_bonuses',
   // },
+
+  {
+    href: '/profile/account',
+    icon: '/Setting.png',
+    activeIcon: '/activePersonal.png',
+    langCode: 'profile_account',
+  },
   {
     href: '/profile/orders',
-    icon: '/order.png',
+    icon: '/Bag.png',
     activeIcon: '/activeOrder.png',
     langCode: 'profile_orders',
   },
@@ -24,18 +31,6 @@ const menuItems: profileMenuItem[] = [
   //   activeIcon: '/activeAddress.png',
   //   langCode: 'profile_address',
   // },
-  {
-    href: '/profile/account',
-    icon: '/personal.png',
-    activeIcon: '/activePersonal.png',
-    langCode: 'profile_account',
-  },
-  {
-    href: '/profile/logout',
-    icon: '/logout.png',
-    activeIcon: '/logout.png',
-    langCode: 'profile_logout',
-  },
 ]
 
 export default menuItems

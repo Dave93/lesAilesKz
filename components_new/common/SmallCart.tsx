@@ -480,7 +480,7 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
           </div>
         )}
         {!isEmpty && (
-          <div className="grid grid-cols-1 divide-y border-b overflow-y-auto  bg-white p-5 rounded-2xl">
+          <div className="grid grid-cols-1 divide-y border-b overflow-y-auto  bg-white p-5 rounded-2xl ">
             <div className="flex  text-xl items-center justify-between mb-9">
               <div className="flex">
                 Корзина
@@ -494,129 +494,152 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
               </button>
             </div>
 
-            {data &&
-              data?.lineItems.map((lineItem: any) => (
-                <div key={lineItem.id} className="py-3">
-                  <div>
-                    {lineItem.child &&
-                    lineItem.child.length &&
-                    lineItem.child[0].variant?.product?.id !=
-                      lineItem?.variant?.product?.box_id ? (
-                      <div className="h-11 w-11 flex relative">
-                        <div className="w-5 relative overflow-hidden">
-                          <div>
-                            <Image
-                              src={
-                                lineItem?.variant?.product?.assets?.length
-                                  ? `${webAddress}/storage/${lineItem?.variant?.product?.assets[0]?.location}/${lineItem?.variant?.product?.assets[0]?.filename}`
-                                  : '/no_photo.svg'
-                              }
-                              width="40"
-                              height="40"
-                              layout="fixed"
-                              className="absolute rounded-full"
-                            />
+            <div className="max-h-80 overflow-auto">
+              {data &&
+                data?.lineItems.map((lineItem: any) => (
+                  <div key={lineItem.id} className="py-3">
+                    <div>
+                      {lineItem.child &&
+                      lineItem.child.length &&
+                      lineItem.child[0].variant?.product?.id !=
+                        lineItem?.variant?.product?.box_id ? (
+                        <div className="h-11 w-11 flex relative">
+                          <div className="w-5 relative overflow-hidden">
+                            <div>
+                              <Image
+                                src={
+                                  lineItem?.variant?.product?.assets?.length
+                                    ? `${webAddress}/storage/${lineItem?.variant?.product?.assets[0]?.location}/${lineItem?.variant?.product?.assets[0]?.filename}`
+                                    : '/no_photo.svg'
+                                }
+                                width="40"
+                                height="40"
+                                layout="fixed"
+                                className="absolute rounded-full"
+                              />
+                            </div>
+                          </div>
+                          <div className="w-5 relative overflow-hidden">
+                            <div className="absolute right-0">
+                              <Image
+                                src={
+                                  lineItem?.child[0].variant?.product?.assets
+                                    ?.length
+                                    ? `${webAddress}/storage/${lineItem?.child[0].variant?.product?.assets[0]?.location}/${lineItem?.child[0].variant?.product?.assets[0]?.filename}`
+                                    : '/no_photo.svg'
+                                }
+                                width="40"
+                                height="40"
+                                layout="fixed"
+                                className="rounded-full"
+                              />
+                            </div>
                           </div>
                         </div>
-                        <div className="w-5 relative overflow-hidden">
-                          <div className="absolute right-0">
-                            <Image
-                              src={
-                                lineItem?.child[0].variant?.product?.assets
-                                  ?.length
-                                  ? `${webAddress}/storage/${lineItem?.child[0].variant?.product?.assets[0]?.location}/${lineItem?.child[0].variant?.product?.assets[0]?.filename}`
-                                  : '/no_photo.svg'
-                              }
-                              width="40"
-                              height="40"
-                              layout="fixed"
-                              className="rounded-full"
-                            />
+                      ) : (
+                        <div className="flex mb-2 items-center">
+                          <div className="rounded-lg bg-gray-200  flex items-center p-1">
+                            <div className="flex">
+                              <Image
+                                src={
+                                  lineItem?.variant?.product?.assets?.length
+                                    ? `${webAddress}/storage/${lineItem?.variant?.product?.assets[0]?.location}/${lineItem?.variant?.product?.assets[0]?.filename}`
+                                    : '/no_photo.svg'
+                                }
+                                width={52}
+                                height={52}
+                              />
+                            </div>
+                          </div>
+                          <div className="font-medium ml-3 mx-1 w-7/12">
+                            {lineItem.child && lineItem.child.length > 1
+                              ? `${
+                                  lineItem?.variant?.product?.attribute_data
+                                    ?.name[channelName][locale || 'ru']
+                                } + ${lineItem?.child
+                                  .filter(
+                                    (v: any) =>
+                                      lineItem?.variant?.product?.box_id !=
+                                      v?.variant?.product?.id
+                                  )
+                                  .map(
+                                    (v: any) =>
+                                      v?.variant?.product?.attribute_data?.name[
+                                        channelName
+                                      ][locale || 'ru']
+                                  )
+                                  .join(' + ')}`
+                              : lineItem?.variant?.product?.attribute_data
+                                  ?.name[channelName][locale || 'ru']}
                           </div>
                         </div>
-                      </div>
-                    ) : (
-                      <div className="flex mb-2 items-center">
-                        <div className="rounded-lg bg-gray-200  flex items-center px-1">
-                          <div className="my-1 h-16">
-                            <Image
-                              src={
-                                lineItem?.variant?.product?.assets?.length
-                                  ? `${webAddress}/storage/${lineItem?.variant?.product?.assets[0]?.location}/${lineItem?.variant?.product?.assets[0]?.filename}`
-                                  : '/no_photo.svg'
+                      )}
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className=" font-medium">
+                        {lineItem.child && lineItem.child.length
+                          ? currency(
+                              (+lineItem.total + +lineItem.child[0].total) *
+                                lineItem.quantity,
+                              {
+                                pattern: '# !',
+                                separator: ' ',
+                                decimal: '.',
+                                symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                                precision: 0,
                               }
-                              width={60}
-                              height={60}
-                            />
-                          </div>
-                        </div>
-                        <div className="font-medium mx-1">
-                          {lineItem.child && lineItem.child.length > 1
-                            ? `${
-                                lineItem?.variant?.product?.attribute_data
-                                  ?.name[channelName][locale || 'ru']
-                              } + ${lineItem?.child
-                                .filter(
-                                  (v: any) =>
-                                    lineItem?.variant?.product?.box_id !=
-                                    v?.variant?.product?.id
-                                )
-                                .map(
-                                  (v: any) =>
-                                    v?.variant?.product?.attribute_data?.name[
-                                      channelName
-                                    ][locale || 'ru']
-                                )
-                                .join(' + ')}`
-                            : lineItem?.variant?.product?.attribute_data?.name[
-                                channelName
-                              ][locale || 'ru']}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="text-right flex-grow  font-medium">
-                      {lineItem.child && lineItem.child.length
-                        ? currency(
-                            (+lineItem.total + +lineItem.child[0].total) *
-                              lineItem.quantity,
-                            {
+                            ).format()
+                          : currency(lineItem.total * lineItem.quantity, {
                               pattern: '# !',
                               separator: ' ',
                               decimal: '.',
                               symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
                               precision: 0,
-                            }
-                          ).format()
-                        : currency(lineItem.total * lineItem.quantity, {
-                            pattern: '# !',
-                            separator: ' ',
-                            decimal: '.',
-                            symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                            precision: 0,
-                          }).format()}
-                    </div>
-                    <div className="w-20 h-6 ml-14 bg-gray-200 rounded-lg flex items-center text-white">
-                      <div className="w-6 h-6 items-center flex justify-around">
-                        <MinusIcon
-                          className="cursor-pointer w-5 h-5"
-                          onClick={() => decreaseQuantity(lineItem)}
-                        />
+                            }).format()}
                       </div>
-                      <div className="flex-grow text-center">
-                        {lineItem.quantity}
-                      </div>
-                      <div className="w-6 h-6 items-center flex justify-around">
-                        <PlusIcon
-                          className="cursor-pointer w-5 h-5"
-                          onClick={() => increaseQuantity(lineItem.id)}
-                        />
+                      <div className="w-20 ml-14 bg-gray-200 rounded-lg flex items-center p-1">
+                        <div className="items-center flex justify-around bg-white text-gray-500 rounded-md p-1 ">
+                          <MinusIcon
+                            className="cursor-pointer w-4 "
+                            onClick={() => decreaseQuantity(lineItem)}
+                          />
+                        </div>
+                        <div className="flex-grow text-center text-gray-500 font-medium">
+                          {lineItem.quantity}
+                        </div>
+                        <div className=" items-center flex justify-around bg-white text-gray-500 rounded-md p-1">
+                          <PlusIcon
+                            className="cursor-pointer w-4 "
+                            onClick={() => increaseQuantity(lineItem.id)}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
+                ))}
+            </div>
+            {!isEmpty && (
+              <div className="flex items-center justify-between pt-4">
+                <div className="text-sm">{tr('basket_order_price')}</div>
+                <div className="text-xl font-medium">
+                  {currency(data.totalPrice, {
+                    pattern: '# !',
+                    separator: ' ',
+                    decimal: '.',
+                    symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                    precision: 0,
+                  }).format()}
                 </div>
-              ))}
+              </div>
+            )}
+            <button
+              className="bg-green-500 rounded-xl w-full text-white py-4 mt-5"
+              onClick={() => {
+                openModal()
+              }}
+            >
+              Оформить заказ
+            </button>
           </div>
         )}
       </div>
