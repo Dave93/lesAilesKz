@@ -22,8 +22,10 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import getConfig from 'next/config'
 import { useCart } from '@framework/cart'
-import { XIcon } from '@heroicons/react/solid'
+import { PlusIcon, XIcon } from '@heroicons/react/solid'
 import styles from './ProductItemNew.module.css'
+import { MinusIcon } from '@heroicons/react/outline'
+import Hashids from 'hashids'
 // import SessionContext from 'react-storefront/session/SessionContext'
 
 type ProductItem = {
@@ -39,26 +41,30 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
   const { t: tr } = useTranslation('common')
   const [store, updateStore] = useState(product)
   const [isLoadingBasket, setIsLoadingBasket] = useState(false)
-  const { mutate } = useCart()
 
-  const [addToCartInProgress, setAddToCartInProgress] = useState(false)
-  const [isChoosingModifier, setIsChoosingModifier] = useState(false)
+  let cartId: string | null = null
+  if (typeof window !== 'undefined') {
+    cartId = localStorage.getItem('basketId')
+  }
+
+  const hashids = new Hashids(
+    'basket',
+    15,
+    'abcdefghijklmnopqrstuvwxyz1234567890'
+  )
+  const { mutate, data, isEmpty } = useCart({
+    cartId,
+  })
+
   const [activeModifiers, setActiveModifiers] = useState([] as number[])
   let [isOpen, setIsOpen] = useState(false)
   let completeButtonRef = useRef(null)
   const router = useRouter()
   const { locale } = router
+  const [isCartLoading, setIsCartLoading] = useState(false)
 
   function closeModal() {
     setIsOpen(false)
-  }
-
-  function openModal() {
-    if (modifiers && modifiers.length) {
-      let freeModifier = modifiers.find((mod: any) => mod.price == 0)
-      setActiveModifiers([freeModifier.id])
-    }
-    setIsOpen(true)
   }
 
   const updateOptionSelection = (valueId: string) => {
@@ -76,67 +82,6 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
     setActiveModifiers([])
     // console.log(prod)
     updateStore({ ...prod })
-  }
-
-  const addModifier = (modId: number) => {
-    let modifierProduct: any = null
-    if (store.variants && store.variants.length) {
-      const activeValue: any = store.variants.find(
-        (item) => item.active == true
-      )
-
-      if (activeValue.modifierProduct) {
-        modifierProduct = activeValue.modifierProduct
-      }
-    }
-    let zeroModifier = modifiers.find((mod: any) => mod.price == 0)
-    if (activeModifiers.includes(modId)) {
-      let currentModifier: any = modifiers.find((mod: any) => mod.id == modId)
-      if (!currentModifier) return
-      if (currentModifier.price == 0) return
-      let resultModifiers = [
-        ...activeModifiers.filter((id) => modId != id),
-      ].filter((id) => id)
-      if (!resultModifiers.length) {
-        resultModifiers.push(zeroModifier.id)
-      }
-      setActiveModifiers(resultModifiers)
-    } else {
-      let currentModifier: any = modifiers.find((mod: any) => mod.id == modId)
-      if (currentModifier.price == 0) {
-        setActiveModifiers([modId])
-      } else {
-        let selectedModifiers = [
-          ...activeModifiers.filter((id: number) => id != zeroModifier.id),
-          modId,
-        ]
-
-        if (modifierProduct) {
-          let sausage = modifiers.find(
-            (mod: any) => mod.id == modifierProduct.id
-          )
-          if (
-            selectedModifiers.includes(modifierProduct.id) &&
-            sausage.price < currentModifier.price
-          ) {
-            selectedModifiers = [
-              ...selectedModifiers.filter((modId: any) => modId != sausage.id),
-            ]
-          } else if (currentModifier.id == sausage.id) {
-            let richerModifier = modifiers
-              .filter((mod: any) => mod.price > sausage.price)
-              .map((mod: any) => mod.id)
-            selectedModifiers = [
-              ...selectedModifiers.filter(
-                (modId: any) => !richerModifier.includes(modId)
-              ),
-              modId,
-            ]
-          }
-        }
-        setActiveModifiers(selectedModifiers)
-      }
-    }
   }
 
   const setCredentials = async () => {
@@ -163,46 +108,17 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
   }
 
   const addToBasket = async (mods: any = null) => {
-    let modifierProduct: any = null
-    let selectedModifiers: any = null
     setIsLoadingBasket(true)
     await setCredentials()
 
-    if (!mods || !mods.length) {
-      mods = activeModifiers
-    }
-    if (modifiers) {
-      selectedModifiers = modifiers
-        .filter((m: any) => mods.includes(m.id))
-        .map((m: any) => ({ id: m.id }))
-    }
-
     let selectedProdId = 0
-    if (store.variants && store.variants.length) {
-      let selectedVariant = store.variants.find((v: any) => v.active == true)
-      selectedProdId = selectedVariant.id
-      if (selectedVariant.modifierProduct) {
-        modifierProduct = selectedVariant.modifierProduct
-      }
-
-      if (mods.length && modifierProduct) {
-        if (mods.includes(modifierProduct.id)) {
-          selectedProdId = modifierProduct.id
-          let currentProductModifiersPrices = [
-            ...modifiers
-              .filter((mod: any) => mod.id != modifierProduct.id)
-              .map((mod: any) => mod.price),
-          ]
-          selectedModifiers = modifierProduct.modifiers
-            .filter((mod: any) =>
-              currentProductModifiersPrices.includes(mod.price)
-            )
-            .map((m: any) => ({ id: m.id }))
-        }
-      }
-    } else {
-      selectedProdId = +store.id
-    }
+    // if (store.variants && store.variants.length) {
+    //   let selectedVariant = store.variants.find((v: any) => v.active == true)
+    //   selectedProdId = selectedVariant.id
+    //   selectedProdId = +store.id
+    // } else {
+    selectedProdId = +store.id
+    // }
 
     let basketId = localStorage.getItem('basketId')
     const otpToken = Cookies.get('opt_token')
@@ -218,7 +134,6 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
             {
               id: selectedProdId,
               quantity: 1,
-              modifiers: selectedModifiers,
             },
           ],
         },
@@ -248,7 +163,6 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
             {
               id: selectedProdId,
               quantity: 1,
-              modifiers: selectedModifiers,
             },
           ],
         },
@@ -275,69 +189,11 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
 
     await mutate(basketResult, false)
     setIsLoadingBasket(false)
-    if (modifiers && modifiers.length) {
-      setIsChoosingModifier(false)
-    }
 
     if (window.innerWidth < 768) {
       closeModal()
     }
   }
-
-  const discardModifier = async () => {
-    let freeModifier = modifiers.find((mod: any) => mod.price == 0)
-    setActiveModifiers([freeModifier.id])
-    addToBasket([freeModifier.id])
-  }
-
-  const modifiers = useMemo(() => {
-    let modifier = null
-    if (store.variants && store.variants.length) {
-      const activeValue: any = store.variants.find(
-        (item) => item.active == true
-      )
-      if (activeValue && activeValue.modifiers) {
-        modifier = activeValue.modifiers
-        if (activeValue.modifierProduct) {
-          let isExistSausage = modifier.find(
-            (mod: any) => mod.id == activeValue.modifierProduct.id
-          )
-          if (!isExistSausage) {
-            modifier.push({
-              id: activeValue.modifierProduct.id,
-              name: 'Сосисочный борт',
-              name_uz: 'Sosiskali tomoni',
-              price: +activeValue.modifierProduct.price - +activeValue.price,
-              assets: [
-                {
-                  local: '/sausage_modifier.png',
-                },
-              ],
-            })
-          }
-        }
-      }
-    } else {
-      if (store.modifiers && store.modifiers.length) {
-        modifier = store.modifiers
-      }
-    }
-
-    if (modifier) {
-      modifier.sort(function (a: any, b: any) {
-        if (+a.price > +b.price) {
-          return 1
-        }
-        if (+a.price < +b.price) {
-          return -1
-        }
-        // a должно быть равным b
-        return 0
-      })
-    }
-
-    return modifier
-  }, [store])
 
   const totalPrice = useMemo(() => {
     let price: number = parseInt(store.price, 0) || 0
@@ -348,16 +204,8 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
       if (activeValue) price += parseInt(activeValue.price, 0)
     }
 
-    if (modifiers && modifiers.length) {
-      modifiers.map((mod: any) => {
-        if (activeModifiers.includes(mod.id)) {
-          price += mod.price
-        }
-      })
-    }
-
     return price
-  }, [store.price, store.variants, modifiers, activeModifiers])
+  }, [store.price, store.variants, activeModifiers])
 
   const prodPriceDesktop = useMemo(() => {
     let price: number = parseInt(store.price, 0) || 0
@@ -384,164 +232,118 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
   const handleSubmit = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault() // prevent the page location from changing
     // setAddToCartInProgress(true) // disable the add to cart button until the request is finished
-    if (modifiers && modifiers.length) {
-      let freeModifier = modifiers.find((mod: any) => mod.price == 0)
-      setActiveModifiers([freeModifier.id])
-      setIsChoosingModifier(true)
-    } else {
-      addToBasket()
+
+    addToBasket()
+  }
+  const decreaseQuantity = async (line: any) => {
+    if (line.quantity == 1) {
+      return
+    }
+    setIsCartLoading(true)
+    await setCredentials()
+    const { data: basket } = await axios.put(
+      `${webAddress}/api/v1/basket-lines/${hashids.encode(line.id)}/remove`,
+      {
+        quantity: 1,
+      }
+    )
+
+    if (cartId) {
+      let { data: basket } = await axios.get(
+        `${webAddress}/api/baskets/${cartId}`
+      )
+      const basketResult = {
+        id: basket.data.id,
+        createdAt: '',
+        currency: { code: basket.data.currency },
+        taxesIncluded: basket.data.tax_total,
+        lineItems: basket.data.lines,
+        lineItemsSubtotalPrice: basket.data.sub_total,
+        subtotalPrice: basket.data.sub_total,
+        totalPrice: basket.data.total,
+      }
+
+      await mutate(basketResult, false)
+      setIsCartLoading(false)
     }
   }
-  // console.log(modifiers)
+
+  const increaseQuantity = async (lineId: string) => {
+    setIsCartLoading(true)
+    await setCredentials()
+    const { data: basket } = await axios.post(
+      `${webAddress}/api/v1/basket-lines/${hashids.encode(lineId)}/add`,
+      {
+        quantity: 1,
+      }
+    )
+
+    if (cartId) {
+      let { data: basket } = await axios.get(
+        `${webAddress}/api/baskets/${cartId}`
+      )
+      const basketResult = {
+        id: basket.data.id,
+        createdAt: '',
+        currency: { code: basket.data.currency },
+        taxesIncluded: basket.data.tax_total,
+        lineItems: basket.data.lines,
+        lineItemsSubtotalPrice: basket.data.sub_total,
+        subtotalPrice: basket.data.sub_total,
+        totalPrice: basket.data.total,
+      }
+
+      await mutate(basketResult, false)
+      setIsCartLoading(false)
+    }
+  }
+
+  const productLine = useMemo(() => {
+    if (!isEmpty) {
+      return data.lineItems.find(
+        (lineItem: any) => lineItem?.variant?.product?.id == store.id
+      )
+    }
+    return null
+  }, [data])
+
   return (
     <>
-      {isChoosingModifier ? (
-        <div
-          className="gap-4 grid grid-cols-2 items-center bg-white justify-between relative md:flex md:flex-col px-6 py-4 rounded-[15px] shadow-lg"
-          id={`prod-${store.id}`}
-        >
-          {isLoadingBasket && (
-            <div className="h-full w-full absolute flex items-center justify-around bg-gray-300 top-0 bg-opacity-60">
-              <svg
-                className="animate-spin text-yellow h-14"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  stroke-width="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-            </div>
-          )}
-          <div className="absolute right-2">
-            <XIcon
-              className="cursor-pointer h-4 text-black w-4"
-              onClick={() => setIsChoosingModifier(false)}
-            />
-          </div>
-          <div className="border-b border-yellow pb-3 text-center text-xl w-full">
-            {tr('add')}
-          </div>
-          <div className="max-h-96 overflow-y-auto">
-            <div className="flex-grow gap-3 grid grid-cols-2">
-              {modifiers &&
-                modifiers.map((mod: any) => (
-                  <div
-                    key={mod.id}
-                    className={`border ${
-                      activeModifiers.includes(mod.id)
-                        ? 'border-yellow'
-                        : 'border-gray-300'
-                    } flex flex-col justify-between overflow-hidden rounded-[15px] cursor-pointer`}
-                    onClick={() => addModifier(mod.id)}
-                  >
-                    <div className="flex-grow pt-2 px-2">
-                      {mod.assets.length ? (
-                        <img
-                          src={
-                            mod.assets[0].local
-                              ? mod.assets[0].local
-                              : `${webAddress}/storage/${mod.assets[0]?.location}/${mod.assets[0]?.filename}`
-                          }
-                          width={50}
-                          height={50}
-                          alt={mod.name}
-                          className="mx-auto"
-                        />
-                      ) : (
-                        <img
-                          src="/no_photo.svg"
-                          width={50}
-                          height={50}
-                          alt={mod.name}
-                          className="rounded-full mx-auto"
-                        />
-                      )}
-                    </div>
-                    <div className="text-center text-xs">
-                      {locale == 'uz' ? mod.name_uz : mod.name}
-                    </div>
-                    <div
-                      className={`${
-                        activeModifiers.includes(mod.id)
-                          ? 'bg-yellow'
-                          : 'bg-gray-300'
-                      } font-bold py-2 text-center text-white text-xs`}
-                    >
-                      {currency(mod.price, {
-                        pattern: '# !',
-                        separator: ' ',
-                        decimal: '.',
-                        symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                        precision: 0,
-                      }).format()}
-                    </div>
-                  </div>
-                ))}
-            </div>
-          </div>
-          <div className="gap-3 grid grid-cols-2 w-full">
-            <button
-              className="bg-yellow focus:outline-none font-bold outline-none py-2 rounded-full text-center text-white uppercase"
-              onClick={addToBasket}
-            >
-              {tr('yes')}
-            </button>
-            <button
-              className="bg-gray-200 focus:outline-none font-bold outline-none py-2 rounded-full text-center text-white uppercase"
-              onClick={discardModifier}
-            >
-              {tr('no')}
-            </button>
+      <div
+        className={`gap-4 grid grid-cols-2 py-4  md:py-3 overflow-hidden bg-white rounded-[15px] hover:shadow-xl group items-center justify-between md:flex md:flex-col shadow-lg`}
+        id={`prod-${store.id}`}
+      >
+        <div>
+          <div className="text-center">
+            {store.image ? (
+              <img
+                src={store.image}
+                width={275}
+                height={275}
+                alt={store?.attribute_data?.name[channelName][locale || 'ru']}
+                className="transform motion-safe:group-hover:scale-105 transition duration-500"
+              />
+            ) : (
+              <img
+                src="/no_photo.svg"
+                width={250}
+                height={250}
+                alt={store?.attribute_data?.name[channelName][locale || 'ru']}
+                className="rounded-full transform motion-safe:group-hover:scale-105 transition duration-500"
+              />
+            )}
           </div>
         </div>
-      ) : (
-        <div
-          className={`${styles.gridItemOutline} gap-4 grid grid-cols-2 py-4 px-2 md:py-3 md:px-3 overflow-hidden bg-white rounded-[15px] hover:shadow-xl shadow-sm group items-center justify-between md:flex md:flex-col`}
-          id={`prod-${store.id}`}
-        >
-          <div>
-            <div className="text-center">
-              {store.image ? (
-                <img
-                  src={store.image}
-                  width={250}
-                  height={250}
-                  alt={store?.attribute_data?.name[channelName][locale || 'ru']}
-                  className="transform motion-safe:group-hover:scale-105 transition duration-500"
-                />
-              ) : (
-                <img
-                  src="/no_photo.svg"
-                  width={250}
-                  height={250}
-                  alt={store?.attribute_data?.name[channelName][locale || 'ru']}
-                  className="rounded-full transform motion-safe:group-hover:scale-105 transition duration-500"
-                />
-              )}
-            </div>
+        <div className="flex flex-col flex-grow w-full px-5">
+          <div className="mt-4 font-bold text-2xl flex-grow">
+            {store?.attribute_data?.name[channelName][locale || 'ru']}
           </div>
-          <div className="flex flex-col flex-grow w-full">
-            <div className="font-black mt-4 text-xl">
-              {store?.attribute_data?.name[channelName][locale || 'ru']}
+          {store.sizeDesc && (
+            <div className="font-bold mt-2 text-gray-700 text-xs">
+              {store.sizeDesc}
             </div>
-            {store.sizeDesc && (
-              <div className="font-bold mt-2 text-gray-700 text-xs">
-                {store.sizeDesc}
-              </div>
-            )}
-            <div
+          )}
+          {/* <div
               className="mt-1 text-xs flex-grow"
               dangerouslySetInnerHTML={{
                 __html: store?.attribute_data?.description
@@ -550,8 +352,8 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                     ]
                   : '',
               }}
-            ></div>
-            <div className="hidden md:block">
+            ></div> */}
+          {/* <div className="hidden md:block">
               {store.variants && store.variants.length > 0 && (
                 <div className="flex mt-5 space-x-1">
                   {store.variants.map((v) => (
@@ -571,16 +373,48 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                   ))}
                 </div>
               )}
+            </div> */}
+          <div className=" mt-2 justify-between items-center">
+            <span className="md:text-xl hidden md:block md:w-auto text-primary md:px-0 md:py-0 ">
+              {currency(prodPriceDesktop, {
+                pattern: '# !',
+                separator: ' ',
+                decimal: '.',
+                symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                precision: 0,
+              }).format()}
+            </span>
+          </div>
+
+          {productLine ? (
+            <div className="rounded-lg flex items-center p-1 w-full mt-2 bg-primary text-white ">
+              <div className="items-center flex justify-around  p-1 ">
+                <MinusIcon
+                  className="cursor-pointer w-7 text-white"
+                  onClick={() => decreaseQuantity(productLine)}
+                />
+              </div>
+              <div className="flex-grow text-center font-medium text-2xl">
+                {productLine.quantity}
+              </div>
+              <div className=" items-center flex justify-around p-1">
+                <PlusIcon
+                  className="cursor-pointer w-7 text-white"
+                  onClick={() => increaseQuantity(productLine.id)}
+                />
+              </div>
             </div>
-            <div className="md:mt-10 mt-2 flex justify-between items-center text-sm">
+          ) : (
+            <div className="flex justify-between items-center mt-3">
+              <div>350 гр</div>
               <button
-                className="bg-yellow focus:outline-none md:w-32 md:justify-around font-bold outline-none py-2 rounded-full text-white uppercase md:inline-flex items-center hidden"
+                className="bg-primary focus:outline-none outline-none rounded-md w-10 text-white uppercase md:inline-flex items-center hidden"
                 onClick={handleSubmit}
                 disabled={isLoadingBasket}
               >
                 {isLoadingBasket ? (
                   <svg
-                    className="animate-spin h-5 w-5 text-white flex-grow text-center"
+                    className="animate-spin w-10 text-white flex-grow text-center"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -600,265 +434,13 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                     ></path>
                   </svg>
                 ) : (
-                  tr('main_to_basket')
+                  <PlusIcon className="w-10 rounded-full" />
                 )}
               </button>
-              <span className="md:text-xl md:bg-white hidden md:block md:w-auto rounded-full text-sm text-center md:px-0 md:py-0 md:text-black">
-                {currency(prodPriceDesktop, {
-                  pattern: '# !',
-                  separator: ' ',
-                  decimal: '.',
-                  symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                  precision: 0,
-                }).format()}
-              </span>
-              <button
-                className="md:text-xl md:hidden bg-yellow md:bg-white w-28 md:w-auto rounded-full px-2 py-2 text-sm text-center md:px-0 md:py-0 text-white md:text-black"
-                onClick={openModal}
-              >
-                {locale == 'uz' ? '' : <span>от </span>}
-                {currency(prodPriceMobile, {
-                  pattern: '# !',
-                  separator: ' ',
-                  decimal: '.',
-                  symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                  precision: 0,
-                }).format()}
-              </button>
-              <Transition.Root show={isOpen} as={Fragment}>
-                <Dialog
-                  initialFocus={completeButtonRef}
-                  as="div"
-                  className="fixed inset-0 z-50 overflow-y-auto"
-                  open={isOpen}
-                  onClose={closeModal}
-                >
-                  <div className="flex items-end justify-center min-h-screen  text-center sm:block sm:p-0">
-                    <Transition.Child
-                      as={Fragment}
-                      enter="ease-out duration-300"
-                      enterFrom="opacity-0"
-                      enterTo="opacity-100"
-                      leave="ease-in duration-200"
-                      leaveFrom="opacity-100"
-                      leaveTo="opacity-0"
-                    >
-                      <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-                    </Transition.Child>
-
-                    {/* This element is to trick the browser into centering the modal contents. */}
-                    <span
-                      className="hidden sm:inline-block sm:align-middle sm:h-screen"
-                      aria-hidden="true"
-                    >
-                      &#8203;
-                    </span>
-                    <Transition.Child
-                      as={Fragment}
-                      enter="ease-out duration-300"
-                      enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                      enterTo="opacity-100 translate-y-0 sm:scale-100"
-                      leave="ease-in duration-200"
-                      leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                      leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    >
-                      <div className="bg-white p-4 text-left transform h-screen w-full overflow-hidden fixed top-0">
-                        <div className="flex fixed w-full max-h-10 -ml-4 -mt-4 bg-white pt-8 pl-4 top-0 flex-col">
-                          <div className="flex w-full items-center">
-                            <span onClick={closeModal} className="flex">
-                              <img
-                                src="/assets/back.png"
-                                width="24"
-                                height="24"
-                              />
-                            </span>
-                          </div>
-                        </div>
-                        <div className="h-[calc(85vh-24px)] overflow-y-auto mt-6 overflow-hidden">
-                          <div className="h-[35vh] mx-auto bg-cover flex relative mt-10">
-                            {store.image ? (
-                              <img
-                                src={store.image}
-                                alt={
-                                  store?.attribute_data?.name[channelName][
-                                    locale || 'ru'
-                                  ]
-                                }
-                                className="mx-auto"
-                              />
-                            ) : (
-                              <img
-                                src="/no_photo.svg"
-                                alt={
-                                  store?.attribute_data?.name[channelName][
-                                    locale || 'ru'
-                                  ]
-                                }
-                                className="rounded-full mx-auto"
-                              />
-                            )}
-                          </div>
-                          <div className="font-black mt-4 text-xl">
-                            {
-                              store?.attribute_data?.name[channelName][
-                                locale || 'ru'
-                              ]
-                            }
-                          </div>
-                          <div
-                            className="mt-1 text-xs flex-grow"
-                            dangerouslySetInnerHTML={{
-                              __html: store?.attribute_data?.description
-                                ? store?.attribute_data?.description[
-                                    channelName
-                                  ][locale || 'ru']
-                                : '',
-                            }}
-                          ></div>
-                          {store.variants && store.variants.length > 0 && (
-                            <div className="flex mt-5 space-x-1">
-                              {store.variants.map((v) => (
-                                <div
-                                  className={`w-full text-center cursor-pointer rounded-2xl outline-none ${
-                                    v.active
-                                      ? 'bg-yellow text-white shadow-xl'
-                                      : 'bg-gray-200 text-gray-600'
-                                  }`}
-                                  onClick={() => updateOptionSelection(v.id)}
-                                  key={v.id}
-                                >
-                                  <button className="outline-none focus:outline-none text-xs py-2">
-                                    {locale == 'ru'
-                                      ? v?.custom_name
-                                      : v?.custom_name_uz}
-                                  </button>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                          {modifiers && (
-                            <div className="pb-10">
-                              <div className="my-2">
-                                <span>Добавить в пиццу</span>
-                              </div>
-                              <div className="overflow-x-scroll">
-                                <div className="-mr-20 flex space-x-2">
-                                  {modifiers.map((mod: any, index: number) => (
-                                    <div
-                                      key={mod.id}
-                                      className={`border ${
-                                        (activeModifiers.length &&
-                                          activeModifiers.includes(mod.id)) ||
-                                        (!activeModifiers.length && index == 0)
-                                          ? 'border-yellow'
-                                          : 'border-gray-300'
-                                      } flex flex-col justify-between overflow-hidden rounded-[15px] cursor-pointer w-24`}
-                                      onClick={() => addModifier(mod.id)}
-                                    >
-                                      <div className="flex-grow pt-2 px-2">
-                                        {mod.assets.length ? (
-                                          <img
-                                            src={
-                                              mod.assets[0].local
-                                                ? mod.assets[0].local
-                                                : `${webAddress}/storage/${mod.assets[0]?.location}/${mod.assets[0]?.filename}`
-                                            }
-                                            width={50}
-                                            height={50}
-                                            alt={mod.name}
-                                            className="mx-auto"
-                                          />
-                                        ) : (
-                                          <img
-                                            src="/no_photo.svg"
-                                            width={50}
-                                            height={50}
-                                            alt={mod.name}
-                                            className="rounded-full mx-auto"
-                                          />
-                                        )}
-                                      </div>
-                                      <div className="text-center text-xs">
-                                        {locale == 'uz'
-                                          ? mod.name_uz
-                                          : mod.name}
-                                      </div>
-                                      <div
-                                        className={`${
-                                          (activeModifiers.length &&
-                                            activeModifiers.includes(mod.id)) ||
-                                          (!activeModifiers.length &&
-                                            index == 0)
-                                            ? 'bg-yellow'
-                                            : 'bg-gray-300'
-                                        } font-bold px-2 py-2 text-center text-white text-xs`}
-                                      >
-                                        {currency(mod.price, {
-                                          pattern: '# !',
-                                          separator: ' ',
-                                          decimal: '.',
-                                          symbol: `${
-                                            locale == 'uz' ? "so'm" : 'сум'
-                                          }`,
-                                          precision: 0,
-                                        }).format()}
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                        <div className="w-full fixed bottom-0 bg-white -ml-4 px-3 py-5 items-center flex mt-3">
-                          <button
-                            className="bg-yellow flex items-center justify-around focus:outline-none font-bold outline-none py-2 rounded-full text-center text-white w-full"
-                            onClick={addToBasket}
-                          >
-                            {isLoadingBasket ? (
-                              <svg
-                                className="animate-spin h-5 w-5 text-white flex-grow text-center"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                              >
-                                <circle
-                                  className="opacity-25"
-                                  cx="12"
-                                  cy="12"
-                                  r="10"
-                                  stroke="currentColor"
-                                  stroke-width="4"
-                                ></circle>
-                                <path
-                                  className="opacity-75"
-                                  fill="currentColor"
-                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                ></path>
-                              </svg>
-                            ) : (
-                              <span>
-                                {tr('main_to_basket')}{' '}
-                                {currency(totalPrice, {
-                                  pattern: '# !',
-                                  separator: ' ',
-                                  decimal: '.',
-                                  symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                                  precision: 0,
-                                }).format()}
-                              </span>
-                            )}
-                          </button>
-                        </div>
-                      </div>
-                    </Transition.Child>
-                  </div>
-                </Dialog>
-              </Transition.Root>
             </div>
-          </div>
+          )}
         </div>
-      )}
+      </div>
     </>
   )
 }

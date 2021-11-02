@@ -3,6 +3,12 @@ import { useRouter } from 'next/router'
 import { LinkItem } from '@commerce/types/headerMenu'
 import Image from 'next/image'
 import { Link } from 'react-scroll'
+import dynamic from 'next/dynamic'
+
+const CartWithNoSSR = dynamic(
+  () => import('@components_new/common/SmallCart'),
+  { ssr: false }
+)
 
 const CategoriesMenu: FC<{ categories: any[]; channelName: string }> = ({
   categories = [],
@@ -13,12 +19,15 @@ const CategoriesMenu: FC<{ categories: any[]; channelName: string }> = ({
   const [fixed, changeState] = useState(false)
 
   const categoriesFixing = () => {
-    window.pageYOffset > 600 ? changeState(true) : changeState(false)
+    window.pageYOffset > 700 ? changeState(true) : changeState(false)
   }
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       window.addEventListener('scroll', categoriesFixing)
+    }
+    return () => {
+      window.removeEventListener('scroll', categoriesFixing)
     }
   }, [])
 
@@ -54,6 +63,7 @@ const CategoriesMenu: FC<{ categories: any[]; channelName: string }> = ({
             )
           })}
         </div>
+        {fixed && <CartWithNoSSR channelName={channelName} />}
       </div>
     </div>
   )

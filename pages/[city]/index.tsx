@@ -77,8 +77,7 @@ export async function getServerSideProps({
       footerInfoMenu,
       socials,
       cities,
-      currentCity,
-      cleanBackground: true,
+      currentCity
     },
   }
 }
@@ -211,7 +210,7 @@ export default function Home({
       </div>
       <CategoriesMenu categories={categories} channelName={channelName} />
       <div className="container mx-auto">
-        <div className="grid lg:grid-cols-4 grid-cols-1 md:grid-cols-2 gap-10 mt-10">
+        <div className="">
           <div className="col-span-3 md:hidden">
             {halfModeProds.map((sec: any) => (
               <div
@@ -222,12 +221,12 @@ export default function Home({
               </div>
             ))}
           </div>
-          <div className="col-span-3 space-y-16">
+          <div className="">
             {readyProducts.map((sec: any) =>
               sec.half_mode ? (
                 <div
                   key={sec.id}
-                  className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 md:gap-10 divide-y md:divide-y-0 px-4 md:px-0"
+                  className="grid grid-cols-4 md:gap-10 divide-y md:divide-y-0 px-4 md:px-0"
                 >
                   <HalfPizzaNoSSR sec={sec} channelName={channelName} />
                 </div>
@@ -238,7 +237,7 @@ export default function Home({
                       sec?.attribute_data?.name[channelName][locale || 'ru']
                     }
                   />
-                  <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 md:gap-3 divide-y md:divide-y-0 px-4 md:px-0 space-y-3 md:space-y-0">
+                  <div className="grid grid-cols-4  md:gap-3 divide-y md:divide-y-0 px-4 md:px-0 space-y-3 md:space-y-0">
                     {sec.items.map((prod: any) => (
                       <ProductItemNew
                         product={prod}
@@ -251,21 +250,7 @@ export default function Home({
               )
             )}
           </div>
-          <div className="mt-20 sticky top-16 max-h-screen hidden md:block">
-            {halfModeProds.map((sec: any) => (
-              <div
-                key={sec.id}
-                className="border transition-all overflow-hidden duration-500 border-yellow mt-4 px-5 py-7 relative rounded-[15px] bg-white shadow-sm hover:shadow-xl"
-              >
-                <HalfPizzaNoSSR
-                  sec={sec}
-                  channelName={channelName}
-                  isSmall={isStickySmall}
-                />
-              </div>
-            ))}
-            <CartWithNoSSR channelName={channelName} />
-          </div>
+          
         </div>
       </div>
       <MobileCartWithNoSSR />

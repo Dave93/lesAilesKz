@@ -69,7 +69,7 @@ const UserProfileDropDown: FC = () => {
       <div
         className={
           popoverShow
-            ? 'z-20 rounded-2xl p-3 mt-8 right-0 bg-white absolute'
+            ? 'z-20 rounded-2xl p-3 mt-8 bg-white absolute'
             : 'hidden '
         }
       >

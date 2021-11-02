@@ -367,6 +367,11 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
       }
 
       await mutate(basketResult, false)
+
+      if (!basket.data.lines) {
+        hideOverlay();
+      }
+        
       setIsCartLoading(false)
     }
   }
@@ -441,11 +446,11 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
         ref={btnRef}
       >
         <div className="pr-2">Корзина</div>
-        <div className="text-xl pl-2 text-white flex items-center">
-          {data && data.lineItems.length > 0 ? (
+        <div className="text-xl pl-2 text-white flex items-center w-max">
+          {data && data.lineItems && data.lineItems.length > 0 ? (
             data.lineItems.length
           ) : (
-            <Image src="/bag.svg" width="20" height="20" />
+            <img src="/bag.svg" width="20" height="20" />
           )}
         </div>
       </button>
@@ -459,7 +464,7 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
         {isCartLoading && (
           <div className="h-full w-full absolute flex items-center justify-around bg-gray-300 top-0 bg-opacity-60 left-0 rounded-[15px]">
             <svg
-              className="animate-spin text-yellow h-14"
+              className="animate-spin text-primary h-14"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -487,7 +492,7 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
                 Корзина
                 <div className="text-primary font-bold ml-1">
                   {' '}
-                  x{data?.lineItems.length}
+                  x{data && data.lineItems ? data?.lineItems.length : 0}
                 </div>
               </div>
               <button onClick={() => {}}>
@@ -572,6 +577,12 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
                                   .join(' + ')}`
                               : lineItem?.variant?.product?.attribute_data
                                   ?.name[channelName][locale || 'ru']}
+                          </div>
+                          <div>
+                            <XIcon
+                              className="cursor-pointer h-4 text-black w-4"
+                              onClick={() => destroyLine(lineItem.id)}
+                            />
                           </div>
                         </div>
                       )}

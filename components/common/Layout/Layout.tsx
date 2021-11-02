@@ -23,8 +23,8 @@ import Link from 'next/link'
 import { Link as LinkScroll } from 'react-scroll'
 import { useUI } from '@components/ui'
 import {
-  faFacebook,
   faInstagram,
+  faFacebook,
   faTelegram,
   IconDefinition,
 } from '@fortawesome/free-brands-svg-icons'
@@ -39,6 +39,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import Cookies from 'js-cookie'
 import CityModal from './CityModal'
 import Overlay from './Overlay'
+import { chunk, sortBy } from 'lodash'
 const { publicRuntimeConfig } = getConfig()
 
 interface Props {
@@ -60,8 +61,8 @@ interface SocIconsProps {
 }
 
 const socIcons: SocIconsProps = {
-  fb: faFacebook,
   inst: faInstagram,
+  fb: faFacebook,
   tg: faTelegram,
 }
 
@@ -117,6 +118,7 @@ const Layout: FC<Props> = ({
     return
   }, [cleanBackground, currentCity])
 
+  let newFooterMenu = chunk(footerInfoMenu, 4)
   return (
     <CommerceProvider locale={locale}>
       <div className="font-sans">
@@ -135,99 +137,70 @@ const Layout: FC<Props> = ({
 
             <Overlay />
           </main>
-          <footer className="text-white md:flex flex-col flex">
-            <div className="hidden md:flex justify-center">
-              <Image src="/assets/uzor.svg" width={1920} height={40} />
-            </div>
-            <div className="md:hidden flex">
-              <Image
-                src="/assets/uzormob.svg"
-                width={1000}
-                height={60}
-                className="object-cover"
-              />
-            </div>
-            <div className="bg-secondary w-full pt-5 pb-2 px-4 md:px-0">
-              <div className="container mx-auto md:my-6">
-                <div className="md:border-b md:flex justify-between mb-1 md:pb-10">
-                  <div className="md:w-1/5">
-                    <div className="hidden md:flex">
-                      <Image
-                        src="/assets/footer_logo.svg"
-                        width={188}
-                        height={68}
-                      />
-                    </div>
-                    <div className="md:hidden border-b border-blue md:border-0 pb-5">
-                      <div>{tr('delivery_phone')}</div>
-                      <div className="text-[30px] font-bold">
-                        {currentCity?.phone && (
+          <footer className=" md:flex flex-col flex border border-t bg-white">
+            <div className="w-full pt-5 px-4 md:px-0">
+              <div className=" border-b">
+                <div className="container mx-auto md:my-6">
+                  <div className="flex justify-between mb-1 py-10">
+                    <div className="">
+                      <div className="border-b border-blue md:border-0 pb-10">
+                        <div>Колл-центр</div>
+                        <div className="text-[30px] font-bold">
+                          {currentCity?.phone && (
+                            <a
+                              href={parsePhoneNumber(
+                                currentCity?.phone ?? ''
+                              )?.getURI()}
+                            >
+                              {parsePhoneNumber(currentCity?.phone ?? '')
+                                ?.formatNational()
+                                .substring(2)}
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                      <div className="">
+                        <div className="">
+                          <div>Телеграм бот</div>
                           <a
-                            href={parsePhoneNumber(
-                              currentCity?.phone ?? ''
-                            )?.getURI()}
+                            href="https://t.me/lesailesbestbot"
+                            className="font-medium"
                           >
-                            {parsePhoneNumber(currentCity?.phone ?? '')
-                              ?.formatNational()
-                              .substring(2)}
+                            https://t.me/lesailesbestbot
                           </a>
-                        )}
+                        </div>
                       </div>
                     </div>
-                    <span className="md:block mt-7 text-xl hidden">
-                      {tr('footer_pizza_unites')}
-                    </span>
-                  </div>
-                  <div className="flex-grow border-b border-blue md:border-0 mt-5 md:mt-0 pb-5 md:pb-0">
-                    <div className="md:flex justify-center">
-                      <div className="mr-24 hidden md:block">
-                        <span className="block font-bold mb-3 text-[16px]">
-                          {tr('menu')}
-                        </span>
-                        <ul className="ml-3">
-                          {categories.map((item) => {
-                            return (
-                              <li
-                                key={item.id}
-                                className={styles.footerMenuListItem}
-                              >
-                                {pathname == '/[city]' ? (
-                                  <LinkScroll
-                                    to={`productSection_${item.id}`}
-                                    spy={true}
-                                    smooth={true}
-                                    offset={-100}
-                                    className="w-full cursor-pointer block"
-                                  >
-                                    {
-                                      item?.attribute_data?.name['chopar'][
-                                        locale || 'ru'
-                                      ] // TODO: fix static value chopar
-                                    }
-                                  </LinkScroll>
-                                ) : (
-                                  <Link
-                                    href={`/${currentCity?.slug}/#productSection_${item.id}`}
-                                    prefetch={false}
-                                  >
-                                    {
-                                      item?.attribute_data?.name['chopar'][
-                                        locale || 'ru'
-                                      ] // TODO: fix static value chopar
-                                    }
-                                  </Link>
-                                )}
-                              </li>
-                            )
-                          })}
-                        </ul>
-                      </div>
-                      <div>
-                        {footerInfoMenu && footerInfoMenu.length > 0 && (
+                    <div className="flex-grow border-b border-blue md:border-0 mt-5 md:mt-0 pb-5 md:pb-0">
+                      <div className="md:flex justify-center">
+                        <div>
+                          {newFooterMenu && newFooterMenu.length > 0 && (
+                            <>
+                              <div className="grid grid-cols-2 gap-3">
+                                {newFooterMenu.map((item) => (
+                                  <ul className="space-y-5">
+                                    {item.map((link: any) => {
+                                      const keyTyped =
+                                        `name_${locale}` as keyof typeof item
+                                      let href = link.href
+                                      if (href.indexOf('http') < 0) {
+                                        href = `/${currentCity?.slug}${link.href}`
+                                      }
+                                      return (
+                                        <li key={href}>
+                                          <Link href={href} prefetch={false}>
+                                            <a>{link[keyTyped]}</a>
+                                          </Link>
+                                        </li>
+                                      )
+                                    })}
+                                  </ul>
+                                ))}
+                              </div>
+                            </>
+                          )}
+                          {/* {footerInfoMenu && footerInfoMenu.length > 0 && (
                           <>
-                            <span className="block font-bold mb-3 text-[16px]">
-                              {tr('information')}
-                            </span>
                             <ul className="ml-3">
                               {footerInfoMenu.map((item) => {
                                 const keyTyped =
@@ -237,10 +210,7 @@ const Layout: FC<Props> = ({
                                   href = `/${currentCity?.slug}${item.href}`
                                 }
                                 return (
-                                  <li
-                                    key={item.href}
-                                    className={styles.footerMenuListItem}
-                                  >
+                                  <li key={item.href}>
                                     <Link href={href} prefetch={false}>
                                       <a>{item[keyTyped]}</a>
                                     </Link>
@@ -249,56 +219,61 @@ const Layout: FC<Props> = ({
                               })}
                             </ul>
                           </>
-                        )}
+                        )} */}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="md:text-right text-sm leading-7 mt-5 md:mt-0">
-                    <div className="hidden md:block">
-                      <div>{tr('delivery_phone')}</div>
-                      <div className="text-[30px] font-bold">
-                        {currentCity?.phone && (
-                          <a
-                            href={parsePhoneNumber(
-                              currentCity?.phone ?? ''
-                            )?.getURI()}
-                          >
-                            {parsePhoneNumber(currentCity?.phone ?? '')
-                              ?.formatNational()
-                              .substring(2)}
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                    <div className=" border-b border-blue md:border-0 pb-5 md:pb-0">
-                      {tr('work_time')} <br />{' '}
-                      {locale == 'uz'
-                        ? configData.workTimeUz
-                        : configData.workTimeRu}
-                    </div>
-                    <div className="mt-4  border-b border-blue md:border-0 pb-5 md:pb-0">
-                      <span>{tr('follow_us')}</span>
-                      <ul className="flex md:justify-end text-4xl">
+                    <div>
+                      <ul className="flex  text-2xl">
                         {socials.map((soc) => {
                           return (
                             <li key={soc.code} className="mx-1">
                               <a
                                 target="_blank"
-                                className="no-underline text-white"
+                                className="no-underline "
                                 href={soc.link}
                               >
-                                <FontAwesomeIcon icon={socIcons[soc.code]} />
+                                <div className="bg-gray-700 rounded-xl p-3">
+                                  <FontAwesomeIcon
+                                    icon={socIcons[soc.code]}
+                                    className="text-white flex items-center"
+                                  />
+                                </div>
                               </a>
                             </li>
                           )
                         })}
                       </ul>
+                      <div className="flex absolute">
+                        <a href="" className="flex">
+                          <div className=" bg-gray-700 flex items-center mt-11 p-2 rounded-lg">
+                            <img
+                              src="/google-play.png"
+                              alt=""
+                              className="w-5"
+                            />
+                            <div className="text-white ml-2">
+                              <div className="text-sm">Google Play</div>
+                            </div>
+                          </div>
+                        </a>
+                        <a href="">
+                          <div className=" bg-gray-700 flex items-center ml-1 mt-11 p-2 px-2 rounded-lg">
+                            <img src="/apple.png" alt="" />
+                            <div className="text-white ml-2">
+                              <div className="text-[8px]">Available on the</div>
+                              <div className="text-sm leading-3">App Store</div>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="mb-7 md:mb-0">
-                  {new Date().getFullYear()} {tr('all_rights_reserved')}
-                </div>
+              </div>
+              <div className="mb-7 md:mb-0 container mx-auto py-5 flex">
+                {new Date().getFullYear()} {tr('all_rights_reserved')}
+                <img src="/assets/main_logo.svg" className="flex m-auto" />
               </div>
             </div>
           </footer>
