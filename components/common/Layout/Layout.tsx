@@ -40,6 +40,7 @@ import Cookies from 'js-cookie'
 import CityModal from './CityModal'
 import Overlay from './Overlay'
 import { chunk, sortBy } from 'lodash'
+import SetLocation from '@components_new/header/SetLocation'
 const { publicRuntimeConfig } = getConfig()
 
 interface Props {
@@ -84,7 +85,7 @@ const Layout: FC<Props> = ({
 
   const [configData, setConfigData] = useState({} as any)
 
-  const { setCitiesData, activeCity, setActiveCity } = useUI()
+  const { setCitiesData, activeCity, setActiveCity, addressModal } = useUI()
 
   const fetchConfig = async () => {
     let configData
@@ -129,7 +130,9 @@ const Layout: FC<Props> = ({
               cleanBackground == true ? 'bg-gray-100' : ''
             } flex-grow md:pb-14 relative`}
           >
-            {pathname == '/[city]' ? (
+            {addressModal ? (
+              <SetLocation />
+            ) : pathname == '/[city]' ? (
               children
             ) : (
               <div className="container mx-auto">{children}</div>

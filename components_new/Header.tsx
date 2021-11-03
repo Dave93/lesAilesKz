@@ -55,6 +55,7 @@ const Header: FC<{
   const { t: tr } = useTranslation('common')
   const [configData, setConfigData] = useState({} as any)
   const [channelName, setChannelName] = useState('chopar')
+  const { showAddress, locationData } = useUI()
 
   const getChannel = async () => {
     const channelData = await defaultChannel()
@@ -103,7 +104,19 @@ const Header: FC<{
               </Link>
             </div>
             <div className=" md:flex hidden">
-              <SetLocation />
+              <button
+                className="bg-primary truncate cursor-pointer flex items-center justify-center rounded-xl text-white w-64 h-[40px] md:h-[36px] outline-none focus:outline-none"
+                onClick={() => {
+                  showAddress()
+                }}
+              >
+                <div className="flex items-center mr-3">
+                  <Image src="/assets/location.png" width="14" height="16" />
+                </div>
+                {locationData && locationData.address
+                  ? locationData.address
+                  : tr('chooseLocation')}
+              </button>
             </div>
 
             <HeaderMenu menuItems={menu} />

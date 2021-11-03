@@ -374,10 +374,43 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
 
   return (
     <>
+      <div>
+        <YMaps>
+          <div>
+            <Map
+              state={mapState}
+              width="100%"
+              height="100vh"
+              onClick={clickOnMap}
+              modules={[
+                'control.ZoomControl',
+                'control.FullscreenControl',
+                'control.GeolocationControl',
+              ]}
+            >
+              {selectedCoordinates.map((item: any, index: number) => (
+                <Placemark
+                  modules={['geoObject.addon.balloon']}
+                  defaultGeometry={[
+                    item?.coordinates?.lat,
+                    item?.coordinates?.long,
+                  ]}
+                  geomerty={[item?.coordinates?.lat, item?.coordinates?.long]}
+                  key={item.key}
+                  defaultOptions={{
+                    iconLayout: 'default#image',
+                    iconImageHref: '/map_placemark.png',
+                  }}
+                />
+              ))}
+            </Map>
+          </div>
+        </YMaps>
+      </div>
       <div className="bg-gray-100 flex rounded-full w-full">
         <button
           className={`${
-            tabIndex == 'deliver' ? 'bg-yellow text-white' : ' text-gray-400'
+            tabIndex == 'deliver' ? 'text-white' : ' text-gray-400'
           } flex-1 font-bold py-3 text-[18px] rounded-full outline-none focus:outline-none`}
           onClick={() => changeTabIndex('deliver')}
         >
@@ -385,7 +418,7 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
         </button>
         <button
           className={`${
-            tabIndex == 'pickup' ? 'bg-yellow text-white' : ' text-gray-400'
+            tabIndex == 'pickup' ? 'text-white' : ' text-gray-400'
           } flex-1 font-bold py-3 text-[18px] rounded-full outline-none focus:outline-none`}
           onClick={() => changeTabIndex('pickup')}
         >
@@ -438,42 +471,7 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
               </Menu>
             </div>
           </div>
-          <div>
-            <YMaps>
-              <div>
-                <Map
-                  state={mapState}
-                  width="100%"
-                  height="35vh"
-                  onClick={clickOnMap}
-                  modules={[
-                    'control.ZoomControl',
-                    'control.FullscreenControl',
-                    'control.GeolocationControl',
-                  ]}
-                >
-                  {selectedCoordinates.map((item: any, index: number) => (
-                    <Placemark
-                      modules={['geoObject.addon.balloon']}
-                      defaultGeometry={[
-                        item?.coordinates?.lat,
-                        item?.coordinates?.long,
-                      ]}
-                      geomerty={[
-                        item?.coordinates?.lat,
-                        item?.coordinates?.long,
-                      ]}
-                      key={item.key}
-                      defaultOptions={{
-                        iconLayout: 'default#image',
-                        iconImageHref: '/map_placemark.png',
-                      }}
-                    />
-                  ))}
-                </Map>
-              </div>
-            </YMaps>
-          </div>
+
           <div className="mt-2">
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="font-bold text-[18px] text-gray-400">

@@ -41,6 +41,9 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
   const { t: tr } = useTranslation('common')
   const [store, updateStore] = useState(product)
   const [isLoadingBasket, setIsLoadingBasket] = useState(false)
+  const [open, setOpen] = useState(false)
+  const cancelButtonRef = useRef(null)
+  const [quantity, setQuantity] = useState(1)
 
   let cartId: string | null = null
   if (typeof window !== 'undefined') {
@@ -133,7 +136,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
           variants: [
             {
               id: selectedProdId,
-              quantity: 1,
+              quantity: quantity,
             },
           ],
         },
@@ -162,7 +165,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
           variants: [
             {
               id: selectedProdId,
-              quantity: 1,
+              quantity: quantity,
             },
           ],
         },
@@ -189,7 +192,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
 
     await mutate(basketResult, false)
     setIsLoadingBasket(false)
-
+    setQuantity(1)
     if (window.innerWidth < 768) {
       closeModal()
     }
@@ -298,6 +301,24 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
     }
   }
 
+  const modalDecreaseQuantity = (q: number) => {
+    if (q == 1) {
+      return
+    } else {
+      q--
+    }
+    setQuantity(q)
+  }
+  const modalIncreaseQuantity = (q: number) => {
+    q++
+    setQuantity(q)
+  }
+
+  const popapAddToBasket = () => {
+    addToBasket()
+    setOpen(false)
+  }
+
   const productLine = useMemo(() => {
     if (!isEmpty) {
       return data.lineItems.find(
@@ -306,7 +327,6 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
     }
     return null
   }, [data])
-
   return (
     <>
       <div
@@ -316,13 +336,16 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
         <div>
           <div className="text-center">
             {store.image ? (
-              <img
-                src={store.image}
-                width={275}
-                height={275}
-                alt={store?.attribute_data?.name[channelName][locale || 'ru']}
-                className="transform motion-safe:group-hover:scale-105 transition duration-500"
-              />
+                <img
+                  src={store.image}
+                  width={275}
+                  height={275}
+                  alt={store?.attribute_data?.name[channelName][locale || 'ru']}
+                  className="transform motion-safe:group-hover:scale-105 transition duration-500 cursor-pointer"
+                  onClick={() => {
+                    setOpen(true)
+                  }}
+                />
             ) : (
               <img
                 src="/no_photo.svg"
@@ -335,14 +358,14 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
           </div>
         </div>
         <div className="flex flex-col flex-grow w-full px-5">
-          <div className="mt-4 font-bold text-2xl flex-grow">
+          <div
+            className="mt-4 font-bold text-2xl flex-grow cursor-pointer"
+            onClick={() => {
+              setOpen(true)
+            }}
+          >
             {store?.attribute_data?.name[channelName][locale || 'ru']}
           </div>
-          {store.sizeDesc && (
-            <div className="font-bold mt-2 text-gray-700 text-xs">
-              {store.sizeDesc}
-            </div>
-          )}
           {/* <div
               className="mt-1 text-xs flex-grow"
               dangerouslySetInnerHTML={{
@@ -440,6 +463,144 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
             </div>
           )}
         </div>
+        <Transition.Root show={open} as={Fragment}>
+          <Dialog
+            as="div"
+            static
+            className="fixed z-10 inset-0 overflow-y-auto"
+            initialFocus={cancelButtonRef}
+            open={open}
+            onClose={setOpen}
+          >
+            <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0"
+                enterTo="opacity-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+              >
+                <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+              </Transition.Child>
+
+              {/* This element is to trick the browser into centering the modal contents. */}
+              <span
+                className="hidden sm:inline-block sm:align-middle sm:h-screen"
+                aria-hidden="true"
+              >
+                &#8203;
+              </span>
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <div className="inline-block align-bottom bg-white pt-12 pb-8 px-8 rounded-lg text-left shadow-xl transform transition-all sm:my-8 sm:align-middle">
+                  <div className="flex w-max">
+                    <div>
+                      <img
+                        src={store.image}
+                        width={390}
+                        height={390}
+                        alt={
+                          store?.attribute_data?.name[channelName][
+                            locale || 'ru'
+                          ]
+                        }
+                        className="transform motion-safe:group-hover:scale-105 transition duration-500"
+                      />
+                    </div>
+                    <div className="flex flex-col ml-8">
+                      <div className="font-bold text-2xl ">
+                        {
+                          store?.attribute_data?.name[channelName][
+                            locale || 'ru'
+                          ]
+                        }
+                      </div>
+                      <div
+                        className="mt-7 text-xs flex-grow"
+                        dangerouslySetInnerHTML={{
+                          __html: store?.attribute_data?.description
+                            ? store?.attribute_data?.description[channelName][
+                                locale || 'ru'
+                              ]
+                            : '',
+                        }}
+                      ></div>
+                      <div className="flex items-center justify-between">
+                        <div className=" font-medium">
+                          {currency(store.price, {
+                            pattern: '# !',
+                            separator: ' ',
+                            decimal: '.',
+                            symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                            precision: 0,
+                          }).format()}
+                        </div>
+                        {productLine ? (
+                          <div className="w-20 ml-14 bg-gray-200 rounded-lg flex items-center p-1">
+                            <div className="items-center flex justify-around bg-white text-gray-500 rounded-md p-1 ">
+                              <MinusIcon
+                                className="cursor-pointer w-4 "
+                                onClick={() => decreaseQuantity(productLine)}
+                              />
+                            </div>
+                            <div className="flex-grow text-center text-gray-500 font-medium">
+                              {productLine.quantity}
+                            </div>
+                            <div className=" items-center flex justify-around bg-white text-gray-500 rounded-md p-1">
+                              <PlusIcon
+                                className="cursor-pointer w-4 "
+                                onClick={() => increaseQuantity(productLine.id)}
+                              />
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="w-20 ml-14 bg-gray-200 rounded-lg flex items-center p-1">
+                            <div className="items-center flex justify-around bg-white text-gray-500 rounded-md p-1 ">
+                              <MinusIcon
+                                className="cursor-pointer w-4 "
+                                onClick={() => modalDecreaseQuantity(quantity)}
+                              />
+                            </div>
+                            <div className="flex-grow text-center text-gray-500 font-medium">
+                              {quantity}
+                            </div>
+                            <div className=" items-center flex justify-around bg-white text-gray-500 rounded-md p-1">
+                              <PlusIcon
+                                className="cursor-pointer w-4 "
+                                onClick={() => modalIncreaseQuantity(quantity)}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      {productLine ? (
+                        <button className="text-lg font-medium bg-primary rounded-lg py-5 px-32 text-white mt-8">
+                          Добавлено
+                        </button>
+                      ) : (
+                        <button
+                          className="text-lg font-medium bg-primary rounded-lg py-5 px-32 text-white mt-8"
+                          onClick={popapAddToBasket}
+                        >
+                          В корзину
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </Transition.Child>
+            </div>
+          </Dialog>
+        </Transition.Root>
       </div>
     </>
   )

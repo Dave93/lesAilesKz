@@ -1,20 +1,20 @@
 {
-  "title": "Chopar",
-  "titleTemplate": "%s - Pizza",
-  "description": "Chopar Pizza",
+  "title": "Les Ailes",
+  "titleTemplate": "",
+  "description": "Les Ailes",
   "openGraph": {
-    "title": "Chopar Pizza",
-    "description": "Chopar Pizza",
+    "title": "Les Ailes",
+    "description": "Les Ailes",
     "type": "website",
     "locale": "en_IE",
     "url": "https://store.hq.fungeek.net",
-    "site_name": "Chopar Pizza",
+    "site_name": "Les Ailes",
     "images": [
       {
         "url": "/icon512x.png",
         "width": 800,
         "height": 600,
-        "alt": "Chopar Pizza"
+        "alt": "Les Ailes"
       }
     ]
   },
