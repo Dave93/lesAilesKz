@@ -583,12 +583,12 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                         )}
                       </div>
                       {productLine ? (
-                        <button className="text-lg font-medium bg-primary rounded-lg py-5 px-32 text-white mt-8">
+                        <button className="text-lg font-medium bg-primary rounded-lg py-5 px-32 text-white mt-8 outline-none">
                           Добавлено
                         </button>
                       ) : (
                         <button
-                          className="text-lg font-medium bg-primary rounded-lg py-5 px-32 text-white mt-8"
+                          className="text-lg font-medium bg-primary rounded-lg py-5 px-32 text-white mt-8 outline-none"
                           onClick={popapAddToBasket}
                         >
                           В корзину

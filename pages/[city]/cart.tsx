@@ -59,7 +59,6 @@ export async function getServerSideProps({
       currentCity,
       footerInfoMenu,
       socials,
-      cleanBackground: true,
       cities,
     },
   }
@@ -310,13 +309,8 @@ export default function Cart() {
         <>
           <div className="md:p-10 p-5 md:rounded-2xl text-xl mt-5 bg-white md:mb-3">
             <div className="flex justify-between items-center">
-              <div className="text-lg font-bold">
+              <div className="text-3xl">
                 {tr('basket')}{' '}
-                {data?.lineItems.length > 0 && (
-                  <span className="font-bold text-[18px] text-yellow">
-                    ({data.lineItems.length})
-                  </span>
-                )}
               </div>
               {/* <div className="text-gray-400 text-sm flex cursor-pointer">
             Очистить всё <TrashIcon className=" w-5 h-5 ml-1" />
@@ -420,25 +414,25 @@ export default function Cart() {
                         </div>
                       )}
                     </div>
-                    <div className="md:flex md:space-x-10 items-center hidden">
-                      <div className="w-20 h-6 ml-1 bg-yellow rounded-full flex items-center text-white">
-                        <div className="w-6 h-6 items-center flex justify-around">
+                    <div className="md:flex md:space-x-20 items-center hidden">
+                      <div className="w-32 ml-14 bg-gray-200 rounded-lg flex items-center p-1">
+                        <div className="items-center flex justify-around bg-white text-gray-500 rounded-md p-1 ">
                           <MinusIcon
-                            className="cursor-pointer w-5 h-5"
+                            className="cursor-pointer w-4 "
                             onClick={() => decreaseQuantity(lineItem)}
                           />
                         </div>
-                        <div className="flex-grow text-center">
+                        <div className="flex-grow text-center text-gray-500 font-medium">
                           {lineItem.quantity}
                         </div>
-                        <div className="w-6 h-6 items-center flex justify-around">
+                        <div className=" items-center flex justify-around bg-white text-gray-500 rounded-md p-1">
                           <PlusIcon
-                            className="cursor-pointer w-5 h-5"
+                            className="cursor-pointer w-4 "
                             onClick={() => increaseQuantity(lineItem.id)}
                           />
                         </div>
                       </div>
-                      <div className="text-xl">
+                      <div className="text-xl font-medium">
                         {lineItem.child && lineItem.child.length
                           ? currency(
                               (+lineItem.total + +lineItem.child[0].total) *
@@ -459,10 +453,13 @@ export default function Cart() {
                               precision: 0,
                             }).format()}
                       </div>
+                      <div className="bg-gray-200 p-2 rounded-md">
+
                       <XIcon
-                        className="cursor-pointer h-4 text-black w-4"
+                        className="cursor-pointer text-gray-400 w-5 "
                         onClick={() => destroyLine(lineItem.id)}
                       />
+                      </div>
                     </div>
                     <div className="md:space-x-10 items-center md:hidden">
                       <XIcon

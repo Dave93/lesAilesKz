@@ -15,6 +15,7 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
   CheckIcon,
+  XIcon,
 } from '@heroicons/react/solid'
 import {
   YMaps,
@@ -38,6 +39,7 @@ import { toast } from 'react-toastify'
 import useTranslation from 'next-translate/useTranslation'
 import { City } from '@commerce/types/cities'
 import router, { useRouter } from 'next/router'
+import SimpleBar from 'simplebar-react'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -52,8 +54,14 @@ interface AnyObject {
 
 const LocationTabs: FC<Props> = ({ setOpen }) => {
   const { locale, pathname, query } = useRouter()
-  const { locationData, setLocationData, cities, activeCity, setActiveCity } =
-    useUI()
+  const {
+    locationData,
+    setLocationData,
+    cities,
+    activeCity,
+    setActiveCity,
+    hideAddress,
+  } = useUI()
   const [tabIndex, setTabIndex] = useState(
     locationData?.deliveryType || 'deliver'
   )
@@ -113,6 +121,9 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
         house: locationData?.house || '',
         entrance: locationData?.entrance || '',
         door_code: locationData?.door_code || '',
+        floor: locationData?.floor || '',
+        address_name: locationData?.address_name || '',
+        comments: locationData?.comments || '',
       },
     })
 
@@ -120,13 +131,14 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
     setLocationData({ ...locationData, deliveryType: index })
 
     if (index == 'pickup') {
-      await loadPickupItems()
+      // await loadPickupItems()
     }
 
     setTabIndex(index)
   }
 
   const loadPickupItems = async () => {
+    setPickupPoint([])
     const { data } = await axios.get(
       `${webAddress}/api/terminals/pickup?city_id=${activeCity.id}`
     )
@@ -372,297 +384,312 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
     return null
   }, [cities, activeCity])
 
+  let haveAddress = watch('address')
+
   return (
     <>
       <div>
         <YMaps>
           <div>
             <Map
-              state={mapState}
+              defaultState={{
+                center: [40.351706, 69.090118],
+                zoom: 7.2,
+                controls: [
+                  'zoomControl',
+                  'fullscreenControl',
+                  'geolocationControl',
+                ],
+              }}
               width="100%"
               height="100vh"
-              onClick={clickOnMap}
               modules={[
                 'control.ZoomControl',
                 'control.FullscreenControl',
                 'control.GeolocationControl',
               ]}
             >
-              {selectedCoordinates.map((item: any, index: number) => (
-                <Placemark
-                  modules={['geoObject.addon.balloon']}
-                  defaultGeometry={[
-                    item?.coordinates?.lat,
-                    item?.coordinates?.long,
-                  ]}
-                  geomerty={[item?.coordinates?.lat, item?.coordinates?.long]}
-                  key={item.key}
-                  defaultOptions={{
-                    iconLayout: 'default#image',
-                    iconImageHref: '/map_placemark.png',
-                  }}
-                />
-              ))}
+              {tabIndex == 'pickup'
+                ? pickupPoints.map((point) => (
+                    <Placemark
+                      modules={['geoObject.addon.balloon']}
+                      defaultGeometry={[point.latitude, point.longitude]}
+                      key={point.id}
+                      onClick={() => choosePickupPoint(point.id)}
+                      // options={{
+                      //   iconColor:
+                      //     activePoint && activePoint == point.id
+                      //       ? '#FAAF04'
+                      //       : '#1E98FF',
+                      // }}
+                      properties={{
+                        balloonContentBody: `<b>${point.name}</b> <br />
+                          ${point.desc}
+                          `,
+                      }}
+                      defaultOptions={{
+                        iconLayout: 'default#image',
+                        iconImageHref: '/map_placemark_pickup.png',
+                        iconImageSize:
+                          activePoint && activePoint == point.id
+                            ? [100, 100]
+                            : [50, 50],
+                      }}
+                    />
+                  ))
+                : selectedCoordinates.map((item: any, index: number) => (
+                    <Placemark
+                      modules={['geoObject.addon.balloon']}
+                      defaultGeometry={[
+                        item?.coordinates?.lat,
+                        item?.coordinates?.long,
+                      ]}
+                      geomerty={[
+                        item?.coordinates?.lat,
+                        item?.coordinates?.long,
+                      ]}
+                      key={item.key}
+                      defaultOptions={{
+                        iconLayout: 'default#image',
+                        iconImageHref: '/map_placemark.png',
+                        iconImageSize: [100, 100],
+                      }}
+                    />
+                  ))}
             </Map>
           </div>
         </YMaps>
       </div>
-      <div className="bg-gray-100 flex rounded-full w-full">
-        <button
-          className={`${
-            tabIndex == 'deliver' ? 'text-white' : ' text-gray-400'
-          } flex-1 font-bold py-3 text-[18px] rounded-full outline-none focus:outline-none`}
-          onClick={() => changeTabIndex('deliver')}
-        >
-          {tr('delivery')}
-        </button>
-        <button
-          className={`${
-            tabIndex == 'pickup' ? 'text-white' : ' text-gray-400'
-          } flex-1 font-bold py-3 text-[18px] rounded-full outline-none focus:outline-none`}
-          onClick={() => changeTabIndex('pickup')}
-        >
-          {tr('pickup')}
-        </button>
-      </div>
-      {tabIndex == 'deliver' && (
-        <div className="mt-2">
-          <div className="flex justify-between">
-            <div className="text-gray-400 font-bold text-[18px]">
-              {tr('chooseLocation')}
-            </div>
-            <div>
-              <Menu as="div" className="relative inline-block text-left">
-                <div>
-                  <Menu.Button className="focus:outline-none font-medium inline-flex justify-center px-4 py-2 text-secondary text-sm w-full">
-                    {locale == 'uz' ? chosenCity?.name_uz : chosenCity?.name}
-                    <ChevronDownIcon
-                      className="w-5 h-5 ml-2 -mr-1 text-violet-200 hover:text-violet-100"
-                      aria-hidden="true"
-                    />
-                  </Menu.Button>
-                </div>
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-100"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-75"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
-                >
-                  <Menu.Items className="z-20 absolute right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                    {cities.map((city: City) => (
-                      <Menu.Item key={city.id}>
-                        <span
-                          onClick={() => setActive(city)}
-                          className={`block px-4 py-2 text-sm cursor-pointer ${
-                            city.id == chosenCity.id
-                              ? 'bg-secondary text-white'
-                              : 'text-secondary'
-                          }`}
-                        >
-                          {locale == 'uz' ? city.name_uz : city.name}
-                        </span>
-                      </Menu.Item>
-                    ))}
-                  </Menu.Items>
-                </Transition>
-              </Menu>
-            </div>
-          </div>
-
-          <div className="mt-2">
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="font-bold text-[18px] text-gray-400">
-                {tr('order_address')}
-              </div>
-              <div className="flex justify-between mt-3">
-                <Downshift
-                  onChange={(selection) => setSelectedAddress(selection)}
-                  ref={downshiftControl}
-                  itemToString={(item) =>
-                    item ? item.formatted : watch('address')
-                  }
-                  initialInputValue={locationData?.address || currentAddress}
-                >
-                  {({
-                    getInputProps,
-                    getItemProps,
-                    getLabelProps,
-                    getMenuProps,
-                    isOpen,
-                    inputValue,
-                    highlightedIndex,
-                    selectedItem,
-                    getRootProps,
-                  }) => (
-                    <>
-                      <div
-                        className="relative w-7/12"
-                        {...getRootProps(undefined, { suppressRefError: true })}
-                      >
-                        <input
-                          type="text"
-                          {...register('address')}
-                          {...getInputProps({
-                            onChange: debouncedAddressInputChangeHandler,
-                          })}
-                          placeholder={tr('address')}
-                          className="bg-gray-100 px-8 py-3 rounded-full w-full outline-none focus:outline-none"
-                        />
-                        <ul
-                          {...getMenuProps()}
-                          className="absolute w-full z-[1000] rounded-[15px] shadow-lg"
-                        >
-                          {isOpen
-                            ? geoSuggestions.map((item: any, index: number) => (
-                                <li
-                                  {...getItemProps({
-                                    key: index,
-                                    index,
-                                    item,
-                                    className: `py-2 px-4 flex items-center ${
-                                      highlightedIndex == index
-                                        ? 'bg-gray-100'
-                                        : 'bg-white'
-                                    }`,
-                                  })}
-                                >
-                                  <CheckIcon
-                                    className={`w-5 text-yellow font-bold mr-2 ${
-                                      highlightedIndex == index
-                                        ? ''
-                                        : 'invisible'
-                                    }`}
-                                  />
-                                  <div>
-                                    <div>{item.title}</div>
-                                    <div className="text-sm">
-                                      {item.description}
-                                    </div>
-                                  </div>
-                                </li>
-                              ))
-                            : null}
-                        </ul>
-                      </div>
-                    </>
-                  )}
-                </Downshift>
-                <div className="mx-5 w-3/12">
-                  <input
-                    type="text"
-                    {...register('flat')}
-                    placeholder={tr('flat')}
-                    className="bg-gray-100 px-8 py-3 rounded-full w-full outline-none focus:outline-none"
-                  />
-                </div>
-                <div className="w-2/12">
-                  <input
-                    type="text"
-                    {...register('house')}
-                    placeholder={tr('house')}
-                    className="bg-gray-100 px-8 py-3 rounded-full w-full"
-                  />
-                </div>
-              </div>
-
-              <div className="mt-2">
-                <Disclosure defaultOpen={true}>
-                  {({ open }) => (
-                    <>
-                      <Disclosure.Button className="flex text-yellow w-1/4 outline-none focus:outline-none">
-                        <span>{tr('indicate_intercom_and_entrance')}</span>
-                        {/*
-                          Use the `open` render prop to rotate the icon when the panel is open
-                        */}
-                        <ChevronRightIcon
-                          className={`w-6 transform ${
-                            open ? 'rotate-90' : '-rotate-90'
-                          }`}
-                        />
-                      </Disclosure.Button>
-                      <Transition
-                        show={open}
-                        enter="transition duration-300 ease-out"
-                        enterFrom="transform scale-95 opacity-0"
-                        enterTo="transform scale-100 opacity-100"
-                        leave="transition duration-300 ease-out"
-                        leaveFrom="transform scale-100 opacity-100"
-                        leaveTo="transform scale-95 opacity-0"
-                      >
-                        <Disclosure.Panel>
-                          <div className="flex mt-3">
-                            <div>
-                              <input
-                                type="text"
-                                {...register('entrance')}
-                                placeholder={tr('entrance')}
-                                className="bg-gray-100 px-8 py-3 rounded-full w-full outline-none focus:outline-none"
-                              />
-                            </div>
-                            <div className="mx-5">
-                              <input
-                                type="text"
-                                {...register('door_code')}
-                                placeholder={tr('door_code')}
-                                className="bg-gray-100 px-8 py-3 rounded-full w-full outline-none focus:outline-none"
-                              />
-                            </div>
-                          </div>
-                        </Disclosure.Panel>
-                      </Transition>
-                    </>
-                  )}
-                </Disclosure>
-              </div>
-              <div className="flex justify-end mt-3">
-                <button
-                  type="submit"
-                  className="bg-yellow font-bold px-12 py-3 rounded-full text-[18px] text-white outline-none focus:outline-none"
-                  disabled={isSearchingTerminals}
-                  onClick={(event: React.MouseEvent) =>
-                    saveDeliveryData(undefined, event)
-                  }
-                >
-                  {isSearchingTerminals ? (
-                    <svg
-                      className="animate-spin h-5 mx-auto text-center text-white w-5"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                  ) : (
-                    tr('confirm')
-                  )}
-                </button>
-              </div>
-            </form>
-          </div>
+      <div className="w-96 absolute top-8 bg-white rounded-3xl p-5 left-40">
+        <div className="bg-gray-100 flex rounded-full w-full p-1">
+          <button
+            className={`${
+              tabIndex == 'deliver' ? 'bg-white' : ''
+            } flex-1 font-medium py-3 rounded-full outline-none focus:outline-none`}
+            onClick={() => changeTabIndex('deliver')}
+          >
+            {tr('delivery')}
+          </button>
+          <button
+            className={`${
+              tabIndex == 'pickup' ? 'bg-white' : ''
+            } flex-1 font-medium py-3  rounded-full outline-none focus:outline-none`}
+            onClick={() => changeTabIndex('pickup')}
+          >
+            {tr('pickup')}
+          </button>
         </div>
-      )}
-      {tabIndex == 'pickup' && (
-        <div className="mt-2">
-          <div className="flex">
-            <div className="font-bold text-[18px] text-gray-400">
-              {tr('select_pizzeries')}
+        {tabIndex == 'deliver' && (
+          <div className="mt-2">
+            <div className="mt-2">
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="mt-8">
+                  <Downshift
+                    onChange={(selection) => setSelectedAddress(selection)}
+                    ref={downshiftControl}
+                    itemToString={(item) =>
+                      item ? item.formatted : watch('address')
+                    }
+                    initialInputValue={locationData?.address || currentAddress}
+                  >
+                    {({
+                      getInputProps,
+                      getItemProps,
+                      getLabelProps,
+                      getMenuProps,
+                      isOpen,
+                      inputValue,
+                      highlightedIndex,
+                      selectedItem,
+                      getRootProps,
+                    }) => (
+                      <>
+                        <div
+                          className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl"
+                          {...getRootProps(undefined, {
+                            suppressRefError: true,
+                          })}
+                        >
+                          <div className="text-xs text-gray-400">
+                            {tr('chooseLocation')}
+                          </div>
+                          <div className="flex">
+                            <input
+                              type="text"
+                              {...register('address')}
+                              {...getInputProps({
+                                onChange: debouncedAddressInputChangeHandler,
+                              })}
+                              placeholder={tr('chooseLocation')}
+                              className="bg-gray-100 mt-2 w-full outline-none focus:outline-none"
+                            />
+                            <XIcon
+                              className="w-5 text-gray-400 cursor-pointer"
+                              onClick={() => setValue('address', '')}
+                            />
+                          </div>
+
+                          <ul
+                            {...getMenuProps()}
+                            className="absolute w-full z-[1000] rounded-[15px] shadow-lg"
+                          >
+                            {isOpen
+                              ? geoSuggestions.map(
+                                  (item: any, index: number) => (
+                                    <li
+                                      {...getItemProps({
+                                        key: index,
+                                        index,
+                                        item,
+                                        className: `py-2 px-4 flex items-center ${
+                                          highlightedIndex == index
+                                            ? 'bg-gray-100'
+                                            : 'bg-white'
+                                        }`,
+                                      })}
+                                    >
+                                      <CheckIcon
+                                        className={`w-5 text-yellow font-bold mr-2 ${
+                                          highlightedIndex == index
+                                            ? ''
+                                            : 'invisible'
+                                        }`}
+                                      />
+                                      <div>
+                                        <div>{item.title}</div>
+                                        <div className="text-sm">
+                                          {item.description}
+                                        </div>
+                                      </div>
+                                    </li>
+                                  )
+                                )
+                              : null}
+                          </ul>
+                        </div>
+                      </>
+                    )}
+                  </Downshift>
+                  <div className="flex mt-2 space-x-2">
+                    <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl">
+                      <div className="text-xs text-gray-400">{tr('house')}</div>
+                      <input
+                        type="text"
+                        {...register('house')}
+                        placeholder={tr('house')}
+                        className="bg-gray-100 w-full mt-2 focus:outline-none"
+                      />
+                    </div>
+                    <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl">
+                      <div className="text-xs text-gray-400">{tr('flat')}</div>
+                      <input
+                        type="text"
+                        {...register('flat')}
+                        placeholder={tr('flat')}
+                        className="bg-gray-100 w-full mt-2 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-2">
+                  <div className="flex mt-2 space-x-2">
+                    <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl">
+                      <div className="text-xs text-gray-400">
+                        {tr('entrance')}
+                      </div>
+                      <input
+                        type="text"
+                        {...register('entrance')}
+                        placeholder={tr('entrance')}
+                        className="bg-gray-100 w-full mt-2 focus:outline-none"
+                      />
+                    </div>
+                    <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl">
+                      <div className="text-xs text-gray-400">{tr('floor')}</div>
+                      <input
+                        type="text"
+                        {...register('floor')}
+                        placeholder={tr('floor')}
+                        className="bg-gray-100 w-full mt-2 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl mt-2">
+                  <div className="text-xs text-gray-400">Название адреса</div>
+                  <div className="flex">
+                    <input
+                      type="text"
+                      {...register('address_name')}
+                      placeholder="Например, Дом или Работа"
+                      className="bg-gray-100 mt-2 w-full outline-none focus:outline-none"
+                    />
+                  </div>
+                </div>
+                <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl mt-2">
+                  <div className="text-xs text-gray-400">
+                    Комментарий к адресу
+                  </div>
+                  <div className="flex">
+                    <input
+                      type="text"
+                      {...register('comments')}
+                      placeholder="Например, Код от домофона 2233
+"
+                      className="bg-gray-100 mt-2 w-full outline-none focus:outline-none"
+                    />
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <button
+                    type="submit"
+                    className={`${
+                      haveAddress ? 'bg-green-500' : 'bg-gray-400'
+                    } font-medium px-12 py-3 rounded-xl text-[18px] text-white outline-none focus:outline-none w-full`}
+                    disabled={isSearchingTerminals}
+                    onClick={(event: React.MouseEvent) => {
+                      saveDeliveryData(undefined, event)
+                      hideAddress()
+                    }}
+                  >
+                    {isSearchingTerminals ? (
+                      <svg
+                        className="animate-spin h-5 mx-auto text-center text-white w-5"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                    ) : (
+                      tr('confirm')
+                    )}
+                  </button>
+                </div>
+              </form>
             </div>
-            {/* <div
+          </div>
+        )}
+        {tabIndex == 'pickup' && (
+          <div className="mt-2">
+            <div className="flex">
+              <div className=" text-x">
+                Выберите ближайший вам ресторан для выдачи заказа
+              </div>
+              {/* <div
               className={`${
                 pickupIndex == 1 ? ' text-yellow' : 'text-gray-400'
               } cursor-pointer font-bold text-[18px] mx-5`}
@@ -672,7 +699,7 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
             >
               {tr('on_the_map')}
             </div> */}
-            {/* <div
+              {/* <div
               className={`${
                 pickupIndex == 2 ? ' text-yellow' : 'text-gray-400'
               } cursor-pointer font-bold text-[18px]`}
@@ -682,10 +709,11 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
             >
               {tr('list')}
             </div> */}
-          </div>
-          <div className="mt-5">
-            {/* {pickupIndex == 1 && ( */}
-            {/* <YMaps>
+            </div>
+            <SimpleBar style={{ maxHeight: 400 }}>
+              <div className="mt-5">
+                {/* {pickupIndex == 1 && ( */}
+                {/* <YMaps>
                 <div>
                   <Map
                     defaultState={{
@@ -731,61 +759,62 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
                   </Map>
                 </div>
               </YMaps> */}
-            {/* )} */}
-            {/* {pickupIndex == 2 && ( */}
-            <div className="gap-2 grid grid-cols-4">
-              {pickupPoints.map((point) => (
-                <div
-                  key={point.id}
-                  className={`border flex items-start p-3 rounded-[15px] cursor-pointer ${
-                    activePoint && activePoint == point.id
-                      ? 'border-yellow'
-                      : 'border-gray-400'
-                  }`}
-                  onClick={() => choosePickupPoint(point.id)}
-                >
-                  <div
-                    className={`border mr-4 mt-1 rounded-full ${
-                      activePoint && activePoint == point.id
-                        ? 'border-yellow'
-                        : 'border-gray-400'
-                    }`}
-                  >
-                    <div
-                      className={`h-3 m-1 rounded-full w-3 ${
-                        activePoint && activePoint == point.id
-                          ? 'bg-yellow'
-                          : 'bg-gray-400'
-                      }`}
-                    ></div>
-                  </div>
-                  <div>
-                    <div className="font-bold">
-                      {locale == 'ru' ? point.name : point.name_uz}
-                    </div>
-                    <div className="text-gray-400 text-sm">
-                      {locale == 'ru' ? point.desc : point.desc_uz}
-                    </div>
-                  </div>
+                {/* )} */}
+                {/* {pickupIndex == 2 && ( */}
+                <div className="gap-2 grid">
+                  {pickupPoints.map((point) => (
+                    <label className="inline-flex items-center">
+                      <div
+                        key={point.id}
+                        className={`border flex items-start p-3 rounded-[10px] cursor-pointer bg-gray-100 ${
+                          activePoint && activePoint == point.id
+                            ? 'border-gray-400'
+                            : ''
+                        }`}
+                        onClick={() => choosePickupPoint(point.id)}
+                      >
+                        <div>
+                          <div className="text-[18px]">
+                            {locale == 'ru' ? point.name : point.name_uz}
+                          </div>
+                          <div className="text-gray-400 text-sm">
+                            {locale == 'ru' ? point.desc : point.desc_uz}
+                          </div>
+                        </div>
+                        <div>
+                          <input
+                            type="checkbox"
+                            className={`${
+                              activePoint && activePoint == point.id
+                                ? ''
+                                : 'border'
+                              } text-green-500 form-checkbox rounded-md w-5 h-5 `}
+                            defaultChecked={false}
+                            checked={activePoint == point.id}
+                          />
+                        </div>
+                      </div>
+                    </label>
+                  ))}
                 </div>
-              ))}
+                {/* )} */}
+              </div>
+            </SimpleBar>
+            <div className="flex mt-4 justify-end">
+              <button
+                type="submit"
+                className={`${
+                  activePoint ? 'bg-green-500' : 'bg-gray-200'
+                } font-medium px-12 py-3 rounded-lg text-[18px] text-white outline-none focus:outline-none w-full`}
+                disabled={!activePoint}
+                onClick={submitPickup}
+              >
+                Заказать здесь
+              </button>
             </div>
-            {/* )} */}
           </div>
-          <div className="flex mt-2 justify-end">
-            <button
-              type="submit"
-              className={`${
-                activePoint ? 'bg-yellow' : 'bg-gray-200'
-              } font-bold px-12 py-3 rounded-full text-[18px] text-white outline-none focus:outline-none`}
-              disabled={!activePoint}
-              onClick={submitPickup}
-            >
-              {tr('confirm')}
-            </button>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </>
   )
 }
