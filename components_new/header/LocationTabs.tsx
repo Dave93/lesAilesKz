@@ -113,7 +113,7 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
     }
   }
 
-  const { register, handleSubmit, getValues, setValue, watch } =
+  const { register, handleSubmit, getValues, setValue, watch, reset } =
     useForm<AnyObject>({
       defaultValues: {
         address: locationData?.address || currentAddress,
@@ -386,6 +386,14 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
 
   let haveAddress = watch('address')
 
+  const resetField = (fieldName: string) => {
+    const newFields: any = {
+      ...getValues(),
+    }
+    newFields[fieldName] = null
+    reset(newFields)
+  }
+
   return (
     <>
       <div>
@@ -525,7 +533,7 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
                             />
                             <XIcon
                               className="w-5 text-gray-400 cursor-pointer"
-                              onClick={() => setValue('address', '')}
+                              onClick={() => resetField('address')}
                             />
                           </div>
 

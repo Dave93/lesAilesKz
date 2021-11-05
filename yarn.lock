@@ -8700,6 +8700,11 @@ tabbable@^5.2.0:
   resolved "https://registry.yarnpkg.com/tabbable/-/tabbable-5.2.1.tgz#e3fda7367ddbb172dcda9f871c0fdb36d1c4cd9c"
   integrity sha512-40pEZ2mhjaZzK0BnI+QGNjJO8UYx9pP5v7BGe17SORTO0OEuuaAwQTkAp8whcZvqon44wKFOikD+Al11K3JICQ==
 
+tailwind-scrollbar-hide@^1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/tailwind-scrollbar-hide/-/tailwind-scrollbar-hide-1.1.5.tgz#4aa488dc3dbfd39929f7190c8301ec02e23cface"
+  integrity sha512-+an0OtSZQgvL5cE66A6WOaOHjjv8nGEJJfajnbzgKmo77UFOnspsViOdqp/ySu2Q3cjXk2BK4H7y0p2rmc0rVw==
+
 tailwindcss@^2.2.2:
   version "2.2.18"
   resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-2.2.18.tgz#39da8c3fd991976f1d711befeb950e37864c8c90"

@@ -28,16 +28,10 @@ const UserData: FC = () => {
   }
 
   return (
-    <div className="border-b justify-between md:flex pb-5">
-      <div>
-        <div className="text-3xl mb-1">
-          {tr('profile_hello')}, {user?.user?.name}!
-        </div>
-        <div className="text-xs w-80 text-gray-400">{tr('profile_desc')}</div>
-      </div>
-      <div className="flex items-end">
+    <div className="px-20 py-3 bg-gray-200 my-5 rounded-2xl">
+      <div className="flex justify-around">
         {items.map((item, id) => (
-          <div className="flex items-center ml-10" key={id}>
+          <div className="flex  bg-white rounded-lg p-4 items-center" key={id}>
             <img
               src={`${pathname == item.href ? item.activeIcon : item.icon}`}
             />

@@ -91,7 +91,7 @@ const Header: FC<{
   return (
     <>
       <header
-        className="py-[15px] items-center md:flex bg-white mb-3"
+        className="py-[15px] items-center md:flex bg-white border-b"
         id="header"
       >
         <div className="container mx-auto">
