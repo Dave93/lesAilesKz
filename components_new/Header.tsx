@@ -30,6 +30,7 @@ import { faTelegram } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
+import MobSetLocation from './header/MobSetLocation'
 const { publicRuntimeConfig } = getConfig()
 
 const CartWithNoSSR = dynamic(
@@ -41,7 +42,7 @@ const Header: FC<{
   menu: Array<APILinkItem>
 }> = ({ menu = [] }) => {
   const { locale = 'ru' } = useRouter()
-  const { activeCity, cities } = useUI()
+  const { activeCity, cities, openSignInModal, closeSignInModal } = useUI()
 
   const chosenCity = useMemo(() => {
     if (activeCity) {
@@ -88,24 +89,36 @@ const Header: FC<{
     return
   }, [])
 
+  const openModal = () => {
+    openSignInModal()
+  }
+
+  const closeModal = () => {
+    closeSignInModal()
+  }
+
   return (
     <>
       <header
-        className="py-[15px] items-center md:flex bg-white border-b"
+        className="py-[15px] items-center md:flex bg-white border-b px-4 md:px-0"
         id="header"
       >
         <div className="container mx-auto">
           <div className="flex justify-between items-center">
-            <div className="w-32 md:w-48 ml-4 md:ml-0">
+            <div className="hidden md:block md:w-48 ml-4 md:ml-0">
               <Link href={`/${chosenCity.slug}`} prefetch={false}>
                 <a className="flex">
                   <Image src="/assets/main_logo.svg" width="188" height="68" />
                 </a>
               </Link>
             </div>
+
+            <div className="md:hidden">
+              <MobSetLocation />
+            </div>
             <div className=" md:flex hidden">
               <button
-                className="bg-primary truncate cursor-pointer flex items-center justify-center rounded-xl text-white w-64 h-[40px] md:h-[36px] outline-none focus:outline-none"
+                className="bg-primary truncate cursor-pointer flex items-center justify-center rounded-xl text-white w-64 h-12 md:h-[36px] outline-none focus:outline-none"
                 onClick={() => {
                   showAddress()
                 }}
@@ -118,15 +131,16 @@ const Header: FC<{
                   : tr('chooseLocation')}
               </button>
             </div>
-
-            <HeaderMenu menuItems={menu} />
-            <div className="flex items-center">
+            <div className="hidden md:flex">
+              <HeaderMenu menuItems={menu} />
+            </div>
+            <div className="md:flex items-center">
               <CartWithNoSSR channelName={channelName} />
-              <div className="md:hidden flex">
-                <MenuIcon
-                  className="cursor-pointer h-5 text-secondary w-5 mr-[21px] md:mr-0"
-                  onClick={() => setMobMenuOpen(true)}
-                />
+              <div
+                className="md:hidden flex p-2 bg-gray-100 rounded-lg border"
+                onClick={() => setMobMenuOpen(true)}
+              >
+                <img src="/menu.svg" width="30" />
               </div>
             </div>
             <SignInButton />
@@ -141,51 +155,41 @@ const Header: FC<{
           </div>
         </div>
         {mobMenuOpen && (
-          <div className="w-screen h-screen fixed bg-secondary z-40 top-0 overflow-y-auto p-4 pt-12">
-            <div className="flex justify-between items-center border-b pb-2 border-blue">
-              <div className="w-32 md:w-48 md:ml-0">
+          <div className="w-full h-full fixed bg-white z-40 top-0 left-0 overflow-y-auto p-4">
+            <div className="flex justify-between items-center pb-7 pt-2">
+              <div className="">
                 <Link href={`/${chosenCity.slug}`} prefetch={false}>
                   <a className="flex">
                     <Image
-                      src="/assets/footer_logo.svg"
-                      width="188"
-                      height="68"
+                      src="/assets/main_logo.svg"
+                      width="197"
+                      height="30"
                     />
                   </a>
                 </Link>
               </div>
               <div>
                 <XIcon
-                  className="cursor-pointer h-5 w-5 text-white"
+                  className="cursor-pointer w-6 text-black"
                   onClick={() => setMobMenuOpen(false)}
                 />
               </div>
             </div>
-            <div className="border-blue border-b py-5 md:mb-7">
-              <MobChooseCityDropDown />
+            <div className="border-b border-t mb-3 py-5">
+              <button
+                className="text-2xl px-4"
+                onClick={() => {
+                  openModal()
+                }}
+              >
+                Войти
+              </button>
             </div>
-            <div className="border-b border-blue py-8">
-              <SignInButton />
-              <MobHeaderMenu menuItems={menu} setMobMenuOpen={setMobMenuOpen} />
+
+            <div className="px-4 border-b mb-3 pb-3">
+              <HeaderMenu menuItems={menu} />
             </div>
-            <div className="ml-9 text-white pt-8">
-              {chosenCity?.phone && (
-                <>
-                  <div className="text-xs mb-1">{tr('delivery_phone')}</div>
-                  <div className="text-2xl mb-5">
-                    <a href={parsePhoneNumber(chosenCity?.phone)?.getURI()}>
-                      {parsePhoneNumber(chosenCity?.phone)
-                        ?.formatNational()
-                        .substring(2)}
-                    </a>
-                  </div>
-                </>
-              )}
-              <a className="flex mb-5" href="#">
-                <Image src="/assets/appstore.png" width="151" height="49" />
-              </a>
-              <MobLanguageDropDown />
-            </div>
+            <LanguageDropDown />
           </div>
         )}
       </header>

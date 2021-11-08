@@ -205,9 +205,6 @@ export default function Home({
       <div className="container mx-auto">
         <MainSlider />
         </div>
-      <div className="lg:hidden mx-8 my-5">
-        <MobSetLocation />
-      </div>
       <CategoriesMenu categories={categories} channelName={channelName} />
       <div className="container mx-auto">
         <div className="">
@@ -237,7 +234,7 @@ export default function Home({
                       sec?.attribute_data?.name[channelName][locale || 'ru']
                     }
                   />
-                  <div className="grid grid-cols-4  md:gap-3 divide-y md:divide-y-0 px-4 md:px-0 space-y-3 md:space-y-0">
+                  <div className="grid md:grid-cols-4 grid-cols-2  gap-3 px-4 md:px-0 md:space-y-0">
                     {sec.items.map((prod: any) => (
                       <ProductItemNew
                         product={prod}

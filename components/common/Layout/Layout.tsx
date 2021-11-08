@@ -128,7 +128,7 @@ const Layout: FC<Props> = ({
           <main
             className={`${
               cleanBackground == true ? 'bg-gray-100' : ''
-            } flex-grow md:pb-14 relative`}
+            } flex-grow pb-14 relative`}
           >
             {addressModal ? (
               <SetLocation />
@@ -140,13 +140,13 @@ const Layout: FC<Props> = ({
 
             <Overlay />
           </main>
-          <footer className=" md:flex flex-col flex border border-t bg-white">
-            <div className="w-full pt-5 px-4 md:px-0">
-              <div className=" border-b">
+          <footer className="md:flex flex-col flex border border-t bg-white">
+            <div className="w-full pt-5">
+              <div className="md:border-b  px-4">
                 <div className="container mx-auto md:my-6">
-                  <div className="flex justify-between mb-1 py-10">
+                  <div className="md:flex justify-between mb-1 md:py-10">
                     <div className="">
-                      <div className="border-b border-blue md:border-0 pb-10">
+                      <div className="pb-10">
                         <div>Колл-центр</div>
                         <div className="text-[30px] font-bold">
                           {currentCity?.phone && (
@@ -174,12 +174,12 @@ const Layout: FC<Props> = ({
                         </div>
                       </div>
                     </div>
-                    <div className="flex-grow border-b border-blue md:border-0 mt-5 md:mt-0 pb-5 md:pb-0">
+                    <div className="flex-grow md:border-0 mt-5 md:mt-0 pb-5 md:pb-0">
                       <div className="md:flex justify-center">
                         <div>
                           {newFooterMenu && newFooterMenu.length > 0 && (
                             <>
-                              <div className="grid grid-cols-2 gap-3">
+                              <div className="md:grid grid-cols-2 gap-3 space-y-5 md:space-y-0">
                                 {newFooterMenu.map((item) => (
                                   <ul className="space-y-5">
                                     {item.map((link: any) => {
@@ -226,7 +226,7 @@ const Layout: FC<Props> = ({
                         </div>
                       </div>
                     </div>
-                    <div>
+                    <div className="mb-10 mt-5 md:mt-0 md:mb-0">
                       <ul className="flex  text-2xl">
                         {socials.map((soc) => {
                           return (
@@ -247,7 +247,7 @@ const Layout: FC<Props> = ({
                           )
                         })}
                       </ul>
-                      <div className="flex absolute">
+                      <div className="flex md:absolute ">
                         <a href="" className="flex">
                           <div className=" bg-gray-700 flex items-center mt-11 p-2 rounded-lg">
                             <img
@@ -274,9 +274,14 @@ const Layout: FC<Props> = ({
                   </div>
                 </div>
               </div>
-              <div className="mb-7 md:mb-0 container mx-auto py-5 flex">
-                {new Date().getFullYear()} {tr('all_rights_reserved')}
-                <img src="/assets/main_logo.svg" className="flex m-auto" />
+              <div className="py-4 container mx-auto md:py-5 flex border-t md:border-t-0  px-4 flex-wrap">
+                <div className="order-2 md:order-1">
+                  {new Date().getFullYear()} {tr('all_rights_reserved')}
+                </div>
+                <img
+                  src="/assets/main_logo.svg"
+                  className="flex md:m-auto mt-2 order-1"
+                />
               </div>
             </div>
           </footer>

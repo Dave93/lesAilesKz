@@ -30,11 +30,11 @@ const LanguageDropDown: FC = () => {
     })
   }
   return (
-    <div>
+    <div className="md:bg-white bg-gray-200 p-4 md:p-0 rounded-2xl flex justify-around">
       <a
         className={`${
-          locale == 'ru' ? 'bg-primary text-white' : ''
-        } font-medium hover:bg-primary  hover:text-white inline-flex items-center mx-8 px-3 py-1 rounded-lg border border-gray-200`}
+          locale == 'ru' ? 'bg-primary text-white' : 'bg-white'
+        } font-medium hover:bg-primary  hover:text-white inline-flex items-center mx-8 px-3 py-1 rounded-lg border border-gray-200 `}
         href={`/${locale}${pathname}`}
         onClick={(e) => changeLang(e, 'ru')}
       >
@@ -43,8 +43,8 @@ const LanguageDropDown: FC = () => {
       </a>
       <a
         className={`${
-          locale == 'uz' ? 'bg-primary text-white' : ''
-        } font-medium hover:bg-primary hover:text-white inline-flex items-center mx-8 px-3 py-1 rounded-lg border border-gray-200`}
+          locale == 'uz' ? 'bg-primary text-white' : 'bg-white'
+        } font-medium hover:bg-primary hover:text-white inline-flex items-center mx-8 px-3 py-1 rounded-lg border border-gray-200 `}
         href={`/${locale}${pathname}`}
         onClick={(e) => changeLang(e, 'uz')}
       >

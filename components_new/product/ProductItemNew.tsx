@@ -330,22 +330,22 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
   return (
     <>
       <div
-        className={`gap-4 grid grid-cols-2 py-4  md:py-3 overflow-hidden bg-white rounded-[15px] hover:shadow-xl group items-center justify-between md:flex md:flex-col shadow-lg`}
+        className={`py-3  md:py-3 overflow-hidden bg-white rounded-[15px] hover:shadow-xl group items-center justify-between md:flex md:flex-col shadow-lg`}
         id={`prod-${store.id}`}
       >
         <div>
           <div className="text-center">
             {store.image ? (
-                <img
-                  src={store.image}
-                  width={275}
-                  height={275}
-                  alt={store?.attribute_data?.name[channelName][locale || 'ru']}
-                  className="transform motion-safe:group-hover:scale-105 transition duration-500 cursor-pointer"
-                  onClick={() => {
-                    setOpen(true)
-                  }}
-                />
+              <img
+                src={store.image}
+                width={275}
+                height={275}
+                alt={store?.attribute_data?.name[channelName][locale || 'ru']}
+                className="transform motion-safe:group-hover:scale-105 transition duration-500 cursor-pointer"
+                onClick={() => {
+                  setOpen(true)
+                }}
+              />
             ) : (
               <img
                 src="/no_photo.svg"
@@ -357,9 +357,9 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
             )}
           </div>
         </div>
-        <div className="flex flex-col flex-grow w-full px-5">
+        <div className="flex flex-col flex-grow w-full md:px-5 px-3">
           <div
-            className="mt-4 font-bold text-2xl flex-grow cursor-pointer"
+            className="mt-4 font-bold md:text-2xl flex-grow cursor-pointer"
             onClick={() => {
               setOpen(true)
             }}
@@ -398,7 +398,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
               )}
             </div> */}
           <div className=" mt-2 justify-between items-center">
-            <span className="md:text-xl hidden md:block md:w-auto text-primary md:px-0 md:py-0 ">
+            <span className="md:text-xl md:w-auto text-primary md:px-0 md:py-0 font-medium">
               {currency(prodPriceDesktop, {
                 pattern: '# !',
                 separator: ' ',
@@ -431,7 +431,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
             <div className="flex justify-between items-center mt-3">
               <div>350 гр</div>
               <button
-                className="bg-primary focus:outline-none outline-none rounded-md w-10 text-white uppercase md:inline-flex items-center hidden"
+                className="bg-primary focus:outline-none outline-none rounded-xl md:w-10 w-8 text-white uppercase md:inline-flex items-center"
                 onClick={handleSubmit}
                 disabled={isLoadingBasket}
               >
@@ -457,7 +457,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                     ></path>
                   </svg>
                 ) : (
-                  <PlusIcon className="w-10 rounded-full" />
+                  <PlusIcon className="md:w-10 w-8 rounded-full" />
                 )}
               </button>
             </div>

@@ -440,7 +440,7 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
   return (
     <>
       <button
-        className="outline-none focus:outline-none bottom-20 right-4 divide-x-2 flex px-4 bg-primary h-10 items-center justify-around rounded-xl text-white"
+        className="outline-none focus:outline-none bottom-20 right-4 divide-x-2 md:flex px-4 bg-primary h-10 items-center justify-around rounded-xl text-white hidden"
         type="button"
         onClick={openCart}
         ref={btnRef}

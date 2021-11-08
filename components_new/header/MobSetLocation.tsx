@@ -14,7 +14,7 @@ const SetLocation: FC = () => {
   return (
     <>
       <button
-        className="bg-yellow cursor-pointer flex items-center justify-center rounded-full text-white w-full h-[40px] md:h-[36px] outline-none focus:outline-none"
+        className="bg-primary truncate cursor-pointer flex items-center justify-center rounded-xl text-white w-64 h-12 md:h-[36px] outline-none focus:outline-none"
         onClick={() => {
           setOpen(true)
         }}

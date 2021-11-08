@@ -261,13 +261,11 @@ const SmallCartMobile: FC = () => {
   return (
     <>
       <button
-        className="md:hidden fixed outline-none focus:outline-none bottom-20 right-4 divide-x flex w-20 px-2 bg-red-700 h-12 items-center justify-around rounded-full"
+        className="md:hidden fixed outline-none focus:outline-none bottom-20 right-4 divide-x flex  px-2 bg-primary h-12 items-center justify-around rounded-xl text-white"
         onClick={goToCheckout}
       >
-        <div className="flex">
-          <Image src="/mobile_cart.svg" width="20" height="20" />
-        </div>
-        <div className="text-xl pl-2 text-white">
+        <div className="pr-2">Корзина</div>
+        <div className="text-xl pl-2 ">
           {data && data.lineItems ? data.lineItems.length : 0}
         </div>
       </button>
@@ -310,7 +308,13 @@ const SmallCartMobile: FC = () => {
             >
               <div className="align-middle inline-block overflow-hidden w-full">
                 <div className="md:inline-flex my-8 items-start">
-                  <div className="align-middle bg-white inline-block overflow-hidden md:px-40 px-6 py-10 rounded-2xl shadow-xl text-center transform transition-all max-w-2xl">
+                  <div className="align-middle bg-white inline-block overflow-hidden md:px-16 px-6 py-10 rounded-2xl shadow-xl text-center transform transition-all max-w-2xl">
+                    <button
+                      className="absolute focus:outline-none hidden md:block outline-none right-4 text-gray-500 top-5 transform"
+                      onClick={closeModal}
+                    >
+                      <XIcon className=" cursor-pointer w-4 h-4" />
+                    </button>
                     <Dialog.Title as="h3" className="leading-6 text-3xl">
                       {tr('auth')}
                     </Dialog.Title>
@@ -336,18 +340,18 @@ const SmallCartMobile: FC = () => {
                             <OtpInput
                               value={otpCode}
                               onChange={handleOtpChange}
-                              inputStyle={`${styles.digitField} border border-yellow w-16 rounded-3xl h-12 outline-none focus:outline-none text-center`}
+                              inputStyle={`${styles.digitField} border border-primary w-16 rounded-3xl h-12 outline-none focus:outline-none text-center`}
                               isInputNum={true}
                               containerStyle="grid grid-cols-4 gap-1.5 justify-center"
                               numInputs={4}
                             />
                             {otpShowCode > 0 ? (
-                              <div className="text-xs text-yellow mt-3">
+                              <div className="text-xs text-primary mt-3">
                                 {otpTimerText}
                               </div>
                             ) : (
                               <button
-                                className="text-xs text-yellow mt-3 outline-none focus:outline-none border-b border-yellow pb-0.5"
+                                className="text-xs text-primary mt-3 outline-none focus:outline-none border-b border-primary pb-0.5"
                                 onClick={(e) => getNewCode(e)}
                               >
                                 {tr('get_code_again')}
@@ -356,9 +360,9 @@ const SmallCartMobile: FC = () => {
                           </div>
                           <div className="mt-10">
                             <button
-                              className={`py-3 px-20 text-white font-bold text-xl text-center rounded-full w-full outline-none focus:outline-none ${
+                              className={`py-3 px-20 text-white font-bold text-xl text-center rounded-xl w-full outline-none focus:outline-none ${
                                 otpCode.length >= 4
-                                  ? 'bg-yellow'
+                                  ? 'bg-primary'
                                   : 'bg-gray-400'
                               }`}
                               disabled={otpCode.length < 4}
@@ -409,7 +413,7 @@ const SmallCartMobile: FC = () => {
                                     international
                                     withCountryCallingCode
                                     value={value}
-                                    className="border border-yellow focus:outline-none outline-none px-6 py-3 rounded-full text-sm w-full"
+                                    className="border border-primary focus:outline-none outline-none px-6 py-3 rounded-full text-sm w-full"
                                     onChange={(e: any) => onChange(e)}
                                     onKeyDown={(e: any) => {
                                       if (e.key == 'Enter') {
@@ -448,7 +452,7 @@ const SmallCartMobile: FC = () => {
                                 <input
                                   type="text"
                                   {...register('name')}
-                                  className="border border-yellow focus:outline-none outline-none px-6 py-3 rounded-full text-sm w-full"
+                                  className="border border-primary focus:outline-none outline-none px-6 py-3 rounded-full text-sm w-full"
                                 />
                                 {authName && (
                                   <button
@@ -465,8 +469,8 @@ const SmallCartMobile: FC = () => {
                           )}
                           <div className="mt-10">
                             <button
-                              className={`py-3 md:px-20 text-white font-bold text-xl text-center rounded-full w-full outline-none focus:outline-none ${
-                                formState.isValid ? 'bg-yellow' : 'bg-gray-400'
+                              className={`py-3 md:px-20 text-white font-bold text-xl text-center rounded-xl w-full outline-none focus:outline-none ${
+                                formState.isValid ? 'bg-primary' : 'bg-gray-400'
                               }`}
                               disabled={!formState.isValid}
                               ref={authButtonRef}
@@ -503,7 +507,7 @@ const SmallCartMobile: FC = () => {
                               <a
                                 href="/privacy"
                                 onClick={showPrivacy}
-                                className="text-yellow block"
+                                className="text-primary block"
                                 target="_blank"
                               >
                                 пользовательского соглашения
@@ -512,12 +516,6 @@ const SmallCartMobile: FC = () => {
                       </>
                     )}
                   </div>
-                  <button
-                    className="text-white outline-none focus:outline-none transform hidden md:block"
-                    onClick={closeModal}
-                  >
-                    <XIcon className="text-white cursor-pointer w-10 h-10" />
-                  </button>
                 </div>
               </div>
             </Transition.Child>

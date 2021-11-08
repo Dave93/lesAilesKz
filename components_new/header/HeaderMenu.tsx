@@ -8,7 +8,7 @@ const HeaderMenu: FC<HeaderMenuItems> = ({ menuItems }) => {
   const { locale } = useRouter()
   const { activeCity } = useUI()
   return (
-    <ul className="flex justify-between">
+    <ul className="md:flex justify-between md:space-y-0 space-y-3">
       {menuItems.length &&
         menuItems.map((item) => {
           const keyTyped = `name_${locale}` as keyof typeof item
@@ -19,9 +19,11 @@ const HeaderMenu: FC<HeaderMenuItems> = ({ menuItems }) => {
           }
 
           return (
-            <li className="px-3" key={item.id}>
+            <li className="md:px-3" key={item.id}>
               <Link href={href} prefetch={false}>
-                <a className="no-underline">{item[keyTyped]}</a>
+                <a className="no-underline text-lg md:text-base">
+                  {item[keyTyped]}
+                </a>
               </Link>
             </li>
           )

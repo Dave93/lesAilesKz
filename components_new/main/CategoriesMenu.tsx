@@ -36,8 +36,8 @@ const CategoriesMenu: FC<{ categories: any[]; channelName: string }> = ({
     <div
       className={`${
         fixed
-          ? 'bg-white fixed flex md:overflow-x-visible overflow-x-scroll top-0 w-full z-30'
-          : 'mt-8'
+          ? 'bg-white fixed flex md:overflow-x-visible overflow-x-scroll top-0 w-full z-30 px-4'
+          : 'mt-8 px-4 md:px-0'
       }`}
     >
       <div
@@ -49,7 +49,7 @@ const CategoriesMenu: FC<{ categories: any[]; channelName: string }> = ({
       >
         <SimpleBar
           style={{ maxHeight: 120 }}
-          className={`${fixed ? 'w-10/12' : ''}`}
+          className={`${fixed ? 'md:w-10/12 w-full' : ''}`}
         >
           <div className="flex items-center md:w-full space-x-3">
             {categories.map((item: any) => {

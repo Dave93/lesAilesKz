@@ -268,7 +268,7 @@ const SignInButton: FC = () => {
       )}
       {!user && (
         <>
-          <div className="relative">
+          <div className="relative hidden md:block">
             <div className="flex flex-wrap">
               <div className="w-full text-center">
                 <button
