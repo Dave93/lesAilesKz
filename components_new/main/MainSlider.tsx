@@ -33,12 +33,12 @@ const MainSlider: FC = () => {
       `${publicRuntimeConfig.apiUrl}/api/sliders/public?locale=${locale}`
     )
     // sliderRef.current?.moveTo(0)
-    sliderRef.current?.destroy()
-    setDefaultIndex(1)
+    // sliderRef.current?.destroy()
+    // setDefaultIndex(1)
     setSliders(data.data)
-    setTimeout(() => {
-      sliderRef.current?.init()
-    }, 100)
+    // setTimeout(() => {
+    //   sliderRef.current?.init()
+    // }, 200)
   }
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const MainSlider: FC = () => {
   }, [locale])
 
   return (
-    <div className="relative rounded-2xl">
+    <div className="relative">
       {sliders && sliders.length > 0 && (
         <>
           <Flicking
@@ -62,58 +62,59 @@ const MainSlider: FC = () => {
             panelsPerView={1}
           >
             {sliders.map((item: any) => (
-              <div className="panel max-w-full mr-6" key={item.id}>
-                <div className="rounded-[15px] overflow-hidden flex mb-[10px]">
-                  {item.link ? (
-                    <a href={item.link}>
-                      {item.asset && (
-                        <>
-                          <img
-                            src={item.asset[0].link}
-                            width={1160}
-                            height={340}
-                            data-href={item.link}
-                            className="hidden md:flex "
-                          />
-                          <img
-                            src={
-                              item.asset[1]
-                                ? item.asset[1].link
-                                : item.asset[0].link
-                            }
-                            width={400}
-                            height={176}
-                            data-href={item.link}
-                            className="md:hidden flex"
-                          />
-                        </>
-                      )}
-                    </a>
-                  ) : (
-                    item.asset && (
+              <div
+                className="rounded-[15px] overflow-hidden flex mb-[10px]"
+                key={item.id}
+              >
+                {item.link ? (
+                  <a href={item.link}>
+                    {item.asset && (
                       <>
-                        <div className="hidden md:flex">
-                          <img
-                            src={item.asset[0].link}
-                            width={1160}
-                            height={340}
-                          />
-                        </div>
-                        <div className="md:hidden flex">
-                          <img
-                            src={
-                              item.asset[1]
-                                ? item.asset[1].link
-                                : item.asset[0].link
-                            }
-                            width={400}
-                            height={176}
-                          />
-                        </div>
+                        <img
+                          src={item.asset[0].link}
+                          width={1160}
+                          height={340}
+                          data-href={item.link}
+                          className="hidden md:flex "
+                        />
+                        <img
+                          src={
+                            item.asset[1]
+                              ? item.asset[1].link
+                              : item.asset[0].link
+                          }
+                          width={400}
+                          height={176}
+                          data-href={item.link}
+                          className="md:hidden flex"
+                        />
                       </>
-                    )
-                  )}
-                </div>
+                    )}
+                  </a>
+                ) : (
+                  item.asset && (
+                    <>
+                      <div className="hidden md:flex">
+                        <img
+                          src={item.asset[0].link}
+                          width={1160}
+                          height={340}
+                        />
+                      </div>
+                      <div className="md:hidden flex">
+                        <img
+                          src={
+                            item.asset[1]
+                              ? item.asset[1].link
+                              : item.asset[0].link
+                          }
+                          width={400}
+                          height={176}
+                        />
+                      </div>
+                    </>
+                  )
+                )}
               </div>
             ))}
             <ViewportSlot>

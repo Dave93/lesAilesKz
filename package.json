@@ -20,8 +20,8 @@
     "node": ">=14.x"
   },
   "dependencies": {
-    "@egjs/flicking-plugins": "^4.2.1",
-    "@egjs/react-flicking": "^4.3.0",
+    "@egjs/flicking-plugins": "^4.2.2",
+    "@egjs/react-flicking": "^4.4.1",
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
     "@fortawesome/free-brands-svg-icons": "^5.15.3",
     "@fortawesome/react-fontawesome": "^0.1.14",

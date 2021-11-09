@@ -180,9 +180,9 @@ const Layout: FC<Props> = ({
                           {newFooterMenu && newFooterMenu.length > 0 && (
                             <>
                               <div className="md:grid grid-cols-2 gap-3 space-y-5 md:space-y-0">
-                                {newFooterMenu.map((item) => (
-                                  <ul className="space-y-5">
-                                    {item.map((link: any) => {
+                                {newFooterMenu.map((item, i) => (
+                                  <ul className="space-y-5" key={`footer_${i}`}>
+                                    {item.map((link: any, i) => {
                                       const keyTyped =
                                         `name_${locale}` as keyof typeof item
                                       let href = link.href
@@ -190,7 +190,7 @@ const Layout: FC<Props> = ({
                                         href = `/${currentCity?.slug}${link.href}`
                                       }
                                       return (
-                                        <li key={href}>
+                                        <li key={`${href}${i}`}>
                                           <Link href={href} prefetch={false}>
                                             <a>{link[keyTyped]}</a>
                                           </Link>
