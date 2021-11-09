@@ -1004,7 +1004,7 @@
   resolved "https://registry.yarnpkg.com/@egjs/component/-/component-3.0.2.tgz#c56794fcf1b2cb2768d09b021444779e54d0de1b"
   integrity sha512-Mze3mwEE19+dERrimg0JVLtpOHG4AC+LOuKqvF4qGZjn0k23ZbNI7b/gy1LFR63LigC2b8k70aDjy8xoT+WNPA==
 
-"@egjs/flicking-plugins@^4.2.1":
+"@egjs/flicking-plugins@^4.2.2":
   version "4.2.2"
   resolved "https://registry.yarnpkg.com/@egjs/flicking-plugins/-/flicking-plugins-4.2.2.tgz#993c45dce82e451044a8b0a8cbaeadd4734d3990"
   integrity sha512-HJigDVl4z7p8rVSyET72/96s45pgJNW0M8KbbABP+Y/aYttpMHmU+c2YtotY/45ViLq4gQfZkm98AJ7p1s1Bzg==
@@ -1038,10 +1038,10 @@
   resolved "https://registry.yarnpkg.com/@egjs/list-differ/-/list-differ-1.0.0.tgz#2277aff52e3e4bd9318d5c30ffc3ba3b6216f05e"
   integrity sha512-HsbMKc0ZAQH+EUeCmI/2PvTYSybmkaWwakU8QGDYYgMVIg9BQ5sM0A0Nnombjxo2+JzXHxmH+jw//yGX+y6GYw==
 
-"@egjs/react-flicking@^4.3.0":
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/@egjs/react-flicking/-/react-flicking-4.4.0.tgz#a0652d66fe07ec4b594e929260d2ccc235faaa08"
-  integrity sha512-Ek2YKLZ/IOgBGMborumDiERibwcuXBdAoSkdoaX+9i46M7sluvqqtbV7Q2+RtmRbrqwYHgH4yrB6wO4bpS8Zlw==
+"@egjs/react-flicking@^4.4.1":
+  version "4.4.1"
+  resolved "https://registry.yarnpkg.com/@egjs/react-flicking/-/react-flicking-4.4.1.tgz#8fd81acb61b2efc626bbb57265aca1b8d142603b"
+  integrity sha512-7g3/UOBGABVII7ZzNjkjKkGPd7ehpJE6vZ9WN1kHDRZSlG8Yo/8oZSNLSKN5iQe826ZuuhAb5BVd5BvVoAGMXA==
   dependencies:
     "@egjs/flicking" "^4.4.0"
     "@egjs/list-differ" "^1.0.0"
