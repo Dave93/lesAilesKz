@@ -309,9 +309,7 @@ export default function Cart() {
         <>
           <div className="md:p-10 p-5 md:rounded-2xl text-xl mt-5 bg-white md:mb-3">
             <div className="flex justify-between items-center">
-              <div className="text-3xl">
-                {tr('basket')}{' '}
-              </div>
+              <div className="text-3xl">{tr('basket')} </div>
               {/* <div className="text-gray-400 text-sm flex cursor-pointer">
             Очистить всё <TrashIcon className=" w-5 h-5 ml-1" />
           </div> */}
@@ -415,6 +413,16 @@ export default function Cart() {
                       )}
                     </div>
                     <div className="md:flex md:space-x-20 items-center hidden">
+                      <div className="text-xl font-medium text-center">
+                        {currency(lineItem.total, {
+                          pattern: '# !',
+                          separator: ' ',
+                          decimal: '.',
+                          symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                          precision: 0,
+                        }).format()}
+                        <div className="text-xs">Цена за 1 шт</div>
+                      </div>
                       <div className="w-32 ml-14 bg-gray-200 rounded-lg flex items-center p-1">
                         <div className="items-center flex justify-around bg-white text-gray-500 rounded-md p-1 ">
                           <MinusIcon
@@ -454,11 +462,10 @@ export default function Cart() {
                             }).format()}
                       </div>
                       <div className="bg-gray-200 p-2 rounded-md">
-
-                      <XIcon
-                        className="cursor-pointer text-gray-400 w-5 "
-                        onClick={() => destroyLine(lineItem.id)}
-                      />
+                        <XIcon
+                          className="cursor-pointer text-gray-400 w-5 "
+                          onClick={() => destroyLine(lineItem.id)}
+                        />
                       </div>
                     </div>
                     <div className="md:space-x-10 items-center md:hidden">
@@ -509,9 +516,8 @@ export default function Cart() {
                 ))}
             </div>
           </div>
-          <div className="md:p-10 p-5 md:rounded-2xl bg-white">
-            <div className="border-b md:flex items-center justify-between pb-10">
-              {/* <div className="md:w-72">
+          <div className="rounded-2xl bg-gray-200 flex items-center justify-between px-10 py-16">
+            {/* <div className="md:w-72">
                 <form onSubmit={handleSubmit(onSubmit)} className="relative">
                   <input
                     type="text"
@@ -524,38 +530,24 @@ export default function Cart() {
                   </button>
                 </form>
               </div> */}
-              <div className="flex font-bold items-center justify-between mt-10">
-                <div className="text-lg text-gray-400">
-                  {tr('basket_order_price')}
-                </div>
-                <div className="ml-7 text-3xl">
-                  {currency(data.totalPrice, {
-                    pattern: '# !',
-                    separator: ' ',
-                    decimal: '.',
-                    symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                    precision: 0,
-                  }).format()}
-                </div>
+            <div className="flex font-bold items-center justify-between">
+              <div className="text-lg">{tr('basket_order_price')}</div>
+              <div className="ml-7 text-3xl text-medium">
+                {currency(data.totalPrice, {
+                  pattern: '# !',
+                  separator: ' ',
+                  decimal: '.',
+                  symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                  precision: 0,
+                }).format()}
               </div>
             </div>
-            <div className="md:flex justify-between mt-8 space-y-2 md:space-y-0">
-              <button
-                className="md:text-xl text-gray-400 bg-gray-100 flex h-12 items-center justify-between px-12 rounded-full md:w-80 w-full"
-                onClick={(e) => {
-                  e.preventDefault()
-                  router.push(`/${activeCity.slug}`)
-                }}
-              >
-                <img src="/left.png" /> {tr('back_to_menu')}
-              </button>
-              <button
-                className={`md:text-xl text-white bg-yellow flex h-12 items-center justify-evenly rounded-full md:w-80 w-full`}
-                onClick={goToCheckout}
-              >
-                {tr('checkout')} <img src="/right.png" />
-              </button>
-            </div>
+            <button
+              className={`bg-green-600 md:text-xl rounded-2xl text-white w-64 py-5 px-12 font-medium`}
+              onClick={goToCheckout}
+            >
+              {tr('checkout')}
+            </button>
           </div>
         </>
       )}

@@ -274,6 +274,7 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
       openModal()
     } else {
       router.push(`/${activeCity.slug}/cart/`)
+      closeModal()
     }
   }
 
@@ -369,9 +370,9 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
       await mutate(basketResult, false)
 
       if (!basket.data.lines) {
-        hideOverlay();
+        hideOverlay()
       }
-        
+
       setIsCartLoading(false)
     }
   }
@@ -646,9 +647,7 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
             )}
             <button
               className="bg-green-500 rounded-xl w-full text-white py-4 mt-5"
-              onClick={() => {
-                openModal()
-              }}
+              onClick={goToCheckout}
             >
               Оформить заказ
             </button>

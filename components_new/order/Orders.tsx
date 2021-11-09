@@ -19,6 +19,8 @@ import {
   ChevronRightIcon,
   LocationMarkerIcon,
 } from '@heroicons/react/solid'
+
+import { ClockIcon } from '@heroicons/react/outline'
 import {
   YMaps,
   Map,
@@ -57,6 +59,7 @@ type FormData = {
   house: string
   entrance: string
   door_code: string
+  floor: string
   change: string
   notes: string
   card_number: string
@@ -67,6 +70,8 @@ type FormData = {
   delivery_time: string
   pay_type: string
   delivery_schedule: string
+  comment_to_address: string
+  comment_to_order: string
 }
 
 interface SelectItem {
@@ -174,6 +179,9 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       house: locationData?.house || '',
       entrance: locationData?.entrance || '',
       door_code: locationData?.door_code || '',
+      floor: locationData?.floor || '',
+      comment_to_address: '',
+      comment_to_order: '',
       change: '',
       notes: '',
       card_number: '',
@@ -706,25 +714,23 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
   return (
     <div className="mx-5 md:mx-0 pt-1 md:pt-0 pb-1">
       {/* Contacts */}
-      <div className="w-full bg-white my-5 rounded-2xl">
-        <div className="p-10">
-          <div className="text-lg mb-5 font-bold">
-            {tr('order_your_contacts')}
-          </div>
-          <form onSubmit={handleSubmit(onSubmit)} className="md:w-80">
-            <div className="mt-8">
-              <label className="text-sm text-gray-400 mb-2 block">
+      <div className="w-full bg-white my-5 rounded-2xl shadow-xl">
+        <div className="py-7 px-10 ">
+          <div className="text-3xl mb-5">Контакты</div>
+          <form onSubmit={handleSubmit(onSubmit)} className="md:flex mt-8 ">
+            <div className="bg-gray-100 rounded-xl py-2 px-4 relative w-72 h-16">
+              <label className="text-sm text-gray-400 block">
                 {tr('personal_data_name')}
               </label>
-              <div className="relative">
+              <div className="flex items-center">
                 <input
                   type="text"
                   {...register('name', { required: true })}
-                  className="focus:outline-none outline-none px-6 py-3 rounded-full text-sm w-full bg-gray-100 text-gray-400"
+                  className="focus:outline-none outline-none  bg-gray-100 w-56"
                 />
                 {authName && (
                   <button
-                    className="absolute focus:outline-none inset-y-0 outline-none right-4 text-gray-400"
+                    className="absolute focus:outline-none outline-none right-4 text-gray-400"
                     onClick={() => resetField('name')}
                   >
                     <XIcon className="cursor-pointer h-5 text-gray-400 w-5" />
@@ -737,19 +743,11 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 </div>
               )}
             </div>
-            <div className="mt-8">
-              <label className="text-sm text-gray-400 mb-2 block">
+            <div className=" bg-gray-100 rounded-xl py-2 px-4 relative ml-2 w-72 h-16">
+              <label className="text-sm text-gray-400 block">
                 {tr('personal_phone')}
               </label>
-              <div className="relative">
-                {/* <input
-                  type="text"
-                  {...register('phone', {
-                    required: true,
-                    pattern: /^\+998\d\d\d\d\d\d\d\d\d$/i,
-                  })}
-                  className="focus:outline-none outline-none px-6 py-3 rounded-full text-sm w-full bg-gray-100 text-gray-400 "
-                /> */}
+              <div className="flex items-center">
                 <Controller
                   render={({ field: { onChange, value } }) => (
                     <Input
@@ -758,7 +756,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                       international
                       withCountryCallingCode
                       value={value}
-                      className="focus:outline-none outline-none px-6 py-3 rounded-full text-sm w-full bg-gray-100 text-gray-400"
+                      className="focus:outline-none outline-none rounded-xl w-56 bg-gray-100"
                       onChange={(e: any) => onChange(e)}
                     />
                   )}
@@ -769,37 +767,10 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                   name="phone"
                   control={control}
                 />
-
                 {authPhone && (
                   <button
-                    className="absolute focus:outline-none inset-y-0 outline-none right-4 text-gray-400"
+                    className="absolute focus:outline-none outline-none right-4 text-gray-400"
                     onClick={() => resetField('phone')}
-                  >
-                    <XIcon className="cursor-pointer h-5 text-gray-400 w-5" />
-                  </button>
-                )}
-              </div>
-
-              {errors.phone && (
-                <div className="text-sm text-center text-red-600">
-                  {tr('required')}
-                </div>
-              )}
-            </div>
-            <div className="mt-8">
-              <label className="text-sm text-gray-400 mb-2 block">
-                {tr('personal_email')}
-              </label>
-              <div className="relative">
-                <input
-                  type="email"
-                  {...register('email')}
-                  className="focus:outline-none outline-none px-6 py-3 rounded-full text-sm w-full bg-gray-100 text-gray-400 "
-                />
-                {authEmail && (
-                  <button
-                    className="absolute focus:outline-none inset-y-0 outline-none right-4 text-gray-400"
-                    onClick={() => resetField('email')}
                   >
                     <XIcon className="cursor-pointer h-5 text-gray-400 w-5" />
                   </button>
@@ -810,23 +781,25 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
         </div>
       </div>
       {/* Orders */}
-      <div className="mb-5">
-        <div className="bg-white flex rounded-2xl w-full items-center p-10 h-32 mb-5">
-          <div className="bg-gray-100 flex  w-full rounded-full">
+      <div className="mb-7">
+        <div className="bg-white flex rounded-2xl w-full items-center py-7 px-10 h-32 mb-5">
+          <div className="bg-gray-100 flex  w-full rounded-xl">
             <button
               className={`${
                 tabIndex == 'deliver'
-                  ? 'bg-yellow text-white'
+                  ? 'bg-green-600 text-white'
                   : ' text-gray-400'
-              } flex-1 font-bold py-3 text-[18px] rounded-full outline-none focus:outline-none`}
+              } flex-1 font-bold py-3 text-[18px] rounded-xl outline-none focus:outline-none`}
               onClick={() => changeTabIndex('deliver')}
             >
               {tr('delivery')}
             </button>
             <button
               className={`${
-                tabIndex == 'pickup' ? 'bg-yellow text-white' : ' text-gray-400'
-              } flex-1 font-bold py-3 text-[18px] rounded-full outline-none focus:outline-none`}
+                tabIndex == 'pickup'
+                  ? 'bg-green-600 text-white'
+                  : ' text-gray-400'
+              } flex-1 font-bold py-3 text-[18px] rounded-xl outline-none focus:outline-none`}
               onClick={() => changeTabIndex('pickup')}
             >
               {tr('pickup')}
@@ -834,11 +807,9 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
           </div>
         </div>
         {tabIndex == 'deliver' && (
-          <div className="bg-white p-10 rounded-2xl">
+          <div className="bg-white py-7 px-10  rounded-2xl">
             <div className="flex justify-between">
-              <div className="text-gray-400 font-bold text-lg">
-                {tr('chooseLocation')}
-              </div>
+              <div className="text-3xl mb-5">Адрес доставки</div>
               <div>
                 <Menu as="div" className="relative inline-block text-left">
                   <div>
@@ -879,45 +850,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 </Menu>
               </div>
             </div>
-            <div>
-              <YMaps>
-                <div>
-                  <Map
-                    state={mapState}
-                    width="100%"
-                    height="530px"
-                    onClick={clickOnMap}
-                    modules={[
-                      'control.ZoomControl',
-                      'control.FullscreenControl',
-                      'control.GeolocationControl',
-                    ]}
-                  >
-                    {selectedCoordinates.map((item: any, index: number) => (
-                      <Placemark
-                        modules={['geoObject.addon.balloon']}
-                        defaultGeometry={[
-                          item?.coordinates?.lat,
-                          item?.coordinates?.long,
-                        ]}
-                        geomerty={[
-                          item?.coordinates?.lat,
-                          item?.coordinates?.long,
-                        ]}
-                        key={item.key}
-                        defaultOptions={{
-                          iconLayout: 'default#image',
-                          iconImageHref: '/map_placemark.png',
-                        }}
-                      />
-                    ))}
-                  </Map>
-                </div>
-              </YMaps>
-            </div>
             <div className="mt-3">
               <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="font-bold text-lg">{tr('address')}</div>
                 <div className="mt-3 space-y-6">
                   <div className="md:flex justify-between md:w-full space-y-2 md:space-y-0">
                     <Downshift
@@ -943,7 +877,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                       }) => (
                         <>
                           <div
-                            className="relative md:w-7/12"
+                            className="relative mr-2"
                             {...getRootProps(undefined, {
                               suppressRefError: true,
                             })}
@@ -955,7 +889,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                                 onChange: debouncedAddressInputChangeHandler,
                               })}
                               placeholder={tr('address')}
-                              className="bg-gray-100 px-8 py-3 rounded-full w-full outline-none focus:outline-none"
+                              className="bg-gray-100 px-4 py-5 rounded-xl w-96 outline-none focus:outline-none"
                             />
                             <ul
                               {...getMenuProps()}
@@ -998,77 +932,75 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                         </>
                       )}
                     </Downshift>
-                    <div className="md:mx-5 md:w-3/12">
-                      <input
-                        type="text"
-                        {...register('flat')}
-                        placeholder={tr('flat')}
-                        className="bg-gray-100 px-8 py-3 rounded-full w-full outline-none focus:outline-none"
-                      />
-                    </div>
-                    <div className="md:w-2/12">
-                      <input
-                        type="text"
-                        {...register('house', { required: true })}
-                        placeholder={tr('house')}
-                        className="bg-gray-100 px-8 py-3 rounded-full w-full"
-                      />
-                      {errors.house && (
-                        <div className="text-sm text-center text-red-600">
-                          {tr('required')}
+                    <div className="grid grid-cols-4 gap-2">
+                      <div className="bg-gray-100 px-4 py-3 rounded-xl">
+                        <div className="text-gray-400 text-xs">
+                          {tr('house')}
                         </div>
-                      )}
+                        <input
+                          type="text"
+                          {...register('house', { required: true })}
+                          className="bg-gray-100   w-full outline-none focus:outline-none"
+                        />
+                        {errors.house && (
+                          <div className="text-sm text-center text-red-600">
+                            {tr('required')}
+                          </div>
+                        )}
+                      </div>
+                      <div className="bg-gray-100 px-4 py-3 rounded-xl">
+                        <div className="text-gray-400 text-xs">
+                          {tr('flat')}
+                        </div>
+                        <input
+                          type="text"
+                          {...register('flat')}
+                          className="bg-gray-100  w-full  outline-none focus:outline-none"
+                        />
+                      </div>
+                      <div className="bg-gray-100 px-4 py-3 rounded-xl">
+                        <div className="text-gray-400 text-xs">
+                          {tr('entrance')}
+                        </div>
+                        <input
+                          type="text"
+                          {...register('entrance')}
+                          className="bg-gray-100    w-full outline-none focus:outline-none"
+                        />
+                      </div>
+                      <div className="bg-gray-100 px-4 py-3 rounded-xl">
+                        <div className="text-gray-400 text-xs">
+                          {tr('floor')}
+                        </div>
+                        <input
+                          type="text"
+                          {...register('floor')}
+                          className="bg-gray-100   w-full  outline-none focus:outline-none"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="md:mt-5">
-                  <Disclosure defaultOpen={true}>
-                    {({ open }) => (
-                      <>
-                        <Disclosure.Button className="flex text-yellow outline-none focus:outline-none">
-                          <span>{tr('indicate_intercom_and_entrance')}</span>
-                          {/*
-                          Use the `open` render prop to rotate the icon when the panel is open
-                        */}
-                          <ChevronRightIcon
-                            className={`w-6 transform ${
-                              open ? 'rotate-90' : '-rotate-90'
-                            }`}
-                          />
-                        </Disclosure.Button>
-                        <Transition
-                          show={open}
-                          enter="transition duration-300 ease-out"
-                          enterFrom="transform scale-95 opacity-0"
-                          enterTo="transform scale-100 opacity-100"
-                          leave="transition duration-300 ease-out"
-                          leaveFrom="transform scale-100 opacity-100"
-                          leaveTo="transform scale-95 opacity-0"
-                        >
-                          <Disclosure.Panel>
-                            <div className="md:flex mt-3 space-y-2 md:space-y-0">
-                              <div>
-                                <input
-                                  type="text"
-                                  {...register('entrance')}
-                                  placeholder={tr('entrance')}
-                                  className="bg-gray-100 px-8 py-2 rounded-full w-60  outline-none focus:outline-none"
-                                />
-                              </div>
-                              <div className="md:mx-5">
-                                <input
-                                  type="text"
-                                  {...register('door_code')}
-                                  placeholder={tr('door_code')}
-                                  className="bg-gray-100 px-8 py-2 rounded-full w-60 outline-none focus:outline-none"
-                                />
-                              </div>
-                            </div>
-                          </Disclosure.Panel>
-                        </Transition>
-                      </>
-                    )}
-                  </Disclosure>
+                <div className="flex mt-2">
+                  <div className="bg-gray-100 px-4 py-3 rounded-xl w-96 mr-2">
+                    <div className="text-gray-400 text-xs">
+                      Комментарий к адресу
+                    </div>
+                    <textarea
+                      {...register('comment_to_address')}
+                      className="bg-gray-100  outline-none focus:outline-none w-full overflow-hidden resize-none"
+                    />
+                  </div>
+
+                  <div className="bg-gray-100 px-4 py-3 rounded-xl w-full">
+                    <div className="text-gray-400 text-xs">
+                      Комментарий к заказу
+                    </div>
+                    <textarea
+                      {...register('comment_to_order')}
+                      className="bg-gray-100   w-full  outline-none focus:outline-none overflow-hidden resize-none"
+                    />
+                  </div>
                 </div>
                 {locationData?.terminalData && (
                   <div className="md:mt-3 flex space-x-2 items-center">
@@ -1085,7 +1017,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
           </div>
         )}
         {tabIndex == 'pickup' && (
-          <div className="bg-white p-10 rounded-2xl">
+          <div className="bg-white py-7 px-10 rounded-2xl">
             <div>
               <div className="font-bold text-[18px] text-gray-400">
                 {tr('search_for_the_nearest_restaurant')}
@@ -1118,7 +1050,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 type="text"
                 {...register('address')}
                 placeholder={tr('address')}
-                className="bg-gray-100 px-8 rounded-full w-full outline-none focus:outline-none py-2"
+                className="bg-gray-100 px-8 rounded-xl w-full outline-none focus:outline-none py-2"
               />
             </div> */}
             <div className="mt-5">
@@ -1185,14 +1117,14 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                     onClick={() => choosePickupPoint(point.id)}
                   >
                     <div
-                      className={`border mr-4 mt-1 rounded-full ${
+                      className={`border mr-4 mt-1 rounded-xl ${
                         activePoint && activePoint == point.id
                           ? 'border-yellow'
                           : 'border-gray-400'
                       }`}
                     >
                       <div
-                        className={`h-3 m-1 rounded-full w-3 ${
+                        className={`h-3 m-1 rounded-xl w-3 ${
                           activePoint && activePoint == point.id
                             ? 'bg-yellow'
                             : 'bg-gray-400'
@@ -1216,35 +1148,44 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
         )}
       </div>
       {/* time of delivery */}
-      <div className="w-full bg-white mb-5 rounded-2xl p-10">
-        <div className="text-lg mb-5 font-bold">
-          {tr('order_time_of_delivery')}
-        </div>
-        <div className="flex  md:block space-x-5">
-          <button
-            className={`${
-              deliveryActive == 'now'
-                ? 'bg-yellow text-white'
-                : 'text-gray-400 bg-gray-100'
-            } flex-1 font-bold  rounded-full outline-none focus:outline-none  h-11 md:w-44`}
-            onClick={() => setDeliverySchedule('now')}
-          >
-            {tr('hurry_up')}
-          </button>
-          <button
-            className={`${
-              deliveryActive == 'later'
-                ? 'bg-yellow text-white'
-                : 'text-gray-400 bg-gray-100'
-            } flex-1 font-bold  rounded-full outline-none focus:outline-none  h-11 md:w-44 md:ml-5`}
-            onClick={() => setDeliverySchedule('later')}
-          >
-            {tr('later')}
-          </button>
-        </div>
-        {deliveryActive == 'later' && (
-          <div className="mt-8 flex">
-            {/* <Controller
+      <div className="w-full bg-white mb-5 rounded-2xl py-7 px-10 ">
+        <div className="text-3xl mb-5">Время доставки</div>
+        <div className="flex  space-x-2 justify-between">
+          <div className="flex  space-x-2">
+            <div
+              className="bg-gray-200 flex items-center w-max rounded-2xl p-4 pr-14 cursor-pointer"
+              onClick={() => setDeliverySchedule('now')}
+            >
+              <input
+                type="checkbox"
+                className={`${
+                  deliveryActive == 'now' ? '' : 'border'
+                } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                defaultChecked={false}
+                checked={deliveryActive == 'now'}
+              />
+              <div>{tr('hurry_up')}</div>
+            </div>
+
+            <div
+              className="bg-gray-200 flex items-center w-max rounded-2xl p-4 pr-14 cursor-pointer"
+              onClick={() => setDeliverySchedule('later')}
+            >
+              <input
+                type="checkbox"
+                className={`${
+                  deliveryActive == 'later' ? '' : 'border'
+                } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                defaultChecked={false}
+                checked={deliveryActive == 'later'}
+              />
+              {tr('later')}
+            </div>
+          </div>
+
+          {deliveryActive == 'later' ? (
+            <div className="">
+              {/* <Controller
               render={({ field: { onChange } }) => (
                 <Select
                   items={dayOptions}
@@ -1259,26 +1200,33 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               name="delivery_day"
               control={control}
             /> */}
-            <Controller
-              render={({ field: { onChange } }) => (
-                <Select
-                  items={deliveryTimeOptions}
-                  placeholder={tr('time')}
-                  onChange={(e: any) => onChange(e)}
-                />
-              )}
-              rules={{
-                required: true,
-              }}
-              key="delivery_time"
-              name="delivery_time"
-              control={control}
-            />
-          </div>
-        )}
+
+              <Controller
+                render={({ field: { onChange } }) => (
+                  <Select
+                    items={deliveryTimeOptions}
+                    placeholder={tr('time')}
+                    onChange={(e: any) => onChange(e)}
+                  />
+                )}
+                rules={{
+                  required: true,
+                }}
+                key="delivery_time"
+                name="delivery_time"
+                control={control}
+              />
+            </div>
+          ) : (
+            <div className="flex items-center bg-gray-200 p-4 pr-14 rounded-2xl">
+              <ClockIcon className="w-5 mr-3" />
+              <div>Доставим в течение 30 минут</div>
+            </div>
+          )}
+        </div>
       </div>
       {/* pay */}
-      <div className="w-full bg-white mb-5 rounded-2xl p-10 relative">
+      <div className="w-full bg-white mb-5 rounded-2xl py-7 px-10 relative">
         {!locationData?.terminal_id && (
           <div className="absolute md:w-full h-full md:-ml-10 md:-mt-10 bg-opacity-60 bg-gray-100 z-20 items-center flex justify-around">
             <div className="text-yellow font-bold text-2xl">
@@ -1286,66 +1234,84 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             </div>
           </div>
         )}
-        <div className="text-lg mb-5 font-bold">{tr('order_pay')}</div>
-        <div className="flex md:block">
-          <button
-            className={`${
-              openTab !== 1
-                ? 'text-gray-400 bg-gray-100'
-                : 'bg-yellow text-white'
-            } flex-1 font-bold  rounded-full outline-none focus:outline-none  h-11 md:w-44`}
-            onClick={() => setOpenTab(1)}
-          >
-            {tr('in_cash')}
-          </button>
-          <button
-            className={`${
-              openTab !== 2
-                ? 'text-gray-400 bg-gray-100'
-                : 'bg-yellow text-white'
-            } flex-1 font-bold  rounded-full outline-none focus:outline-none  h-11 md:w-44 ml-5`}
-            onClick={() => setOpenTab(2)}
-          >
-            {tr('payment_type_card')}
-          </button>
-          <button
-            className={`${
-              openTab !== 3
-                ? 'text-gray-400 bg-gray-100'
-                : 'bg-yellow text-white'
-            } flex-1 font-bold  rounded-full outline-none focus:outline-none  h-11 md:w-44 ml-5`}
-            onClick={() => setOpenTab(3)}
-          >
-            {tr('online')}
-          </button>
-        </div>
-        <div className={openTab === 1 ? 'block' : 'hidden'} id="link1">
-          <input
-            type="number"
-            {...register('change')}
-            min="10000"
-            step="1000"
-            className="borde focus:outline-none outline-none px-6 py-3 rounded-full text-sm md:w-80 w-full bg-gray-100 text-gray-400 mt-8"
-            placeholder={tr('change')}
-          />
-        </div>
-        <div className={openTab === 2 ? 'block' : 'hidden'} id="link2">
-          <div className="grid grid-cols-2 w-60 pt-8 items-center">
-            <label
-              className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
-                payType == 'uzcard' ? 'border-yellow' : 'border-gray-200'
-              } border cursor-pointer`}
+        <div className="text-3xl mb-5">Способы оплаты</div>
+        <div className="flex space-y-2 justify-between items-center">
+          <div className="space-y-2">
+            <div
+              className="bg-gray-200 flex items-center w-64 rounded-2xl p-4  cursor-pointer"
+              onClick={() => setOpenTab(1)}
             >
-              <img src="/assets/uzcard.png" />
               <input
-                type="radio"
-                defaultValue="uzcard"
-                checked={payType === 'uzcard'}
-                onChange={onValueChange}
-                className="hidden"
+                type="checkbox"
+                className={`${
+                  openTab !== 1 ? '' : 'border'
+                } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                defaultChecked={false}
+                checked={openTab == 1}
               />
-            </label>
-            {/* <label
+              <div>Наличными</div>
+            </div>
+            <div
+              className="bg-gray-200 flex items-center w-64 rounded-2xl p-4  cursor-pointer"
+              onClick={() => setOpenTab(2)}
+            >
+              <input
+                type="checkbox"
+                className={`${
+                  openTab !== 2 ? '' : 'border'
+                } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                defaultChecked={false}
+                checked={openTab == 2}
+              />
+              <div>Картой онлайн</div>
+            </div>
+            <div
+              className="bg-gray-200 flex items-center w-64 rounded-2xl p-4  cursor-pointer"
+              onClick={() => setOpenTab(3)}
+            >
+              <input
+                type="checkbox"
+                className={`${
+                  openTab !== 3 ? '' : 'border'
+                } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                defaultChecked={false}
+                checked={openTab == 3}
+              />
+              <div>Картой курьеру</div>
+            </div>
+          </div>
+
+          <div>
+            <div className={openTab === 1 ? 'block' : 'hidden'} id="link1">
+              <div className="bg-gray-200 flex items-center justify-between rounded-2xl p-4  cursor-pointer">
+                {tr('change')}
+                <input
+                  type="number"
+                  {...register('change')}
+                  min="10000"
+                  step="1000"
+                  className="border border-gray-400 focus:outline-none outline-none px-6 py-3 rounded-xl text-sm  w-max bg-gray-200 text-gray-400"
+                />
+                сум
+              </div>
+            </div>
+            <div className={openTab === 2 ? 'block' : 'hidden'} id="link2">
+              <div className="grid grid-cols-2 w-60 pt-8 items-center">
+                <label
+                  className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
+                    payType == 'uzcard' ? 'border-yellow' : 'border-gray-200'
+                  } border cursor-pointer`}
+                >
+                  <img src="/assets/uzcard.png" />
+                  <input
+                    type="radio"
+                    defaultValue="uzcard"
+                    checked={payType === 'uzcard'}
+                    onChange={onValueChange}
+                    className="hidden"
+                  />
+                </label>
+                {/* <label
               className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
                 payType == 'visa' ? 'border-yellow' : 'border-gray-200'
               } border cursor-pointer`}
@@ -1359,21 +1325,21 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 className="hidden"
               />
             </label> */}
-            <label
-              className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
-                payType == 'humo' ? 'border-yellow' : 'border-gray-200'
-              } border cursor-pointer`}
-            >
-              <img src="/assets/humo.png" />
-              <input
-                type="radio"
-                defaultValue="humo"
-                onChange={onValueChange}
-                checked={payType === 'humo'}
-                className="hidden"
-              />
-            </label>
-            {/* <label
+                <label
+                  className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
+                    payType == 'humo' ? 'border-yellow' : 'border-gray-200'
+                  } border cursor-pointer`}
+                >
+                  <img src="/assets/humo.png" />
+                  <input
+                    type="radio"
+                    defaultValue="humo"
+                    onChange={onValueChange}
+                    checked={payType === 'humo'}
+                    className="hidden"
+                  />
+                </label>
+                {/* <label
               className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
                 payType == 'mastercard' ? 'border-yellow' : 'border-gray-200'
               } border cursor-pointer`}
@@ -1387,20 +1353,20 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 className="hidden"
               />
             </label> */}
-          </div>
-          {/* <div className="md:w-[460px] pt-10">
+              </div>
+              {/* <div className="md:w-[460px] pt-10">
             <div className="flex justify-between">
               <input
                 type="text"
                 {...register('card_number')}
                 placeholder="Номер карты"
-                className="bg-gray-100 px-8 py-2 rounded-full w-80  outline-none focus:outline-none"
+                className="bg-gray-100 px-8 py-2 rounded-xl w-80  outline-none focus:outline-none"
               />
               <input
                 type="text"
                 {...register('card_month')}
                 placeholder="ММ/ГГ"
-                className="bg-gray-100 px-10 py-2 rounded-full w-32  outline-none focus:outline-none"
+                className="bg-gray-100 px-10 py-2 rounded-xl w-32  outline-none focus:outline-none"
               />
             </div>
             <div className="flex justify-between pt-5">
@@ -1408,89 +1374,61 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 type="text"
                 {...register('holder_name')}
                 placeholder={tr('holder_name')}
-                className="bg-gray-100 px-8 py-2 rounded-full w-80  outline-none focus:outline-none"
+                className="bg-gray-100 px-8 py-2 rounded-xl w-80  outline-none focus:outline-none"
               />
               <input
                 type="text"
                 {...register('cvv_code')}
                 placeholder="CVV код"
-                className="bg-gray-100 px-10 py-2 rounded-full w-32  outline-none focus:outline-none"
+                className="bg-gray-100 px-10 py-2 rounded-xl w-32  outline-none focus:outline-none"
               />
             </div>
           </div> */}
-        </div>
-        <div className={openTab === 3 ? 'block' : 'hidden'} id="link3">
-          <div className="justify-between pt-8 items-center grid grid-cols-4 w-6/12">
-            {locationData?.terminal_id &&
-              paymentTypes
-                .filter(
-                  (payment: string) =>
-                    !!locationData?.terminalData[`${payment}_active`]
-                )
-                .map((payment: string) => (
-                  <label
-                    className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
-                      payType == payment ? 'border-yellow' : 'border-gray-200'
-                    } border cursor-pointer`}
-                    key={payment}
-                  >
-                    <img src={`/assets/${payment}.png`} />
-                    <input
-                      type="radio"
-                      {...register('pay_type', { required: openTab === 3 })}
-                      defaultValue={payment}
-                      checked={payType === payment}
-                      onChange={onValueChange}
-                      className="hidden"
-                    />
-                  </label>
-                ))}
+            </div>
+            <div className={openTab === 3 ? 'block' : 'hidden'} id="link3">
+              <div className="justify-between pt-8 items-center grid grid-cols-4 w-6/12">
+                {locationData?.terminal_id &&
+                  paymentTypes
+                    .filter(
+                      (payment: string) =>
+                        !!locationData?.terminalData[`${payment}_active`]
+                    )
+                    .map((payment: string) => (
+                      <label
+                        className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
+                          payType == payment
+                            ? 'border-yellow'
+                            : 'border-gray-200'
+                        } border cursor-pointer`}
+                        key={payment}
+                      >
+                        <img src={`/assets/${payment}.png`} />
+                        <input
+                          type="radio"
+                          {...register('pay_type', { required: openTab === 3 })}
+                          defaultValue={payment}
+                          checked={payType === payment}
+                          onChange={onValueChange}
+                          className="hidden"
+                        />
+                      </label>
+                    ))}
+              </div>
+            </div>
+            <div className="md:flex mt-3 md:w-96 h-28">
+              <div className="w-full">
+                <textarea
+                  {...register('notes')}
+                  className="md:w-96 w-full h-28 bg-gray-100 rounded-2xl p-3 outline-none focus:outline-none resize-none"
+                  placeholder={tr('only_the_courier_will_see_your_comment')}
+                ></textarea>
+              </div>
+            </div>
           </div>
         </div>
-
-        <Disclosure defaultOpen={true}>
-          {({ open }) => (
-            <>
-              <Disclosure.Button className="flex text-yellow outline-none focus:outline-none mt-8">
-                <span>{tr('comment_on_the_order')}</span>
-                {/*
-                          Use the `open` render prop to rotate the icon when the panel is open
-                        */}
-                <ChevronRightIcon
-                  className={`w-6 transform ${
-                    open ? 'rotate-90' : '-rotate-90'
-                  }`}
-                />
-              </Disclosure.Button>
-              <Transition
-                show={open}
-                enter="transition duration-300 ease-out"
-                enterFrom="transform scale-95 opacity-0"
-                enterTo="transform scale-100 opacity-100"
-                leave="transition duration-300 ease-out"
-                leaveFrom="transform scale-100 opacity-100"
-                leaveTo="transform scale-95 opacity-0"
-              >
-                <Disclosure.Panel>
-                  <div className="md:flex mt-3 md:w-96 h-28">
-                    <div className="w-full">
-                      <textarea
-                        {...register('notes')}
-                        className="md:w-96 w-full h-28 bg-gray-100 rounded-2xl p-3 outline-none focus:outline-none resize-none"
-                        placeholder={tr(
-                          'only_the_courier_will_see_your_comment'
-                        )}
-                      ></textarea>
-                    </div>
-                  </div>
-                </Disclosure.Panel>
-              </Transition>
-            </>
-          )}
-        </Disclosure>
       </div>
       {/* order list */}
-      <div className="w-full bg-white mb-5 rounded-2xl p-10">
+      <div className="w-full bg-white mb-5 rounded-2xl py-7 px-10 ">
         <div className="text-lg mb-5 font-bold">{tr('order_order_list')}</div>
         {!isEmpty &&
           data &&
@@ -1515,7 +1453,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                         width="40"
                         height="40"
                         layout="fixed"
-                        className="absolute rounded-full"
+                        className="absolute rounded-xl"
                       />
                     </div>
                   </div>
@@ -1530,7 +1468,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                         width="40"
                         height="40"
                         layout="fixed"
-                        className="rounded-full"
+                        className="rounded-xl"
                       />
                     </div>
                   </div>
@@ -1545,7 +1483,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                     }
                     width={40}
                     height={40}
-                    className="rounded-full"
+                    className="rounded-xl"
                   />
                 </div>
               )}
@@ -1578,7 +1516,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                     .filter((mod: any) => mod.price > 0)
                     .map((mod: any) => (
                       <div
-                        className="bg-yellow rounded-full px-2 py-1 ml-2 text-xs text-white"
+                        className="bg-yellow rounded-xl px-2 py-1 ml-2 text-xs text-white"
                         key={mod.id}
                       >
                         {locale == 'uz' ? mod.name_uz : mod.name}
@@ -1627,7 +1565,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
           </div>
         )}
       </div>
-      <div className="w-full bg-white mb-5 rounded-2xl p-10">
+      <div className="w-full bg-white mb-5 rounded-2xl py-7 px-10 ">
         <div className="md:flex">
           {!!user.user.sms_sub != true ||
             (!!user.user.email_sub != true && (
@@ -1888,7 +1826,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
         </Transition>
         <div className="md:flex justify-between mt-8 space-y-2 md:space-y-0">
           <button
-            className="md:text-xl text-gray-400 bg-gray-200 flex h-12 items-center justify-between px-12 rounded-full md:w-80 w-full"
+            className="md:text-xl text-gray-400 bg-gray-200 flex h-12 items-center justify-between px-12 rounded-xl md:w-80 w-full"
             onClick={(e) => {
               e.preventDefault()
               router.push(`/${activeCity.slug}/cart/`)
@@ -1897,7 +1835,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             <img src="/left.png" /> {tr('back_to_basket')}
           </button>
           <button
-            className={`md:text-xl text-white bg-yellow flex h-12 items-center justify-evenly rounded-full md:w-80 w-full ${
+            className={`md:text-xl text-white bg-yellow flex h-12 items-center justify-evenly rounded-xl md:w-80 w-full ${
               !locationData?.terminal_id ? 'opacity-25 cursor-not-allowed' : ''
             }`}
             disabled={!locationData?.terminal_id || isSavingOrder}
@@ -2015,7 +1953,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                         </div>
                         <div className="mt-10">
                           <button
-                            className={`py-3 px-20 text-white font-bold text-xl text-center rounded-full w-full outline-none focus:outline-none ${
+                            className={`py-3 px-20 text-white font-bold text-xl text-center rounded-xl w-full outline-none focus:outline-none ${
                               otpCode.length >= 4 ? 'bg-yellow' : 'bg-gray-400'
                             }`}
                             disabled={otpCode.length < 4}
