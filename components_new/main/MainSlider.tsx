@@ -33,12 +33,12 @@ const MainSlider: FC = () => {
       `${publicRuntimeConfig.apiUrl}/api/sliders/public?locale=${locale}`
     )
     // sliderRef.current?.moveTo(0)
-    sliderRef.current?.destroy()
-    setDefaultIndex(1)
+    // sliderRef.current?.destroy()
+    // setDefaultIndex(1)
     setSliders(data.data)
-    setTimeout(() => {
-      sliderRef.current?.init()
-    }, 200)
+    // setTimeout(() => {
+    //   sliderRef.current?.init()
+    // }, 200)
   }
 
   useEffect(() => {
