@@ -10,6 +10,10 @@ import '@assets/simplebar.css'
 
 import '@assets/flicking.css'
 
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import '@assets/slick.css'
+
 import { FC, useEffect } from 'react'
 import type { AppProps } from 'next/app'
 import { Head } from '@components/common'

@@ -48,7 +48,6 @@ export async function getServerSideProps({
       currentCity,
       footerInfoMenu,
       socials,
-      cleanBackground: true,
       cities,
     },
   }

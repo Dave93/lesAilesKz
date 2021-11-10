@@ -291,6 +291,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       activeCity?.map_zoom) as number
   )
 
+  const [noChange, setNoChange] = useState(false)
+
   const [configData, setConfigData] = useState({} as any)
   const fetchConfig = async () => {
     let configData
@@ -711,10 +713,15 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     )
   }
 
+  const setNoChangeHandler = () => {
+    setNoChange(true)
+    resetField('change')
+  }
+
   return (
     <div className="mx-5 md:mx-0 pt-1 md:pt-0 pb-1">
       {/* Contacts */}
-      <div className="w-full bg-white my-5 rounded-2xl shadow-xl">
+      <div className="w-full bg-white my-10 rounded-2xl shadow-xl">
         <div className="py-7 px-10 ">
           <div className="text-3xl mb-5">Контакты</div>
           <form onSubmit={handleSubmit(onSubmit)} className="md:flex mt-8 ">
@@ -781,7 +788,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
         </div>
       </div>
       {/* Orders */}
-      <div className="mb-7">
+      <div className="mb-7 shadow-xl">
         <div className="bg-white flex rounded-2xl w-full items-center py-7 px-10 h-32 mb-5">
           <div className="bg-gray-100 flex  w-full rounded-xl">
             <button
@@ -1148,12 +1155,12 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
         )}
       </div>
       {/* time of delivery */}
-      <div className="w-full bg-white mb-5 rounded-2xl py-7 px-10 ">
+      <div className="w-full bg-white mb-10 rounded-2xl py-7 px-10  shadow-xl">
         <div className="text-3xl mb-5">Время доставки</div>
         <div className="flex  space-x-2 justify-between">
           <div className="flex  space-x-2">
             <div
-              className="bg-gray-200 flex items-center w-max rounded-2xl p-4 pr-14 cursor-pointer"
+              className="bg-gray-100 flex items-center w-max rounded-2xl p-4 pr-14 cursor-pointer"
               onClick={() => setDeliverySchedule('now')}
             >
               <input
@@ -1168,7 +1175,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             </div>
 
             <div
-              className="bg-gray-200 flex items-center w-max rounded-2xl p-4 pr-14 cursor-pointer"
+              className="bg-gray-100 flex items-center w-max rounded-2xl p-4 pr-14 cursor-pointer"
               onClick={() => setDeliverySchedule('later')}
             >
               <input
@@ -1218,7 +1225,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               />
             </div>
           ) : (
-            <div className="flex items-center bg-gray-200 p-4 pr-14 rounded-2xl">
+            <div className="flex items-center bg-gray-100 p-4 pr-14 rounded-2xl">
               <ClockIcon className="w-5 mr-3" />
               <div>Доставим в течение 30 минут</div>
             </div>
@@ -1226,7 +1233,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
         </div>
       </div>
       {/* pay */}
-      <div className="w-full bg-white mb-5 rounded-2xl py-7 px-10 relative">
+      <div className="w-full bg-white mb-10 rounded-2xl py-7 px-10 relative shadow-xl">
         {!locationData?.terminal_id && (
           <div className="absolute md:w-full h-full md:-ml-10 md:-mt-10 bg-opacity-60 bg-gray-100 z-20 items-center flex justify-around">
             <div className="text-yellow font-bold text-2xl">
@@ -1235,10 +1242,10 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
           </div>
         )}
         <div className="text-3xl mb-5">Способы оплаты</div>
-        <div className="flex space-y-2 justify-between items-center">
+        <div className="flex justify-between">
           <div className="space-y-2">
             <div
-              className="bg-gray-200 flex items-center w-64 rounded-2xl p-4  cursor-pointer"
+              className="bg-gray-100 flex items-center w-64 rounded-2xl p-4  cursor-pointer"
               onClick={() => setOpenTab(1)}
             >
               <input
@@ -1252,7 +1259,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               <div>Наличными</div>
             </div>
             <div
-              className="bg-gray-200 flex items-center w-64 rounded-2xl p-4  cursor-pointer"
+              className="bg-gray-100 flex items-center w-64 rounded-2xl p-4  cursor-pointer"
               onClick={() => setOpenTab(2)}
             >
               <input
@@ -1266,7 +1273,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               <div>Картой онлайн</div>
             </div>
             <div
-              className="bg-gray-200 flex items-center w-64 rounded-2xl p-4  cursor-pointer"
+              className="bg-gray-100 flex items-center w-64 rounded-2xl p-4  cursor-pointer"
               onClick={() => setOpenTab(3)}
             >
               <input
@@ -1280,19 +1287,43 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               <div>Картой курьеру</div>
             </div>
           </div>
-
           <div>
-            <div className={openTab === 1 ? 'block' : 'hidden'} id="link1">
-              <div className="bg-gray-200 flex items-center justify-between rounded-2xl p-4  cursor-pointer">
-                {tr('change')}
+            <div className={openTab === 1 ? 'flex h-14' : 'hidden'} id="link1">
+              <div
+                className="bg-gray-100 flex items-center rounded-2xl p-4  cursor-pointer mr-2"
+                onClick={setNoChangeHandler}
+              >
+                <input
+                  type="checkbox"
+                  className={`${
+                    openTab !== 1 ? '' : 'border'
+                  } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                  defaultChecked={false}
+                  checked={noChange}
+                />
+                <div>Без сдачи</div>
+              </div>
+              <div
+                className="bg-gray-100 flex items-center justify-between rounded-2xl p-4  cursor-pointer"
+                onClick={() => setNoChange(false)}
+              >
+                <input
+                  type="checkbox"
+                  className={`${
+                    openTab !== 1 ? '' : 'border'
+                  } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                  defaultChecked={false}
+                  checked={!noChange}
+                />
+                <div>{tr('change')}</div>
                 <input
                   type="number"
                   {...register('change')}
                   min="10000"
                   step="1000"
-                  className="border border-gray-400 focus:outline-none outline-none px-6 py-3 rounded-xl text-sm  w-max bg-gray-200 text-gray-400"
+                  className="border border-gray-400 focus:outline-none outline-none  py-2 px-2 rounded-xl  bg-gray-100 mx-3 w-24"
                 />
-                сум
+                <div>сум</div>
               </div>
             </div>
             <div className={openTab === 2 ? 'block' : 'hidden'} id="link2">
@@ -1415,21 +1446,12 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                     ))}
               </div>
             </div>
-            <div className="md:flex mt-3 md:w-96 h-28">
-              <div className="w-full">
-                <textarea
-                  {...register('notes')}
-                  className="md:w-96 w-full h-28 bg-gray-100 rounded-2xl p-3 outline-none focus:outline-none resize-none"
-                  placeholder={tr('only_the_courier_will_see_your_comment')}
-                ></textarea>
-              </div>
-            </div>
           </div>
         </div>
       </div>
       {/* order list */}
-      <div className="w-full bg-white mb-5 rounded-2xl py-7 px-10 ">
-        <div className="text-lg mb-5 font-bold">{tr('order_order_list')}</div>
+      <div className="w-full bg-white mb-10 rounded-2xl py-7 px-10  shadow-xl">
+        <div className="text-3xl mb-5">{tr('order_order_list')}</div>
         {!isEmpty &&
           data &&
           data?.lineItems.map((lineItem: any) => (
@@ -1546,329 +1568,69 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               </div>
             </div>
           ))}
-        {!isEmpty && (
-          <div className="flex justify-between items-center mt-8">
-            <div>
-              <div className="font-bold text-xl mb-2">
-                {tr('basket_order_price')}
-              </div>
-            </div>
-            <div className="text-2xl font-bold">
-              {currency(data.totalPrice, {
-                pattern: '# !',
-                separator: ' ',
-                decimal: '.',
-                symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                precision: 0,
-              }).format()}
-            </div>
-          </div>
-        )}
       </div>
-      <div className="w-full bg-white mb-5 rounded-2xl py-7 px-10 ">
-        <div className="md:flex">
-          {!!user.user.sms_sub != true ||
-            (!!user.user.email_sub != true && (
-              <div className="mr-8 text-gray-400">{tr('agree_to_send')}</div>
-            ))}
-          {!!user.user.sms_sub != true && (
-            <label className="mr-8 cursor-pointer text-gray-400 items-center flex">
-              <input
-                type="checkbox"
-                defaultValue="sms"
-                className={` ${
-                  sms ? 'text-yellow' : 'bg-gray-200'
-                } form-checkbox h-5 w-5  rounded-md  mr-2`}
-                onChange={smsValueChange}
-              />
-              <div>SMS</div>
-            </label>
-          )}
-          {!!user.user.email_sub != true && authEmail && (
-            <label className="cursor-pointer text-gray-400 items-center flex">
-              <input
-                type="checkbox"
-                defaultValue="newsletter"
-                className={` ${
-                  newsletter ? 'text-yellow' : 'bg-gray-200'
-                } form-checkbox h-5 w-5  rounded-md mr-2`}
-                onChange={newsletterValueChange}
-              />
-              <div>E-mail {tr('mailing')}</div>
-            </label>
-          )}
-        </div>
-        <div className="mt-5 text-gray-400 text-sm md:flex border-b pb-8">
-          {tr('processing_of_your_personal_data')}
-          <a
-            href="/privacy"
-            onClick={showPrivacy}
-            className="text-yellow block md:mx-1"
-            target="_blank"
-          >
-            {tr('terms_of_use')}
-          </a>
-        </div>
-        <Transition appear show={isShowPrivacy} as={Fragment}>
-          <Dialog
-            as="div"
-            className="fixed inset-0 z-10 overflow-y-auto"
-            onClose={closePrivacy}
-            initialFocus={privacyButtonRef}
-          >
-            <div className="min-h-screen px-4 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0"
-                enterTo="opacity-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100"
-                leaveTo="opacity-0"
-              >
-                <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-              </Transition.Child>
-
-              {/* This element is to trick the browser into centering the modal contents. */}
-              <span
-                className="inline-block h-screen align-middle"
-                aria-hidden="true"
-              >
-                &#8203;
-              </span>
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <div className="align-middle inline-block overflow-hidden w-full">
-                  <div className="inline-flex my-8 items-start">
-                    <div className="align-middle bg-white inline-block max-w-4xl overflow-hidden p-10 rounded-2xl shadow-xl text-left transform transition-all w-full">
-                      <div className="border-b mb-3 pb-3">
-                        <Dialog.Title
-                          as="h3"
-                          className="leading-6 mb-2 text-2xl"
-                        >
-                          1. ПОЛЬЗОВАТЕЛЬСКОЕ СОГЛАШЕНИЕ (ОФЕРТА)
-                        </Dialog.Title>
-                        <p>
-                          The standard Lorem Ipsum passage, used since the 1500s
-                          "Lorem ipsum dolor sit amet, consectetur adipiscing
-                          elit, sed do eiusmod tempor incididunt ut labore et
-                          dolore magna aliqua. Ut enim ad minim veniam, quis
-                          nostrud exercitation ullamco laboris nisi ut aliquip
-                          ex ea commodo consequat. Duis aute irure dolor in
-                          reprehenderit in voluptate velit esse cillum dolore eu
-                          fugiat nulla pariatur. Excepteur sint occaecat
-                          cupidatat non proident, sunt in culpa qui officia
-                          deserunt mollit anim id est laborum."
-                        </p>
-                      </div>
-                      <div className="border-b mb-3 pb-3">
-                        <Dialog.Title
-                          as="h3"
-                          className="leading-6 mb-2 text-2xl"
-                        >
-                          2. Предмет Пользовательского соглашения
-                        </Dialog.Title>
-                        <p>
-                          "Sed ut perspiciatis unde omnis iste natus error sit
-                          voluptatem accusantium doloremque laudantium, totam
-                          rem aperiam, eaque ipsa quae ab illo inventore
-                          veritatis et quasi architecto beatae vitae dicta sunt
-                          explicabo. Nemo enim ipsam voluptatem quia voluptas
-                          sit aspernatur aut odit aut fugit, sed quia
-                          consequuntur magni dolores eos qui ratione voluptatem
-                          sequi nesciunt. Neque porro quisquam est, qui dolorem
-                          ipsum quia dolor sit amet, consectetur, adipisci
-                          velit, sed quia non numquam eius modi tempora incidunt
-                          ut labore et dolore magnam aliquam quaerat voluptatem.
-                          Ut enim ad minima veniam, quis nostrum exercitationem
-                          ullam corporis suscipit laboriosam, nisi ut aliquid ex
-                          ea commodi consequatur? Quis autem vel eum iure
-                          reprehenderit qui in ea voluptate velit esse quam
-                          nihil molestiae consequatur, vel illum qui dolorem eum
-                          fugiat quo voluptas nulla pariatur?"
-                        </p>
-                      </div>
-                      <div className="border-b mb-3 pb-3">
-                        <Dialog.Title
-                          as="h3"
-                          className="leading-6 mb-2 text-2xl"
-                        >
-                          3. Регистрация на Сайте и безопасность
-                        </Dialog.Title>
-                        <p>
-                          "But I must explain to you how all this mistaken idea
-                          of denouncing pleasure and praising pain was born and
-                          I will give you a complete account of the system, and
-                          expound the actual teachings of the great explorer of
-                          the truth, the master-builder of human happiness. No
-                          one rejects, dislikes, or avoids pleasure itself,
-                          because it is pleasure, but because those who do not
-                          know how to pursue pleasure rationally encounter
-                          consequences that are extremely painful. Nor again is
-                          there anyone who loves or pursues or desires to obtain
-                          pain of itself, because it is pain, but because
-                          occasionally circumstances occur in which toil and
-                          pain can procure him some great pleasure. To take a
-                          trivial example, which of us ever undertakes laborious
-                          physical exercise, except to obtain some advantage
-                          from it? But who has any right to find fault with a
-                          man who chooses to enjoy a pleasure that has no
-                          annoying consequences, or one who avoids a pain that
-                          produces no resultant pleasure?"
-                        </p>
-                      </div>
-                      <div className="border-b mb-3 pb-3">
-                        <Dialog.Title
-                          as="h3"
-                          className="leading-6 mb-2 text-2xl"
-                        >
-                          4. Интеллектуальная собственность и авторское право
-                        </Dialog.Title>
-                        <p>
-                          "At vero eos et accusamus et iusto odio dignissimos
-                          ducimus qui blanditiis praesentium voluptatum deleniti
-                          atque corrupti quos dolores et quas molestias
-                          excepturi sint occaecati cupiditate non provident,
-                          similique sunt in culpa qui officia deserunt mollitia
-                          animi, id est laborum et dolorum fuga. Et harum quidem
-                          rerum facilis est et expedita distinctio. Nam libero
-                          tempore, cum soluta nobis est eligendi optio cumque
-                          nihil impedit quo minus id quod maxime placeat facere
-                          possimus, omnis voluptas assumenda est, omnis dolor
-                          repellendus. Temporibus autem quibusdam et aut
-                          officiis debitis aut rerum necessitatibus saepe
-                          eveniet ut et voluptates repudiandae sint et molestiae
-                          non recusandae. Itaque earum rerum hic tenetur a
-                          sapiente delectus, ut aut reiciendis voluptatibus
-                          maiores alias consequatur aut perferendis doloribus
-                          asperiores repellat."
-                        </p>
-                      </div>
-                      <div className="border-b mb-3 pb-3">
-                        <Dialog.Title
-                          as="h3"
-                          className="leading-6 mb-2 text-2xl"
-                        >
-                          5. Права и обязанности Поверенного
-                        </Dialog.Title>
-                        <p>
-                          "On the other hand, we denounce with righteous
-                          indignation and dislike men who are so beguiled and
-                          demoralized by the charms of pleasure of the moment,
-                          so blinded by desire, that they cannot foresee the
-                          pain and trouble that are bound to ensue; and equal
-                          blame belongs to those who fail in their duty through
-                          weakness of will, which is the same as saying through
-                          shrinking from toil and pain. These cases are
-                          perfectly simple and easy to distinguish. In a free
-                          hour, when our power of choice is untrammelled and
-                          when nothing prevents our being able to do what we
-                          like best, every pleasure is to be welcomed and every
-                          pain avoided. But in certain circumstances and owing
-                          to the claims of duty or the obligations of business
-                          it will frequently occur that pleasures have to be
-                          repudiated and annoyances accepted. The wise man
-                          therefore always holds in these matters to this
-                          principle of selection: he rejects pleasures to secure
-                          other greater pleasures, or else he endures pains to
-                          avoid worse pains."
-                        </p>
-                      </div>
-                      <div className="border-b mb-3 pb-3">
-                        <Dialog.Title
-                          as="h3"
-                          className="leading-6 mb-2 text-2xl"
-                        >
-                          6. Права и обязанности Пользователя
-                        </Dialog.Title>
-                        <p>
-                          "But I must explain to you how all this mistaken idea
-                          of denouncing pleasure and praising pain was born and
-                          I will give you a complete account of the system, and
-                          expound the actual teachings of the great explorer of
-                          the truth, the master-builder of human happiness. No
-                          one rejects, dislikes, or avoids pleasure itself,
-                          because it is pleasure, but because those who do not
-                          know how to pursue pleasure rationally encounter
-                          consequences that are extremely painful. Nor again is
-                          there anyone who loves or pursues or desires to obtain
-                          pain of itself, because it is pain, but because
-                          occasionally circumstances occur in which toil and
-                          pain can procure him some great pleasure. To take a
-                          trivial example, which of us ever undertakes laborious
-                          physical exercise, except to obtain some advantage
-                          from it? But who has any right to find fault with a
-                          man who chooses to enjoy a pleasure that has no
-                          annoying consequences, or one who avoids a pain that
-                          produces no resultant pleasure?"
-                        </p>
-                      </div>
-                    </div>
-                    <button
-                      className="text-white outline-none focus:outline-none transform"
-                      onClick={closePrivacy}
-                      ref={privacyButtonRef}
-                    >
-                      <XIcon className="text-white cursor-pointer w-10 h-10" />
-                    </button>
-                  </div>
+      <div className="rounded-2xl bg-gray-100 flex items-center justify-between px-10 py-16 ">
+        {/* <div className="md:w-72">
+                <form onSubmit={handleSubmit(onSubmit)} className="relative">
+                  <input
+                    type="text"
+                    placeholder={tr('promocode')}
+                    {...register('discount_code')}
+                    className="bg-gray-100 focus:outline-none outline-none px-5 py-2 rounded-full text-lg w-full"
+                  />
+                  <button className="absolute focus:outline-none outline-none right-1 top-1">
+                    <Image src="/discount_arrow.png" width={37} height={37} />
+                  </button>
+                </form>
+              </div> */}
+        <div className="space-y-4 w-1/3">
+          {!isEmpty && (
+            <>
+              <div className="flex items-center justify-between">
+                <div className="text-lg">{tr('basket_order_price')}</div>
+                <div className="ml-7 text-lg">
+                  {currency(data.totalPrice, {
+                    pattern: '# !',
+                    separator: ' ',
+                    decimal: '.',
+                    symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                    precision: 0,
+                  }).format()}
                 </div>
-              </Transition.Child>
-            </div>
-          </Dialog>
-        </Transition>
-        <div className="md:flex justify-between mt-8 space-y-2 md:space-y-0">
-          <button
-            className="md:text-xl text-gray-400 bg-gray-200 flex h-12 items-center justify-between px-12 rounded-xl md:w-80 w-full"
-            onClick={(e) => {
-              e.preventDefault()
-              router.push(`/${activeCity.slug}/cart/`)
-            }}
-          >
-            <img src="/left.png" /> {tr('back_to_basket')}
-          </button>
-          <button
-            className={`md:text-xl text-white bg-yellow flex h-12 items-center justify-evenly rounded-xl md:w-80 w-full ${
-              !locationData?.terminal_id ? 'opacity-25 cursor-not-allowed' : ''
-            }`}
-            disabled={!locationData?.terminal_id || isSavingOrder}
-            onClick={handleSubmit(saveOrder)}
-          >
-            {isSavingOrder ? (
-              <svg
-                className="animate-spin h-5 mx-auto text-center text-white w-5"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-            ) : (
-              <>
-                {tr('checkout')} <img src="/right.png" />
-              </>
-            )}
-          </button>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="text-lg">Доставка:</div>
+                <div className="ml-7 text-lg">
+                  {currency(data.totalPrice, {
+                    pattern: '# !',
+                    separator: ' ',
+                    decimal: '.',
+                    symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                    precision: 0,
+                  }).format()}
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="text-lg font-medium">Итого:</div>
+                <div className="ml-7 text-2xl font-medium">
+                  {currency(data.totalPrice, {
+                    pattern: '# !',
+                    separator: ' ',
+                    decimal: '.',
+                    symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                    precision: 0,
+                  }).format()}
+                </div>
+              </div>
+            </>
+          )}
         </div>
+        <button
+          className={`bg-green-600 md:text-xl rounded-2xl text-white w-64 py-5 px-12 font-medium`}
+          onClick={handleSubmit(saveOrder)}
+        >
+          {tr('checkout')}
+        </button>
       </div>
       <Transition appear show={isPhoneConfirmOpen} as={Fragment}>
         <Dialog

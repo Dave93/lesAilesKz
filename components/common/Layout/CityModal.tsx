@@ -83,17 +83,11 @@ const CityModal: FC<Props> = ({ cities }) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-secondary shadow-xl rounded-2xl">
-                <Dialog.Title
-                  as="h3"
-                  className="text-2xl font-medium leading-6 text-white"
-                >
-                  {tr('choose_your_city')}
+              <div className="align-middle bg-white inline-block max-w-md mt-40 overflow-hidden p-10 rounded-2xl text-left transform transition-all w-full">
+                <Dialog.Title as="h3" className="text-3xl m-auto w-max">
+                  Ваш город
                 </Dialog.Title>
-                <div
-                  className="m-auto md:w-96 bg-white rounded-2xl mt-4"
-                  ref={cityListRef}
-                >
+                <div className="bg-white mt-4 rounded-2xl" ref={cityListRef}>
                   <Menu as="div" className="text-center">
                     <>
                       <Transition
@@ -111,7 +105,7 @@ const CityModal: FC<Props> = ({ cities }) => {
                             <Menu.Item key={item.id}>
                               <span
                                 onClick={() => changeCity(item)}
-                                className={`block px-4 py-2 cursor-pointer text-xl text-secondary hover:text-white hover:bg-secondary`}
+                                className={`block px-4 py-2 cursor-pointer text-xl hover:text-white hover:bg-primary bg-gray-100 rounded-lg mb-1`}
                               >
                                 {locale == 'uz' ? item.name_uz : item.name}
                               </span>
@@ -156,26 +150,23 @@ const CityModal: FC<Props> = ({ cities }) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-secondary shadow-xl rounded-2xl">
-                <Dialog.Title
-                  as="h3"
-                  className="text-2xl font-medium leading-6 text-white"
-                >
+              <div className="align-middle bg-white inline-block max-w-md mt-40 overflow-hidden p-10 rounded-2xl text-left transform transition-all w-full">
+                <Dialog.Title as="h3" className="text-3xl m-auto w-max">
                   {tr('isThisYourCity', {
                     city: locale == 'uz' ? activeCity.name_uz : activeCity.name,
                   })}
                 </Dialog.Title>
-                <div className="m-auto mt-4">
+                <div className="bg-white mt-4 rounded-2xl">
                   <div className="gap-3 grid grid-cols-2 w-full">
                     <button
-                      className="bg-yellow focus:outline-none font-bold outline-none py-2 rounded-full text-center text-white uppercase"
+                      className="bg-primary focus:outline-none font-bold outline-none py-2 rounded-lg text-center text-white uppercase"
                       onClick={closePromptModal}
                       ref={cityPromptRef}
                     >
                       {tr('yes')}
                     </button>
                     <button
-                      className="bg-gray-200 focus:outline-none font-bold outline-none py-2 rounded-full text-center text-white uppercase"
+                      className="bg-gray-200 focus:outline-none font-bold outline-none py-2 rounded-lg text-center text-white uppercase"
                       onClick={chooseAnotherCity}
                     >
                       {tr('no')}
