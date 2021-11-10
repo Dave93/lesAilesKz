@@ -7,8 +7,61 @@ import axios from 'axios'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import getConfig from 'next/config'
+import Slider from 'react-slick'
 
 const { publicRuntimeConfig } = getConfig()
+
+const settings = {
+  dots: false,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 1,
+  slidesToScroll: 1,
+  nextArrow: <SampleNextArrow />,
+  prevArrow: <SamplePrevArrow />,
+  responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        infinite: true,
+        dots: false
+      }
+    },
+    {
+      breakpoint: 600,
+      settings: {
+      }
+    },
+    {
+      breakpoint: 480,
+      settings: {
+        dots: true,
+        nextArrow: null,
+        prevArrow: null
+      }
+    }
+  ]
+};
+
+
+function SampleNextArrow(props: any) {
+  const { className, style, onClick } = props;
+  return (
+    <img src="/rightArrow.webp" className={className}
+      style={{ ...style, display: "block", height: "40px" }}
+      onClick={onClick} />
+  );
+}
+
+function SamplePrevArrow(props: any) {
+  const { className, style, onClick } = props;
+  return (
+    <img src="/leftArrow.webp" className={className}
+      style={{ ...style, display: "block", height: "40px" }}
+      onClick={onClick} />
+  );
+}
+
 
 const MainSlider: FC = () => {
   let router = useRouter()
@@ -47,106 +100,67 @@ const MainSlider: FC = () => {
   }, [locale])
 
   return (
-    <div className="relative">
+    <div className="mt-5 mx-4 md:mx-0">
       {sliders && sliders.length > 0 && (
-        <>
-          <Flicking
-            align="prev"
-            circular={true}
-            defaultIndex={defaultIndex}
-            plugins={plugins}
-            ref={sliderRef}
-            renderOnlyVisible={true}
-            autoResize={true}
-            autoInit={true}
-            panelsPerView={1}
-          >
-            {sliders.map((item: any) => (
-              <div
-                className="rounded-[15px] overflow-hidden flex mb-[10px]"
-                key={item.id}
-              >
-                {item.link ? (
-                  <a href={item.link}>
-                    {item.asset && (
-                      <>
-                        <img
-                          src={item.asset[0].link}
-                          width={1160}
-                          height={340}
-                          data-href={item.link}
-                          className="hidden md:flex "
-                        />
-                        <img
-                          src={
-                            item.asset[1]
-                              ? item.asset[1].link
-                              : item.asset[0].link
-                          }
-                          width={400}
-                          height={176}
-                          data-href={item.link}
-                          className="md:hidden flex"
-                        />
-                      </>
-                    )}
-                  </a>
-                ) : (
-                  item.asset && (
+        <Slider  {...settings}>
+          {sliders.map((item: any) => (
+            <div
+              className="rounded-[15px] overflow-hidden flex mb-[10px]"
+              key={item.id}
+            >
+              {item.link ? (
+                <a href={item.link}>
+                  {item.asset && (
                     <>
-                      <div className="hidden md:flex">
-                        <img
-                          src={item.asset[0].link}
-                          width={1160}
-                          height={340}
-                        />
-                      </div>
-                      <div className="md:hidden flex">
-                        <img
-                          src={
-                            item.asset[1]
-                              ? item.asset[1].link
-                              : item.asset[0].link
-                          }
-                          width={400}
-                          height={176}
-                        />
-                      </div>
+                      <img
+                        src={item.asset[0].link}
+                        width={1160}
+                        height={340}
+                        data-href={item.link}
+                        className="hidden md:flex "
+                      />
+                      <img
+                        src={
+                          item.asset[1]
+                            ? item.asset[1].link
+                            : item.asset[0].link
+                        }
+                        width="100%"
+                        height={176}
+                        data-href={item.link}
+                        className="md:hidden flex"
+                      />
                     </>
-                  )
-                )}
-              </div>
-            ))}
-            <ViewportSlot>
-              <div className="md:hidden flicking-pagination justify-center flex"></div>
-              {typeof window === 'undefined' && (
-                <>
-                  <span className="flicking-arrow-prev is-outside hidden md:block"></span>
-                  <span className="flicking-arrow-next is-outside  hidden md:block"></span>
-                </>
+                  )}
+                </a>
+              ) : (
+                item.asset && (
+                  <>
+                    <div className="hidden md:flex">
+                      <img
+                        src={item.asset[0].link}
+                        width={1160}
+                        height={340}
+                      />
+                    </div>
+                    <div className="md:hidden flex">
+                      <img
+                        src={
+                          item.asset[1]
+                            ? item.asset[1].link
+                            : item.asset[0].link
+                        }
+                        width="100%"
+                        height={176}
+                      />
+                    </div>
+                  </>
+                )
               )}
-            </ViewportSlot>
-            {/* <span className="flicking-arrow-prev is-outside hidden md:block"></span>
-            <span className="flicking-arrow-next is-outside  hidden md:block"></span> */}
-          </Flicking>
-          <span className="flicking-arrow-prev is-outside hidden md:block"></span>
-          <span className="flicking-arrow-next is-outside  hidden md:block"></span>
-        </>
+            </div>
+          ))}
+        </Slider>
       )}
-
-      <style jsx global>{`
-        .flicking-pagination-bullet {
-          width: 15.18px;
-          height: 4px;
-          background: rgba(210, 210, 210, 0.8);
-          border-radius: 10px;
-          margin-right: 4px;
-        }
-
-        .flicking-pagination-bullet.flicking-pagination-bullet-active {
-          background: #faaf04;
-        }
-      `}</style>
     </div>
   )
 }
