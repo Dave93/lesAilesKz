@@ -28,16 +28,11 @@ const settings = {
       }
     },
     {
-      breakpoint: 600,
-      settings: {
-      }
-    },
-    {
       breakpoint: 480,
       settings: {
         dots: true,
-        nextArrow: null,
-        prevArrow: null
+        // nextArrow: null,
+        // prevArrow: null
       }
     }
   ]
