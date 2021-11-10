@@ -488,8 +488,49 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       `${webAddress}/api/terminals/pickup?city_id=${activeCity.id}`
     )
     let res: any[] = []
+    let currentTime = DateTime.local()
+    let weekDay = currentTime.weekday
     data.data.map((item: any) => {
       if (item.latitude) {
+        item.isWorking = false
+        if (weekDay >= 1 && weekDay < 6) {
+          let openWork = DateTime.fromISO(item.open_work)
+          openWork = openWork.set({ day: currentTime.day })
+          openWork = openWork.set({ year: currentTime.year })
+          openWork = openWork.set({ month: currentTime.month })
+          let closeWork = DateTime.fromISO(item.close_work)
+          closeWork = closeWork.set({ day: currentTime.day })
+          closeWork = closeWork.set({ year: currentTime.year })
+          closeWork = closeWork.set({ month: currentTime.month })
+          if (closeWork.hour < openWork.hour) {
+            closeWork = closeWork.set({ day: currentTime.day + 1 })
+          }
+
+          if (currentTime >= openWork && currentTime < closeWork) {
+            item.isWorking = true
+          }
+          item.workTimeStart = openWork.toFormat('HH:mm')
+          item.workTimeEnd = closeWork.toFormat('HH:mm')
+        } else {
+          let openWork = DateTime.fromISO(item.open_weekend)
+          openWork = openWork.set({ day: currentTime.day })
+          openWork = openWork.set({ year: currentTime.year })
+          openWork = openWork.set({ month: currentTime.month })
+          let closeWork = DateTime.fromISO(item.close_weekend)
+          closeWork = closeWork.set({ day: currentTime.day })
+          closeWork = closeWork.set({ year: currentTime.year })
+          closeWork = closeWork.set({ month: currentTime.month })
+          if (closeWork.hour < openWork.hour) {
+            closeWork = closeWork.set({ day: currentTime.day + 1 })
+          }
+
+          if (currentTime >= openWork && currentTime < closeWork) {
+            item.isWorking = true
+          }
+          item.workTimeStart = openWork.toFormat('HH:mm')
+          item.workTimeEnd = closeWork.toFormat('HH:mm')
+        }
+
         res.push(item)
       }
     })
@@ -1142,9 +1183,36 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                       <div className="font-bold">
                         {locale == 'uz' ? point.name_uz : point.name}
                       </div>
-                      <div className="text-gray-400 text-sm">
-                        {locale == 'uz' ? point.desc_uz : point.desc}
+                      {point.desc && (
+                        <div className="text-gray-400 text-sm">
+                          {tr('address')}:{' '}
+                          {locale == 'ru' ? point.desc : point.desc_uz}
+                        </div>
+                      )}
+                      {point.near && (
+                        <div className="text-gray-400 text-sm">
+                          {tr('nearLabel')}:{' '}
+                          {locale == 'ru' ? point.near : point.near_uz}
+                        </div>
+                      )}
+                      <div className="font-bold text-gray-700">
+                        {tr('terminalWorkTime', {
+                          workTimeStart: point.workTimeStart,
+                          workTimeEnd: point.workTimeEnd,
+                        })}
                       </div>
+                      {point.services && (
+                        <div className="flex py-2 space-x-3">
+                          {point.services.split(',').map((service: string) => (
+                            <span key={service}>
+                              <img
+                                src={`/assets/services/${service}.webp`}
+                                alt=""
+                              />
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
