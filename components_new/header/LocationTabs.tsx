@@ -40,6 +40,7 @@ import useTranslation from 'next-translate/useTranslation'
 import { City } from '@commerce/types/cities'
 import router, { useRouter } from 'next/router'
 import SimpleBar from 'simplebar-react'
+import { DateTime } from 'luxon'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -143,8 +144,49 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
       `${webAddress}/api/terminals/pickup?city_id=${activeCity.id}`
     )
     let res: any[] = []
+    let currentTime = DateTime.local()
+    let weekDay = currentTime.weekday
     data.data.map((item: any) => {
       if (item.latitude) {
+        item.isWorking = false
+        if (weekDay >= 1 && weekDay < 6) {
+          let openWork = DateTime.fromISO(item.open_work)
+          openWork = openWork.set({ day: currentTime.day })
+          openWork = openWork.set({ year: currentTime.year })
+          openWork = openWork.set({ month: currentTime.month })
+          let closeWork = DateTime.fromISO(item.close_work)
+          closeWork = closeWork.set({ day: currentTime.day })
+          closeWork = closeWork.set({ year: currentTime.year })
+          closeWork = closeWork.set({ month: currentTime.month })
+          if (closeWork.hour < openWork.hour) {
+            closeWork = closeWork.set({ day: currentTime.day + 1 })
+          }
+
+          if (currentTime >= openWork && currentTime < closeWork) {
+            item.isWorking = true
+          }
+          item.workTimeStart = openWork.toFormat('HH:mm')
+          item.workTimeEnd = closeWork.toFormat('HH:mm')
+        } else {
+          let openWork = DateTime.fromISO(item.open_weekend)
+          openWork = openWork.set({ day: currentTime.day })
+          openWork = openWork.set({ year: currentTime.year })
+          openWork = openWork.set({ month: currentTime.month })
+          let closeWork = DateTime.fromISO(item.close_weekend)
+          closeWork = closeWork.set({ day: currentTime.day })
+          closeWork = closeWork.set({ year: currentTime.year })
+          closeWork = closeWork.set({ month: currentTime.month })
+          if (closeWork.hour < openWork.hour) {
+            closeWork = closeWork.set({ day: currentTime.day + 1 })
+          }
+
+          if (currentTime >= openWork && currentTime < closeWork) {
+            item.isWorking = true
+          }
+          item.workTimeStart = openWork.toFormat('HH:mm')
+          item.workTimeEnd = closeWork.toFormat('HH:mm')
+        }
+
         res.push(item)
       }
     })
@@ -298,12 +340,19 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
     saveDeliveryData(data, null)
   }
 
-  const choosePickupPoint = (pointId: number) => {
-    setActivePoint(pointId)
-    let terminalData = pickupPoints.find((pickup: any) => pickup.id == pointId)
+  const choosePickupPoint = (point: any) => {
+    if (!point.isWorking) {
+      toast.warn(tr('terminal_is_not_working'), {
+        position: toast.POSITION.BOTTOM_RIGHT,
+        hideProgressBar: true,
+      })
+      return
+    }
+    setActivePoint(point.id)
+    let terminalData = pickupPoints.find((pickup: any) => pickup.id == point.id)
     setLocationData({
       ...locationData,
-      terminal_id: pointId,
+      terminal_id: point.id,
       terminalData,
     })
   }
@@ -358,7 +407,7 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
         terminal_id: terminalsData.data.items[0].id,
         terminalData: terminalsData.data.items[0],
       })
-      setOpen(false)
+      hideAddress()
     }
   }
 
@@ -371,7 +420,7 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
       return
     }
 
-    setOpen(false)
+    hideAddress(false)
   }
 
   const { t: tr } = useTranslation('common')
@@ -769,25 +818,53 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
               </YMaps> */}
                 {/* )} */}
                 {/* {pickupIndex == 2 && ( */}
-                <div className="gap-2 grid">
+                <div className="gap-2 grid w-full">
                   {pickupPoints.map((point) => (
-                    <label className="inline-flex items-center">
+                    <label key={point.id}>
                       <div
-                        key={point.id}
-                        className={`border flex items-start p-3 rounded-[10px] cursor-pointer bg-gray-100 ${
+                        className={`border flex items-start p-3 rounded-[10px] cursor-pointer justify-between bg-gray-100 ${
                           activePoint && activePoint == point.id
                             ? 'border-gray-400'
                             : ''
-                        }`}
-                        onClick={() => choosePickupPoint(point.id)}
+                        }  ${!point.isWorking ? 'opacity-30' : ''}`}
+                        onClick={() => choosePickupPoint(point)}
                       >
                         <div>
                           <div className="text-[18px]">
                             {locale == 'ru' ? point.name : point.name_uz}
                           </div>
-                          <div className="text-gray-400 text-sm">
-                            {locale == 'ru' ? point.desc : point.desc_uz}
+                          {point.desc && (
+                            <div className="text-gray-400 text-sm">
+                              {tr('address')}:{' '}
+                              {locale == 'ru' ? point.desc : point.desc_uz}
+                            </div>
+                          )}
+                          {point.near && (
+                            <div className="text-gray-400 text-sm">
+                              {tr('nearLabel')}:{' '}
+                              {locale == 'ru' ? point.near : point.near_uz}
+                            </div>
+                          )}
+                          <div className="font-bold text-gray-700">
+                            {tr('terminalWorkTime', {
+                              workTimeStart: point.workTimeStart,
+                              workTimeEnd: point.workTimeEnd,
+                            })}
                           </div>
+                          {point.services && (
+                            <div className="flex py-2 space-x-3">
+                              {point.services
+                                .split(',')
+                                .map((service: string) => (
+                                  <span key={service}>
+                                    <img
+                                      src={`/assets/services/${service}.webp`}
+                                      alt=""
+                                    />
+                                  </span>
+                                ))}
+                            </div>
+                          )}
                         </div>
                         <div>
                           <input
@@ -796,9 +873,9 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
                               activePoint && activePoint == point.id
                                 ? ''
                                 : 'border'
-                              } text-green-500 form-checkbox rounded-md w-5 h-5 `}
-                            defaultChecked={false}
-                            checked={activePoint == point.id}
+                            } text-green-500 form-checkbox rounded-md w-5 h-5 `}
+                            defaultChecked={activePoint == point.id}
+                            // checked={activePoint == point.id}
                           />
                         </div>
                       </div>
