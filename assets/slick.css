@@ -1,11 +1,21 @@
 .slick-dots li.slick-active button:before {
-    color: red;
+  color: red;
 }
 
 .slick-prev {
-    left: -40px;
+  left: -40px;
 }
 
 .slick-next {
-    right: -40px;
+  right: -40px;
+}
+
+@media only screen and (max-width: 600px) {
+  .slick-prev {
+    display: none!important;
+  }
+
+  .slick-next {
+    display: none!important;
+  }
 }
