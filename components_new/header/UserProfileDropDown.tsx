@@ -85,8 +85,7 @@ const UserProfileDropDown: FC = () => {
           }
 
           return (
-            <a onClick={() => goTo(href)}>
-              <div className="cursor-pointer flex items-center py-4 px-5 justify-between">
+              <div className="cursor-pointer flex items-center py-4 px-5 justify-between" onClick={() => goTo(href)}>
                 <div className="flex items-center">
                   <img src={item.icon} />
                   <div className="ml-3">{item.name}</div>
@@ -95,7 +94,6 @@ const UserProfileDropDown: FC = () => {
                   <ChevronRightIcon className=" w-5 text-blue-500" />
                 </div>
               </div>
-            </a>
           )
         })}
 

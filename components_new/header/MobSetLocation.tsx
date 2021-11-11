@@ -64,7 +64,7 @@ const SetLocation: FC = () => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <div className="bg-white p-4 text-left transform h-screen overflow-y-auto w-full overflow-hidden">
+              <div className="bg-white text-left transform h-screen overflow-y-auto w-full overflow-hidden">
                 <MobLocationTabs setOpen={setOpen} />
               </div>
             </Transition.Child>

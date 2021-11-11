@@ -120,7 +120,7 @@ export default function Cart() {
       configData = configData.toString('ascii')
       configData = JSON.parse(configData)
       setConfigData(configData)
-    } catch (e) {}
+    } catch (e) { }
   }
 
   const setCredentials = async () => {
@@ -321,10 +321,10 @@ export default function Cart() {
                     className="flex justify-between items-center border-b pb-3"
                     key={lineItem.id}
                   >
-                    <div className="md:flex items-center text-center">
+                    <div className="flex  md:items-center text-center">
                       {lineItem.child &&
-                      lineItem.child.length &&
-                      lineItem.child[0].variant?.product?.id !=
+                        lineItem.child.length &&
+                        lineItem.child[0].variant?.product?.id !=
                         lineItem?.variant?.product?.box_id ? (
                         <div className="h-28 w-28 flex relative">
                           <div className="w-12 relative overflow-hidden">
@@ -360,7 +360,7 @@ export default function Cart() {
                           </div>
                         </div>
                       ) : (
-                        <div className="h-24 w-24 flex relative mr-4">
+                        <div className="md:w-24 md:h-24 flex relative mr-4">
                           <Image
                             src={
                               lineItem?.variant?.product?.assets?.length
@@ -374,46 +374,37 @@ export default function Cart() {
                         </div>
                       )}
                       <div className="md:ml-7 ml-1 space-y-2 md:w-72 md:text-left">
-                        <div className="text-xl font-bold">
+                        <div className="md:text-xl font-bold text-base">
                           {lineItem.child && lineItem.child.length > 1
-                            ? `${
-                                lineItem?.variant?.product?.attribute_data
-                                  ?.name[channelName][locale || 'ru']
-                              } + ${lineItem?.child
-                                .filter(
-                                  (v: any) =>
-                                    lineItem?.variant?.product?.box_id !=
-                                    v?.variant?.product?.id
-                                )
-                                .map(
-                                  (v: any) =>
-                                    v?.variant?.product?.attribute_data?.name[
-                                      channelName
-                                    ][locale || 'ru']
-                                )
-                                .join(' + ')}`
+                            ? `${lineItem?.variant?.product?.attribute_data
+                              ?.name[channelName][locale || 'ru']
+                            } + ${lineItem?.child
+                              .filter(
+                                (v: any) =>
+                                  lineItem?.variant?.product?.box_id !=
+                                  v?.variant?.product?.id
+                              )
+                              .map(
+                                (v: any) =>
+                                  v?.variant?.product?.attribute_data?.name[
+                                  channelName
+                                  ][locale || 'ru']
+                              )
+                              .join(' + ')}`
                             : lineItem?.variant?.product?.attribute_data?.name[
-                                channelName
-                              ][locale || 'ru']}
+                            channelName
+                            ][locale || 'ru']}
                         </div>
                       </div>
-                      {lineItem.modifiers && (
-                        <div className="md:flex">
-                          {lineItem.modifiers
-                            .filter((mod: any) => mod.price > 0)
-                            .map((mod: any) => (
-                              <div
-                                className="bg-yellow rounded-full px-2 py-1 md:ml-2 text-xs text-white my-2"
-                                key={mod.id}
-                              >
-                                {locale == 'uz' ? mod.name_uz : mod.name}
-                              </div>
-                            ))}
-                        </div>
-                      )}
                     </div>
-                    <div className="md:flex md:space-x-20 items-center hidden">
-                      <div className="text-xl font-medium text-center">
+                    <div className="md:flex md:space-x-20 items-center">
+                      <div className="bg-gray-200 p-2 rounded-md w-max md:hidden mx-auto">
+                        <XIcon
+                          className="cursor-pointer text-gray-400 w-5 "
+                          onClick={() => destroyLine(lineItem.id)}
+                        />
+                      </div>
+                      <div className="md:text-xl text-base md:font-medium text-center w-max mx-auto">
                         {currency(lineItem.total, {
                           pattern: '# !',
                           separator: ' ',
@@ -423,7 +414,7 @@ export default function Cart() {
                         }).format()}
                         <div className="text-xs">Цена за 1 шт</div>
                       </div>
-                      <div className="w-32 ml-14 bg-gray-200 rounded-lg flex items-center p-1">
+                      <div className="md:w-32 w-24 md:ml-14 bg-gray-200 rounded-lg flex items-center p-1">
                         <div className="items-center flex justify-around bg-white text-gray-500 rounded-md p-1 ">
                           <MinusIcon
                             className="cursor-pointer w-4 "
@@ -440,76 +431,32 @@ export default function Cart() {
                           />
                         </div>
                       </div>
-                      <div className="text-xl font-medium">
+                      <div className="m-auto md:font-medium md:text-xl text-base w-max">
                         {lineItem.child && lineItem.child.length
                           ? currency(
-                              (+lineItem.total + +lineItem.child[0].total) *
-                                lineItem.quantity,
-                              {
-                                pattern: '# !',
-                                separator: ' ',
-                                decimal: '.',
-                                symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                                precision: 0,
-                              }
-                            ).format()
-                          : currency(lineItem.total * lineItem.quantity, {
+                            (+lineItem.total + +lineItem.child[0].total) *
+                            lineItem.quantity,
+                            {
                               pattern: '# !',
                               separator: ' ',
                               decimal: '.',
                               symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
                               precision: 0,
-                            }).format()}
+                            }
+                          ).format()
+                          : currency(lineItem.total * lineItem.quantity, {
+                            pattern: '# !',
+                            separator: ' ',
+                            decimal: '.',
+                            symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                            precision: 0,
+                          }).format()}
                       </div>
-                      <div className="bg-gray-200 p-2 rounded-md">
+                      <div className="bg-gray-200 p-2 rounded-md w-max md:block hidden">
                         <XIcon
                           className="cursor-pointer text-gray-400 w-5 "
                           onClick={() => destroyLine(lineItem.id)}
                         />
-                      </div>
-                    </div>
-                    <div className="md:space-x-10 items-center md:hidden">
-                      <XIcon
-                        className="cursor-pointer h-4 text-black w-4 ml-auto"
-                        onClick={() => destroyLine(lineItem.id)}
-                      />
-                      <div className="text-xl mb-2">
-                        {lineItem.child && lineItem.child.length
-                          ? currency(
-                              (+lineItem.total + +lineItem.child[0].total) *
-                                lineItem.quantity,
-                              {
-                                pattern: '# !',
-                                separator: ' ',
-                                decimal: '.',
-                                symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                                precision: 0,
-                              }
-                            ).format()
-                          : currency(lineItem.total * lineItem.quantity, {
-                              pattern: '# !',
-                              separator: ' ',
-                              decimal: '.',
-                              symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                              precision: 0,
-                            }).format()}
-                      </div>
-                      <div className="w-20 h-6 bg-yellow rounded-full flex items-center text-white ml-auto">
-                        <div className="w-6 h-6 items-center flex justify-around">
-                          <MinusIcon
-                            className="cursor-pointer w-5 h-5"
-                            onClick={() => decreaseQuantity(lineItem)}
-                          />
-                        </div>
-                        <div className="flex-grow text-center">
-                          {lineItem.quantity}
-                        </div>
-                        <div className="w-6 h-6 items-center flex justify-around">
-                          <PlusIcon
-                            className="cursor-pointer w-5 h-5"
-                            onClick={() => increaseQuantity(lineItem.id)}
-                          />
-                        </div>
                       </div>
                     </div>
                   </div>

@@ -80,7 +80,7 @@ const Header: FC<{
       configData = configData.toString()
       configData = JSON.parse(configData)
       setConfigData(configData)
-    } catch (e) {}
+    } catch (e) { }
   }
 
   useEffect(() => {
@@ -112,7 +112,6 @@ const Header: FC<{
                 </a>
               </Link>
             </div>
-
             <div className="md:hidden">
               <MobSetLocation />
             </div>
@@ -144,14 +143,6 @@ const Header: FC<{
               </div>
             </div>
             <SignInButton />
-
-            {/* <div className="flex items-center">
-              <LanguageDropDown />
-              <XIcon
-                className="cursor-pointer h-5 text-secondary w-5"
-                onClick={() => setMenuOpen(false)}
-              />
-            </div> */}
           </div>
         </div>
         {mobMenuOpen && (

@@ -137,7 +137,6 @@ const Layout: FC<Props> = ({
             ) : (
               <div className="container mx-auto">{children}</div>
             )}
-
             <Overlay />
           </main>
           <footer className="md:flex flex-col flex border border-t bg-white">
@@ -286,7 +285,6 @@ const Layout: FC<Props> = ({
             </div>
           </footer>
         </div>
-
         <CityModal cities={cities} />
       </div>
       <div className={cn(styles.root)}>

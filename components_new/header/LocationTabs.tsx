@@ -77,14 +77,14 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
   const [selectedCoordinates, setSelectedCoordinates] = useState(
     locationData && locationData.location
       ? [
-          {
-            coordinates: {
-              lat: locationData.location[0],
-              long: locationData.location[1],
-            },
-            key: `${locationData.location[0]}${locationData.location[1]}`,
+        {
+          coordinates: {
+            lat: locationData.location[0],
+            long: locationData.location[1],
           },
-        ]
+          key: `${locationData.location[0]}${locationData.location[1]}`,
+        },
+      ]
       : ([] as any)
   )
   const [mapCenter, setMapCenter] = useState(
@@ -208,7 +208,7 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
       configData = configData.toString('ascii')
       configData = JSON.parse(configData)
       setConfigData(configData)
-    } catch (e) {}
+    } catch (e) { }
   }
 
   useEffect(() => {
@@ -445,7 +445,7 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
 
   return (
     <>
-      <div>
+      <div className="relative">
         <YMaps>
           <div>
             <Map
@@ -465,72 +465,74 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
                 'control.FullscreenControl',
                 'control.GeolocationControl',
               ]}
+              onClick={clickOnMap}
             >
               {tabIndex == 'pickup'
                 ? pickupPoints.map((point) => (
-                    <Placemark
-                      modules={['geoObject.addon.balloon']}
-                      defaultGeometry={[point.latitude, point.longitude]}
-                      key={point.id}
-                      onClick={() => choosePickupPoint(point.id)}
-                      // options={{
-                      //   iconColor:
-                      //     activePoint && activePoint == point.id
-                      //       ? '#FAAF04'
-                      //       : '#1E98FF',
-                      // }}
-                      properties={{
-                        balloonContentBody: `<b>${point.name}</b> <br />
+                  <Placemark
+                    modules={['geoObject.addon.balloon']}
+                    defaultGeometry={[point.latitude, point.longitude]}
+                    key={point.id}
+                    onClick={() => choosePickupPoint(point.id)}
+                    // options={{
+                    //   iconColor:
+                    //     activePoint && activePoint == point.id
+                    //       ? '#FAAF04'
+                    //       : '#1E98FF',
+                    // }}
+                    properties={{
+                      balloonContentBody: `<b>${point.name}</b> <br />
                           ${point.desc}
                           `,
-                      }}
-                      defaultOptions={{
-                        iconLayout: 'default#image',
-                        iconImageHref: '/map_placemark_pickup.png',
-                        iconImageSize:
-                          activePoint && activePoint == point.id
-                            ? [100, 100]
-                            : [50, 50],
-                      }}
-                    />
-                  ))
+                    }}
+                    defaultOptions={{
+                      iconLayout: 'default#image',
+                      iconImageHref: '/map_placemark_pickup.png',
+                      iconImageSize:
+                        activePoint && activePoint == point.id
+                          ? [100, 100]
+                          : [50, 50],
+                    }}
+                  />
+                ))
                 : selectedCoordinates.map((item: any, index: number) => (
-                    <Placemark
-                      modules={['geoObject.addon.balloon']}
-                      defaultGeometry={[
-                        item?.coordinates?.lat,
-                        item?.coordinates?.long,
-                      ]}
-                      geomerty={[
-                        item?.coordinates?.lat,
-                        item?.coordinates?.long,
-                      ]}
-                      key={item.key}
-                      defaultOptions={{
-                        iconLayout: 'default#image',
-                        iconImageHref: '/map_placemark.png',
-                        iconImageSize: [100, 100],
-                      }}
-                    />
-                  ))}
+                  <Placemark
+                    modules={['geoObject.addon.balloon']}
+                    defaultGeometry={[
+                      item?.coordinates?.lat,
+                      item?.coordinates?.long,
+                    ]}
+                    geomerty={[
+                      item?.coordinates?.lat,
+                      item?.coordinates?.long,
+                    ]}
+                    key={item.key}
+                    defaultOptions={{
+                      iconLayout: 'default#image',
+                      iconImageHref: '/map_placemark.png',
+                      iconImageSize: [100, 100],
+                    }}
+                  />
+                ))}
             </Map>
           </div>
         </YMaps>
       </div>
+      <div className="absolute bg-white right-20 rounded-2xl top-8 p-3 cursor-pointer" onClick={hideAddress}>
+        <XIcon className=" w-5" />
+      </div>
       <div className="w-96 absolute top-8 bg-white rounded-3xl p-5 left-40">
         <div className="bg-gray-100 flex rounded-full w-full p-1">
           <button
-            className={`${
-              tabIndex == 'deliver' ? 'bg-white' : ''
-            } flex-1 font-medium py-3 rounded-full outline-none focus:outline-none`}
+            className={`${tabIndex == 'deliver' ? 'bg-white' : ''
+              } flex-1 font-medium py-3 rounded-full outline-none focus:outline-none`}
             onClick={() => changeTabIndex('deliver')}
           >
             {tr('delivery')}
           </button>
           <button
-            className={`${
-              tabIndex == 'pickup' ? 'bg-white' : ''
-            } flex-1 font-medium py-3  rounded-full outline-none focus:outline-none`}
+            className={`${tabIndex == 'pickup' ? 'bg-white' : ''
+              } flex-1 font-medium py-3  rounded-full outline-none focus:outline-none`}
             onClick={() => changeTabIndex('pickup')}
           >
             {tr('pickup')}
@@ -592,35 +594,33 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
                           >
                             {isOpen
                               ? geoSuggestions.map(
-                                  (item: any, index: number) => (
-                                    <li
-                                      {...getItemProps({
-                                        key: index,
-                                        index,
-                                        item,
-                                        className: `py-2 px-4 flex items-center ${
-                                          highlightedIndex == index
-                                            ? 'bg-gray-100'
-                                            : 'bg-white'
+                                (item: any, index: number) => (
+                                  <li
+                                    {...getItemProps({
+                                      key: index,
+                                      index,
+                                      item,
+                                      className: `py-2 px-4 flex items-center ${highlightedIndex == index
+                                          ? 'bg-gray-100'
+                                          : 'bg-white'
                                         }`,
-                                      })}
-                                    >
-                                      <CheckIcon
-                                        className={`w-5 text-yellow font-bold mr-2 ${
-                                          highlightedIndex == index
-                                            ? ''
-                                            : 'invisible'
+                                    })}
+                                  >
+                                    <CheckIcon
+                                      className={`w-5 text-yellow font-bold mr-2 ${highlightedIndex == index
+                                          ? ''
+                                          : 'invisible'
                                         }`}
-                                      />
-                                      <div>
-                                        <div>{item.title}</div>
-                                        <div className="text-sm">
-                                          {item.description}
-                                        </div>
+                                    />
+                                    <div>
+                                      <div>{item.title}</div>
+                                      <div className="text-sm">
+                                        {item.description}
                                       </div>
-                                    </li>
-                                  )
+                                    </div>
+                                  </li>
                                 )
+                              )
                               : null}
                           </ul>
                         </div>
@@ -701,9 +701,8 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
                 <div className="mt-3">
                   <button
                     type="submit"
-                    className={`${
-                      haveAddress ? 'bg-green-500' : 'bg-gray-400'
-                    } font-medium px-12 py-3 rounded-xl text-[18px] text-white outline-none focus:outline-none w-full`}
+                    className={`${haveAddress ? 'bg-green-500' : 'bg-gray-400'
+                      } font-medium px-12 py-3 rounded-xl text-[18px] text-white outline-none focus:outline-none w-full`}
                     disabled={isSearchingTerminals}
                     onClick={(event: React.MouseEvent) => {
                       saveDeliveryData(undefined, event)
@@ -822,11 +821,10 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
                   {pickupPoints.map((point) => (
                     <label key={point.id}>
                       <div
-                        className={`border flex items-start p-3 rounded-[10px] cursor-pointer justify-between bg-gray-100 ${
-                          activePoint && activePoint == point.id
+                        className={`border flex items-start p-3 rounded-[10px] cursor-pointer justify-between bg-gray-100 ${activePoint && activePoint == point.id
                             ? 'border-gray-400'
                             : ''
-                        }  ${!point.isWorking ? 'opacity-30' : ''}`}
+                          }  ${!point.isWorking ? 'opacity-30' : ''}`}
                         onClick={() => choosePickupPoint(point)}
                       >
                         <div>
@@ -869,13 +867,12 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
                         <div>
                           <input
                             type="checkbox"
-                            className={`${
-                              activePoint && activePoint == point.id
+                            className={`${activePoint && activePoint == point.id
                                 ? ''
                                 : 'border'
-                            } text-green-500 form-checkbox rounded-md w-5 h-5 `}
+                              } text-green-500 form-checkbox rounded-md w-5 h-5 `}
                             defaultChecked={activePoint == point.id}
-                            // checked={activePoint == point.id}
+                          // checked={activePoint == point.id}
                           />
                         </div>
                       </div>
@@ -888,9 +885,8 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
             <div className="flex mt-4 justify-end">
               <button
                 type="submit"
-                className={`${
-                  activePoint ? 'bg-green-500' : 'bg-gray-200'
-                } font-medium px-12 py-3 rounded-lg text-[18px] text-white outline-none focus:outline-none w-full`}
+                className={`${activePoint ? 'bg-green-500' : 'bg-gray-200'
+                  } font-medium px-12 py-3 rounded-lg text-[18px] text-white outline-none focus:outline-none w-full`}
                 disabled={!activePoint}
                 onClick={submitPickup}
               >
