@@ -1,0 +1,11 @@
+@font-face {
+  font-family: 'Proxima Soft';
+  src: url(/fonts/ProximaSoft-Regular.woff2) format('woff2'),
+    url(/fonts/ProximaSoft-Regular.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Doughy';
+  src: url(/fonts/Doughy-Regular.woff2) format('woff2'),
+    url(/fonts/Doughy-Regular.woff) format('woff');
+}

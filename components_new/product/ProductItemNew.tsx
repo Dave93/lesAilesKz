@@ -334,7 +334,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
         id={`prod-${store.id}`}
       >
         <div>
-          <div className="text-center">
+          <div className="text-center overflow-hidden">
             {store.image ? (
               <img
                 src={store.image}
@@ -502,10 +502,16 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
                 <div className="inline-block align-bottom bg-white md:pt-12 pb-8 md:px-8 px-3 md:rounded-lg text-left shadow-xl transform transition-all sm:my-8 sm:align-middle h-full md:h-auto">
-                  <div className="md:hidden bg-gray-100 rounded-lg p-3 w-max my-5" onClick={() => setOpen(false)}>
+                  <div
+                    className="md:hidden bg-gray-100 rounded-lg p-3 w-max my-5"
+                    onClick={() => setOpen(false)}
+                  >
                     <ChevronDownIcon className="w-5" />
                   </div>
-                  <div className="absolute cursor-pointer text-gray-400 hidden md:block p-3 right-4 rounded-lg top-5 w-max" onClick={() => setOpen(false)}>
+                  <div
+                    className="absolute cursor-pointer text-gray-400 hidden md:block p-3 right-4 rounded-lg top-5 w-max"
+                    onClick={() => setOpen(false)}
+                  >
                     <XIcon className="w-5" />
                   </div>
                   <div className="md:flex md:w-max overflow-y-auto md:h-auto h-[calc(90vh-24px)]">
@@ -516,7 +522,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                         height={390}
                         alt={
                           store?.attribute_data?.name[channelName][
-                          locale || 'ru'
+                            locale || 'ru'
                           ]
                         }
                         className="transform motion-safe:group-hover:scale-105 transition duration-500"
@@ -526,7 +532,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                       <div className="font-bold text-2xl mt-10 md:mt-0">
                         {
                           store?.attribute_data?.name[channelName][
-                          locale || 'ru'
+                            locale || 'ru'
                           ]
                         }
                       </div>
@@ -535,8 +541,8 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                         dangerouslySetInnerHTML={{
                           __html: store?.attribute_data?.description
                             ? store?.attribute_data?.description[channelName][
-                            locale || 'ru'
-                            ]
+                                locale || 'ru'
+                              ]
                             : '',
                         }}
                       ></div>

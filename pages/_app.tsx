@@ -6,12 +6,12 @@ import 'react-toastify/dist/ReactToastify.css'
 import '@egjs/flicking-plugins/dist/arrow.css'
 import 'simplebar/dist/simplebar.min.css'
 import '@assets/simplebar.css'
-
+import '@assets/fonts.css'
 
 import '@assets/flicking.css'
 
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
 import '@assets/slick.css'
 
 import { FC, useEffect } from 'react'

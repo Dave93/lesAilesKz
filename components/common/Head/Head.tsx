@@ -27,25 +27,6 @@ const Head: FC = () => {
           sizes="180x180"
           href="/apple-touch-icon.png"
         />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="true"
-        />
-        <link
-          rel="preload"
-          href="/fonts/Doughy-Regular.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin=""
-        />
-        <link
-          rel="preload"
-          href="/fonts/ProximaSoft-Regular.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin=""
-        />
       </NextHead>
     </>
   )
