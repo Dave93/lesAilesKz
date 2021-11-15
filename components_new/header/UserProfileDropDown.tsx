@@ -61,7 +61,7 @@ const UserProfileDropDown: FC = () => {
           onClick={() => {
             popoverShow ? closePopover() : openPopover()
           }}
-          className="bg-gray-200 px-8 outline-none focus:outline-none mb-5 md:mb-0 py-2 rounded-xl"
+          className="bg-gray-200 px-8 outline-none focus:outline-none mb-5 md:mb-0 py-2 rounded-xl hidden md:block"
         >
           {user.user.name}
         </button>

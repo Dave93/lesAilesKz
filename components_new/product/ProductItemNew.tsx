@@ -24,7 +24,7 @@ import getConfig from 'next/config'
 import { useCart } from '@framework/cart'
 import { PlusIcon, XIcon } from '@heroicons/react/solid'
 import styles from './ProductItemNew.module.css'
-import { MinusIcon } from '@heroicons/react/outline'
+import { ChevronDownIcon, MinusIcon } from '@heroicons/react/outline'
 import Hashids from 'hashids'
 // import SessionContext from 'react-storefront/session/SessionContext'
 
@@ -467,12 +467,12 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
           <Dialog
             as="div"
             static
-            className="fixed z-10 inset-0 overflow-y-auto"
+            className="fixed z-50 inset-0"
             initialFocus={cancelButtonRef}
             open={open}
             onClose={setOpen}
           >
-            <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div className="flex items-end justify-center h-full md:pt-4 md:px-4 md:pb-20 text-center sm:block sm:p-0">
               <Transition.Child
                 as={Fragment}
                 enter="ease-out duration-300"
@@ -501,8 +501,14 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <div className="inline-block align-bottom bg-white pt-12 pb-8 px-8 rounded-lg text-left shadow-xl transform transition-all sm:my-8 sm:align-middle">
-                  <div className="flex w-max">
+                <div className="inline-block align-bottom bg-white md:pt-12 pb-8 md:px-8 px-3 md:rounded-lg text-left shadow-xl transform transition-all sm:my-8 sm:align-middle h-full md:h-auto">
+                  <div className="md:hidden bg-gray-100 rounded-lg p-3 w-max my-5" onClick={() => setOpen(false)}>
+                    <ChevronDownIcon className="w-5" />
+                  </div>
+                  <div className="absolute cursor-pointer text-gray-400 hidden md:block p-3 right-4 rounded-lg top-5 w-max" onClick={() => setOpen(false)}>
+                    <XIcon className="w-5" />
+                  </div>
+                  <div className="md:flex md:w-max overflow-y-auto md:h-auto h-[calc(90vh-24px)]">
                     <div>
                       <img
                         src={store.image}
@@ -510,17 +516,17 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                         height={390}
                         alt={
                           store?.attribute_data?.name[channelName][
-                            locale || 'ru'
+                          locale || 'ru'
                           ]
                         }
                         className="transform motion-safe:group-hover:scale-105 transition duration-500"
                       />
                     </div>
-                    <div className="flex flex-col ml-8">
-                      <div className="font-bold text-2xl ">
+                    <div className="flex flex-col md:ml-8 ">
+                      <div className="font-bold text-2xl mt-10 md:mt-0">
                         {
                           store?.attribute_data?.name[channelName][
-                            locale || 'ru'
+                          locale || 'ru'
                           ]
                         }
                       </div>
@@ -529,13 +535,13 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                         dangerouslySetInnerHTML={{
                           __html: store?.attribute_data?.description
                             ? store?.attribute_data?.description[channelName][
-                                locale || 'ru'
-                              ]
+                            locale || 'ru'
+                            ]
                             : '',
                         }}
                       ></div>
                       <div className="flex items-center justify-between">
-                        <div className=" font-medium">
+                        <div className=" font-medium text-3xl">
                           {currency(store.price, {
                             pattern: '# !',
                             separator: ' ',
@@ -545,7 +551,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                           }).format()}
                         </div>
                         {productLine ? (
-                          <div className="w-20 ml-14 bg-gray-200 rounded-lg flex items-center p-1">
+                          <div className="w-36 ml-14 bg-gray-200 rounded-lg flex items-center p-1">
                             <div className="items-center flex justify-around bg-white text-gray-500 rounded-md p-1 ">
                               <MinusIcon
                                 className="cursor-pointer w-4 "
@@ -563,7 +569,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                             </div>
                           </div>
                         ) : (
-                          <div className="w-20 ml-14 bg-gray-200 rounded-lg flex items-center p-1">
+                          <div className="w-36 ml-14 bg-gray-200 rounded-lg flex items-center p-1">
                             <div className="items-center flex justify-around bg-white text-gray-500 rounded-md p-1 ">
                               <MinusIcon
                                 className="cursor-pointer w-4 "
@@ -582,19 +588,35 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                           </div>
                         )}
                       </div>
-                      {productLine ? (
-                        <button className="text-lg font-medium bg-primary rounded-lg py-5 px-32 text-white mt-8 outline-none">
-                          Добавлено
-                        </button>
-                      ) : (
-                        <button
-                          className="text-lg font-medium bg-primary rounded-lg py-5 px-32 text-white mt-8 outline-none"
-                          onClick={popapAddToBasket}
-                        >
-                          В корзину
-                        </button>
-                      )}
+                      <div className="md:ml-auto md:w-96 hidden md:block">
+                        {productLine ? (
+                          <button className="text-lg font-medium md:bg-primary bg-green-500 rounded-lg py-5 px-32 text-white mt-8 outline-none w-full">
+                            Добавлено
+                          </button>
+                        ) : (
+                          <button
+                            className="text-lg font-medium md:bg-primary bg-green-500 rounded-lg py-5 px-32 text-white mt-8 outline-none w-full"
+                            onClick={popapAddToBasket}
+                          >
+                            В корзину
+                          </button>
+                        )}
+                      </div>
                     </div>
+                  </div>
+                  <div className="bottom-3 fixed left-0 md:hidden mx-3 right-0 w-auto">
+                    {productLine ? (
+                      <button className="text-lg font-medium md:bg-primary bg-green-500 rounded-lg py-5 px-32 text-white mt-8 outline-none w-full">
+                        Добавлено
+                      </button>
+                    ) : (
+                      <button
+                        className="text-lg font-medium md:bg-primary bg-green-500 rounded-lg py-5 px-32 text-white mt-8 outline-none w-full"
+                        onClick={popapAddToBasket}
+                      >
+                        В корзину
+                      </button>
+                    )}
                   </div>
                 </div>
               </Transition.Child>

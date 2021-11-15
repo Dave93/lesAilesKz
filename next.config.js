@@ -49,7 +49,7 @@ module.exports =
           'store.hq.fungeek.net',
           'api.hq.fungeek.net',
           'choparpizza.uz',
-          'api.choparpizza.uz',
+          'api.lesailes.uz',
         ],
       },
       pwa: {

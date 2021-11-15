@@ -3,10 +3,12 @@ import { XIcon } from '@heroicons/react/outline'
 import { useForm } from 'react-hook-form'
 import useTranslation from 'next-translate/useTranslation'
 import { useUI } from '@components/ui/context'
+import { useRouter } from 'next/router'
 
 const PersonalData: FC = () => {
   const { t: tr } = useTranslation('common')
   const { user, setUserData } = useUI()
+  const router = useRouter()
 
   type FormData = {
     name: string
@@ -43,10 +45,18 @@ const PersonalData: FC = () => {
     reset(newFields)
   }
 
+  const logout = (e: React.SyntheticEvent<EventTarget>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    localStorage.removeItem('mijoz')
+    setUserData(null)
+    router.push('/')
+  }
+
   return (
     <div className="md:w-96 m-auto mt-8">
       <div className="m-auto mb-5  text-2xl w-max">Мои данные</div>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} className="px-4">
         <div className="mt-10 rounded-lg text-sm w-full bg-gray-200 py-2 px-4">
           <label className="text-sm text-gray-400 block">
             {tr('personal_data_name')}
@@ -139,8 +149,16 @@ const PersonalData: FC = () => {
           </div>
         </div>
         <div className="mt-10">
-          <button className="text-white font-bold text-xl rounded-2xl bg-green-500 w-full py-5 px-32">
+          <button className="text-white font-bold text-xl rounded-xl bg-green-500 w-full py-5 px-32">
             {tr('personal_save_button')}
+          </button>
+        </div>
+        <div className="mt-5">
+          <button
+            className="bg-gray-200 rounded-xl w-full text-gray-400 py-5 mt-5"
+            onClick={logout}
+          >
+            Выйти
           </button>
         </div>
       </form>

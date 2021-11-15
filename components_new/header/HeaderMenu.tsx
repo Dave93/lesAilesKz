@@ -19,7 +19,7 @@ const HeaderMenu: FC<HeaderMenuItems> = ({ menuItems }) => {
           }
 
           return (
-            <li className="md:px-3" key={item.id}>
+            <li className="md:px-3 font-serif" key={item.id}>
               <Link href={href} prefetch={false}>
                 <a className="no-underline text-lg md:text-base">
                   {item[keyTyped]}

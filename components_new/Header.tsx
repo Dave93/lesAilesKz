@@ -10,7 +10,12 @@ import React, {
 import SetLocation from '@components_new/header/SetLocation'
 import Link from 'next/link'
 import ChooseCityDropDown from './header/ChooseCityDropDown'
-import { MenuIcon, XIcon } from '@heroicons/react/outline'
+import {
+  ChevronRightIcon,
+  MenuIcon,
+  UserCircleIcon,
+  XIcon,
+} from '@heroicons/react/outline'
 import HeaderMenu from '@components_new/header/HeaderMenu'
 import SignInButton from './header/SignInButton'
 import LanguageDropDown from './header/LanguageDropDown'
@@ -31,6 +36,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import MobSetLocation from './header/MobSetLocation'
+import menuItems from '@commerce/data/profileMenu'
+
 const { publicRuntimeConfig } = getConfig()
 
 const CartWithNoSSR = dynamic(
@@ -42,7 +49,14 @@ const Header: FC<{
   menu: Array<APILinkItem>
 }> = ({ menu = [] }) => {
   const { locale = 'ru' } = useRouter()
-  const { activeCity, cities, openSignInModal, closeSignInModal } = useUI()
+  const {
+    activeCity,
+    cities,
+    openSignInModal,
+    closeSignInModal,
+    user,
+    hideOverlay,
+  } = useUI()
 
   const chosenCity = useMemo(() => {
     if (activeCity) {
@@ -56,7 +70,10 @@ const Header: FC<{
   const { t: tr } = useTranslation('common')
   const [configData, setConfigData] = useState({} as any)
   const [channelName, setChannelName] = useState('chopar')
+  const [popoverShow, setPopoverShow] = React.useState(false)
   const { showAddress, locationData } = useUI()
+
+  const router = useRouter()
 
   const getChannel = async () => {
     const channelData = await defaultChannel()
@@ -80,7 +97,7 @@ const Header: FC<{
       configData = configData.toString()
       configData = JSON.parse(configData)
       setConfigData(configData)
-    } catch (e) { }
+    } catch (e) {}
   }
 
   useEffect(() => {
@@ -95,6 +112,25 @@ const Header: FC<{
 
   const closeModal = () => {
     closeSignInModal()
+  }
+
+  const closePopover = () => {
+    hideOverlay()
+    setPopoverShow(false)
+  }
+
+  let items = menuItems.map((item) => {
+    return {
+      ...item,
+      name: tr(item.langCode),
+    }
+  })
+
+  const goTo = (link: string) => {
+    setMobMenuOpen(false)
+    router.push(link, undefined, {
+      locale,
+    })
   }
 
   return (
@@ -166,18 +202,49 @@ const Header: FC<{
                 />
               </div>
             </div>
-            <div className="border-b border-t mb-3 py-5">
-              <button
-                className="text-2xl px-4"
-                onClick={() => {
-                  openModal()
-                }}
-              >
-                Войти
-              </button>
-            </div>
+            {!user ? (
+              <div className="border-b border-t mb-3 py-5">
+                <button
+                  className="text-2xl px-4"
+                  onClick={() => {
+                    openModal()
+                  }}
+                >
+                  Войти
+                </button>
+              </div>
+            ) : (
+              <div className="border-b mb-4">
+                <div className="flex items-center border-b border-t py-2 px-3">
+                  <UserCircleIcon className="h-10 w-10 text-gray-400" />
+                  <div className="text-2xl ml-5">{user.user.name}</div>
+                </div>
+                {items.map((item) => {
+                  let href = `${item.href}`
 
-            <div className="px-4 border-b mb-3 pb-3">
+                  if (href.indexOf('http') < 0) {
+                    href = `/${activeCity.slug}${item.href}`
+                  }
+
+                  return (
+                    <div
+                      className="cursor-pointer flex items-center py-4 px-4 justify-between"
+                      onClick={() => goTo(href)}
+                    >
+                      <div className="flex items-center">
+                        <img src={item.icon} />
+                        <div className="ml-3">{item.name}</div>
+                      </div>
+                      <div>
+                        <ChevronRightIcon className=" w-5 text-blue-500" />
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+
+            <div className="px-4 mb-3 pb-3">
               <HeaderMenu menuItems={menu} />
             </div>
             <LanguageDropDown />

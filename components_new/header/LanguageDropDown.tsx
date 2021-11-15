@@ -30,7 +30,7 @@ const LanguageDropDown: FC = () => {
     })
   }
   return (
-    <div className="md:bg-white bg-gray-200 p-4 md:p-0 rounded-2xl flex justify-around">
+    <div className="md:bg-white bg-gray-100 p-4 md:p-0 rounded-2xl flex justify-around">
       <a
         className={`${
           locale == 'ru' ? 'bg-primary text-white' : 'bg-white'
