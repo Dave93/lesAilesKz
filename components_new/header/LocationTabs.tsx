@@ -796,7 +796,7 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
                               activePoint && activePoint == point.id
                                 ? ''
                                 : 'border'
-                              } text-green-500 form-checkbox rounded-md w-5 h-5 `}
+                            } text-green-500 form-checkbox rounded-md w-5 h-5 `}
                             defaultChecked={false}
                             checked={activePoint == point.id}
                           />
