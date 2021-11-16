@@ -49,8 +49,8 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        sans: ['Ubuntu', ...defaultTheme.fontFamily.sans],
-        serif: ['Ubuntu', ...defaultTheme.fontFamily.serif],
+        sans: ['"Proxima Soft"', ...defaultTheme.fontFamily.sans],
+        serif: ['Doughy', ...defaultTheme.fontFamily.serif],
         mono: [...defaultTheme.fontFamily.mono],
       },
       gradientColorStops: (theme) => ({

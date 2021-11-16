@@ -61,7 +61,7 @@ const UserProfileDropDown: FC = () => {
           onClick={() => {
             popoverShow ? closePopover() : openPopover()
           }}
-          className="bg-gray-200 px-8 outline-none focus:outline-none mb-5 md:mb-0 py-2 rounded-xl"
+          className="bg-gray-200 px-8 outline-none focus:outline-none mb-5 md:mb-0 py-2 rounded-xl hidden md:block"
         >
           {user.user.name}
         </button>
@@ -85,8 +85,7 @@ const UserProfileDropDown: FC = () => {
           }
 
           return (
-            <a onClick={() => goTo(href)}>
-              <div className="cursor-pointer flex items-center py-4 px-5 justify-between">
+              <div className="cursor-pointer flex items-center py-4 px-5 justify-between" onClick={() => goTo(href)}>
                 <div className="flex items-center">
                   <img src={item.icon} />
                   <div className="ml-3">{item.name}</div>
@@ -95,7 +94,6 @@ const UserProfileDropDown: FC = () => {
                   <ChevronRightIcon className=" w-5 text-blue-500" />
                 </div>
               </div>
-            </a>
           )
         })}
 

@@ -72,14 +72,14 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
   const [selectedCoordinates, setSelectedCoordinates] = useState(
     locationData && locationData.location
       ? [
-          {
-            coordinates: {
-              lat: locationData.location[0],
-              long: locationData.location[1],
-            },
-            key: `${locationData.location[0]}${locationData.location[1]}`,
+        {
+          coordinates: {
+            lat: locationData.location[0],
+            long: locationData.location[1],
           },
-        ]
+          key: `${locationData.location[0]}${locationData.location[1]}`,
+        },
+      ]
       : ([] as any)
   )
 
@@ -98,6 +98,8 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
   )
 
   const [configData, setConfigData] = useState({} as any)
+
+  const [searchAddress, setSearchAddress] = useState(true);
 
   let currentAddress = ''
   if (activeCity.active) {
@@ -157,7 +159,7 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
       configData = configData.toString('ascii')
       configData = JSON.parse(configData)
       setConfigData(configData)
-    } catch (e) {}
+    } catch (e) { }
   }
 
   useEffect(() => {
@@ -235,6 +237,8 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
         setValue('house', address.name)
       }
     })
+    setGeoSuggestions([])
+    setSearchAddress(false)
   }
 
   const clickOnMap = async (event: any) => {
@@ -270,6 +274,7 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
       address: data.data.formatted,
       house,
     })
+    setSearchAddress(false)
   }
 
   const mapState = useMemo<MapState>(() => {
@@ -375,19 +380,25 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
     return null
   }, [cities, activeCity])
 
-    let haveAddress = watch('address')
+  let haveAddress = watch('address')
 
-    const resetField = (fieldName: string) => {
-      const newFields: any = {
-        ...getValues(),
-      }
-      newFields[fieldName] = null
-      reset(newFields)
+  const resetField = (fieldName: string) => {
+    const newFields: any = {
+      ...getValues(),
     }
+    newFields[fieldName] = null
+    reset(newFields)
+  }
+
+  const cleanAddress = () => {
+    resetField('address')
+    setGeoSuggestions([])
+    setSearchAddress(true)
+  }
 
   return (
     <>
-      <div>
+      <div className="relative">
         <YMaps>
           <div>
             <Map
@@ -407,72 +418,74 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
                 'control.FullscreenControl',
                 'control.GeolocationControl',
               ]}
+              onClick={clickOnMap}
             >
               {tabIndex == 'pickup'
                 ? pickupPoints.map((point) => (
-                    <Placemark
-                      modules={['geoObject.addon.balloon']}
-                      defaultGeometry={[point.latitude, point.longitude]}
-                      key={point.id}
-                      onClick={() => choosePickupPoint(point.id)}
-                      // options={{
-                      //   iconColor:
-                      //     activePoint && activePoint == point.id
-                      //       ? '#FAAF04'
-                      //       : '#1E98FF',
-                      // }}
-                      properties={{
-                        balloonContentBody: `<b>${point.name}</b> <br />
+                  <Placemark
+                    modules={['geoObject.addon.balloon']}
+                    defaultGeometry={[point.latitude, point.longitude]}
+                    key={point.id}
+                    onClick={() => choosePickupPoint(point.id)}
+                    // options={{
+                    //   iconColor:
+                    //     activePoint && activePoint == point.id
+                    //       ? '#FAAF04'
+                    //       : '#1E98FF',
+                    // }}
+                    properties={{
+                      balloonContentBody: `<b>${point.name}</b> <br />
                           ${point.desc}
                           `,
-                      }}
-                      defaultOptions={{
-                        iconLayout: 'default#image',
-                        iconImageHref: '/map_placemark_pickup.png',
-                        iconImageSize:
-                          activePoint && activePoint == point.id
-                            ? [100, 100]
-                            : [50, 50],
-                      }}
-                    />
-                  ))
+                    }}
+                    defaultOptions={{
+                      iconLayout: 'default#image',
+                      iconImageHref: '/map_placemark_pickup.png',
+                      iconImageSize:
+                        activePoint && activePoint == point.id
+                          ? [100, 100]
+                          : [50, 50],
+                    }}
+                  />
+                ))
                 : selectedCoordinates.map((item: any, index: number) => (
-                    <Placemark
-                      modules={['geoObject.addon.balloon']}
-                      defaultGeometry={[
-                        item?.coordinates?.lat,
-                        item?.coordinates?.long,
-                      ]}
-                      geomerty={[
-                        item?.coordinates?.lat,
-                        item?.coordinates?.long,
-                      ]}
-                      key={item.key}
-                      defaultOptions={{
-                        iconLayout: 'default#image',
-                        iconImageHref: '/map_placemark.png',
-                        iconImageSize: [100, 100],
-                      }}
-                    />
-                  ))}
+                  <Placemark
+                    modules={['geoObject.addon.balloon']}
+                    defaultGeometry={[
+                      item?.coordinates?.lat,
+                      item?.coordinates?.long,
+                    ]}
+                    geomerty={[
+                      item?.coordinates?.lat,
+                      item?.coordinates?.long,
+                    ]}
+                    key={item.key}
+                    defaultOptions={{
+                      iconLayout: 'default#image',
+                      iconImageHref: '/map_placemark.png',
+                      iconImageSize: [50, 50],
+                    }}
+                  />
+                ))}
             </Map>
           </div>
         </YMaps>
       </div>
-      <div className="left-0 absolute top-8 bg-white rounded-3xl p-5">
+      <div className="absolute bg-white right-10 rounded-2xl top-8 p-3 cursor-pointer" onClick={() => setOpen(false)}>
+        <XIcon className=" w-5" />
+      </div>
+      <div className="left-0 absolute bottom-0 bg-white rounded-t-3xl p-5 w-full overflow-y-auto">
         <div className="bg-gray-100 flex rounded-full w-full p-1">
           <button
-            className={`${
-              tabIndex == 'deliver' ? 'bg-white' : ''
-            } flex-1 font-medium py-3 rounded-full outline-none focus:outline-none`}
+            className={`${tabIndex == 'deliver' ? 'bg-white' : ''
+              } flex-1 font-medium py-3 rounded-full outline-none focus:outline-none`}
             onClick={() => changeTabIndex('deliver')}
           >
             {tr('delivery')}
           </button>
           <button
-            className={`${
-              tabIndex == 'pickup' ? 'bg-white' : ''
-            } flex-1 font-medium py-3  rounded-full outline-none focus:outline-none`}
+            className={`${tabIndex == 'pickup' ? 'bg-white' : ''
+              } flex-1 font-medium py-3  rounded-full outline-none focus:outline-none`}
             onClick={() => changeTabIndex('pickup')}
           >
             {tr('pickup')}
@@ -483,201 +496,161 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
             <div className="mt-2">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="mt-8">
-                  <Downshift
-                    onChange={(selection) => setSelectedAddress(selection)}
-                    ref={downshiftControl}
-                    itemToString={(item) =>
-                      item ? item.formatted : watch('address')
-                    }
-                    initialInputValue={locationData?.address || currentAddress}
+                  <div
+                    className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl"
                   >
-                    {({
-                      getInputProps,
-                      getItemProps,
-                      getLabelProps,
-                      getMenuProps,
-                      isOpen,
-                      inputValue,
-                      highlightedIndex,
-                      selectedItem,
-                      getRootProps,
-                    }) => (
-                      <>
-                        <div
-                          className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl"
-                          {...getRootProps(undefined, {
-                            suppressRefError: true,
-                          })}
+                    <div className="text-xs text-gray-400">
+                      {tr('chooseLocation')}
+                    </div>
+                    <div className="flex mt-2">
+                      <input
+                        type="text"
+                        {...register('address')}
+                        onChange={debouncedAddressInputChangeHandler}
+                        placeholder={tr('chooseLocation')}
+                        className="bg-gray-100  w-full outline-none focus:outline-none"
+                      />
+                      <XIcon
+                        className="w-5 text-gray-400 cursor-pointer"
+                        onClick={cleanAddress}
+                      />
+                    </div>
+
+
+                  </div>
+                  <ul
+                    className={searchAddress ? "p-4" : ''}
+                  >
+                    {geoSuggestions.map(
+                      (item: any, index: number) => (
+                        <li
+                          key={index}
+                          onClick=
+                          {() => { setSelectedAddress(item) }}
+                          className="border-b pb-2"
                         >
-                          <div className="text-xs text-gray-400">
-                            {tr('chooseLocation')}
+                          <div>
+                            <div>{item.title}</div>
+                            <div className="text-sm">
+                              {item.description}
+                            </div>
                           </div>
-                          <div className="flex">
-                            <input
-                              type="text"
-                              {...register('address')}
-                              {...getInputProps({
-                                onChange: debouncedAddressInputChangeHandler,
-                              })}
-                              placeholder={tr('chooseLocation')}
-                              className="bg-gray-100 mt-2 w-full outline-none focus:outline-none"
-                            />
-                            <XIcon
-                              className="w-5 text-gray-400 cursor-pointer"
-                              onClick={() => resetField('address')}
-                            />
-                          </div>
-
-                          <ul
-                            {...getMenuProps()}
-                            className="absolute w-full z-[1000] rounded-[15px] shadow-lg"
-                          >
-                            {isOpen
-                              ? geoSuggestions.map(
-                                  (item: any, index: number) => (
-                                    <li
-                                      {...getItemProps({
-                                        key: index,
-                                        index,
-                                        item,
-                                        className: `py-2 px-4 flex items-center ${
-                                          highlightedIndex == index
-                                            ? 'bg-gray-100'
-                                            : 'bg-white'
-                                        }`,
-                                      })}
-                                    >
-                                      <CheckIcon
-                                        className={`w-5 text-yellow font-bold mr-2 ${
-                                          highlightedIndex == index
-                                            ? ''
-                                            : 'invisible'
-                                        }`}
-                                      />
-                                      <div>
-                                        <div>{item.title}</div>
-                                        <div className="text-sm">
-                                          {item.description}
-                                        </div>
-                                      </div>
-                                    </li>
-                                  )
-                                )
-                              : null}
-                          </ul>
-                        </div>
-                      </>
-                    )}
-                  </Downshift>
-                  <div className="flex mt-2 space-x-2">
-                    <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl">
-                      <div className="text-xs text-gray-400">{tr('house')}</div>
-                      <input
-                        type="text"
-                        {...register('house')}
-                        placeholder={tr('house')}
-                        className="bg-gray-100 w-full mt-2 focus:outline-none"
-                      />
-                    </div>
-                    <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl">
-                      <div className="text-xs text-gray-400">{tr('flat')}</div>
-                      <input
-                        type="text"
-                        {...register('flat')}
-                        placeholder={tr('flat')}
-                        className="bg-gray-100 w-full mt-2 focus:outline-none"
-                      />
-                    </div>
-                  </div>
+                        </li>
+                      )
+                    )
+                    }
+                  </ul>
                 </div>
-
-                <div className="mt-2">
-                  <div className="flex mt-2 space-x-2">
-                    <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl">
-                      <div className="text-xs text-gray-400">
-                        {tr('entrance')}
+                {!searchAddress && (
+                  <div>
+                    <div className="flex mt-2 space-x-2">
+                      <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl">
+                        <div className="text-xs text-gray-400">{tr('house')}</div>
+                        <input
+                          type="text"
+                          {...register('house')}
+                          placeholder={tr('house')}
+                          className="bg-gray-100 w-full mt-2 focus:outline-none"
+                        />
                       </div>
-                      <input
-                        type="text"
-                        {...register('entrance')}
-                        placeholder={tr('entrance')}
-                        className="bg-gray-100 w-full mt-2 focus:outline-none"
-                      />
+                      <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl">
+                        <div className="text-xs text-gray-400">{tr('flat')}</div>
+                        <input
+                          type="text"
+                          {...register('flat')}
+                          placeholder={tr('flat')}
+                          className="bg-gray-100 w-full mt-2 focus:outline-none"
+                        />
+                      </div>
                     </div>
-                    <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl">
-                      <div className="text-xs text-gray-400">{tr('floor')}</div>
-                      <input
-                        type="text"
-                        {...register('floor')}
-                        placeholder={tr('floor')}
-                        className="bg-gray-100 w-full mt-2 focus:outline-none"
-                      />
+                    <div className="mt-2">
+                      <div className="flex mt-2 space-x-2">
+                        <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl">
+                          <div className="text-xs text-gray-400">
+                            {tr('entrance')}
+                          </div>
+                          <input
+                            type="text"
+                            {...register('entrance')}
+                            placeholder={tr('entrance')}
+                            className="bg-gray-100 w-full mt-2 focus:outline-none"
+                          />
+                        </div>
+                        <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl">
+                          <div className="text-xs text-gray-400">{tr('floor')}</div>
+                          <input
+                            type="text"
+                            {...register('floor')}
+                            placeholder={tr('floor')}
+                            className="bg-gray-100 w-full mt-2 focus:outline-none"
+                          />
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-                <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl mt-2">
-                  <div className="text-xs text-gray-400">Название адреса</div>
-                  <div className="flex">
-                    <input
-                      type="text"
-                      {...register('address_name')}
-                      placeholder="Например, Дом или Работа"
-                      className="bg-gray-100 mt-2 w-full outline-none focus:outline-none"
-                    />
-                  </div>
-                </div>
-                <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl mt-2">
-                  <div className="text-xs text-gray-400">
-                    Комментарий к адресу
-                  </div>
-                  <div className="flex">
-                    <input
-                      type="text"
-                      {...register('comments')}
-                      placeholder="Например, Код от домофона 2233
+                    <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl mt-2">
+                      <div className="text-xs text-gray-400">Название адреса</div>
+                      <div className="flex">
+                        <input
+                          type="text"
+                          {...register('address_name')}
+                          placeholder="Например, Дом или Работа"
+                          className="bg-gray-100 mt-2 w-full outline-none focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                    <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl mt-2">
+                      <div className="text-xs text-gray-400">
+                        Комментарий к адресу
+                      </div>
+                      <div className="flex">
+                        <input
+                          type="text"
+                          {...register('comments')}
+                          placeholder="Например, Код от домофона 2233
 "
-                      className="bg-gray-100 mt-2 w-full outline-none focus:outline-none"
-                    />
-                  </div>
-                </div>
-                <div className="mt-3">
-                  <button
-                    type="submit"
-                    className={`${
-                      haveAddress ? 'bg-green-500' : 'bg-gray-400'
-                    } font-medium px-12 py-3 rounded-xl text-[18px] text-white outline-none focus:outline-none w-full`}
-                    disabled={isSearchingTerminals}
-                    onClick={(event: React.MouseEvent) => {
-                      saveDeliveryData(undefined, event)
-                      hideAddress()
-                    }}
-                  >
-                    {isSearchingTerminals ? (
-                      <svg
-                        className="animate-spin h-5 mx-auto text-center text-white w-5"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
+                          className="bg-gray-100 mt-2 w-full outline-none focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                    <div className="mt-3">
+                      <button
+                        type="submit"
+                        className={`${haveAddress ? 'bg-green-500' : 'bg-gray-400'
+                          } font-medium px-12 py-3 rounded-xl text-[18px] text-white outline-none focus:outline-none w-full`}
+                        disabled={isSearchingTerminals}
+                        onClick={(event: React.MouseEvent) => {
+                          saveDeliveryData(undefined, event)
+                          hideAddress()
+                        }}
                       >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      tr('confirm')
-                    )}
-                  </button>
-                </div>
+                        {isSearchingTerminals ? (
+                          <svg
+                            className="animate-spin h-5 mx-auto text-center text-white w-5"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                        ) : (
+                          tr('confirm')
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </form>
             </div>
           </div>
@@ -765,11 +738,10 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
                     <label className="inline-flex items-center">
                       <div
                         key={point.id}
-                        className={`border flex items-start p-3 rounded-[10px] cursor-pointer bg-gray-100 ${
-                          activePoint && activePoint == point.id
-                            ? 'border-gray-400'
-                            : ''
-                        }`}
+                        className={`border flex items-start p-3 rounded-[10px] cursor-pointer bg-gray-100 ${activePoint && activePoint == point.id
+                          ? 'border-gray-400'
+                          : ''
+                          }`}
                         onClick={() => choosePickupPoint(point.id)}
                       >
                         <div>
@@ -783,11 +755,10 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
                         <div>
                           <input
                             type="checkbox"
-                            className={`${
-                              activePoint && activePoint == point.id
-                                ? ''
-                                : 'border'
-                            } text-green-500 form-checkbox rounded-md w-5 h-5 `}
+                            className={`${activePoint && activePoint == point.id
+                              ? ''
+                              : 'border'
+                              } text-green-500 form-checkbox rounded-md w-5 h-5 `}
                             defaultChecked={false}
                             checked={activePoint == point.id}
                           />
@@ -802,9 +773,8 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
             <div className="flex mt-4 justify-end">
               <button
                 type="submit"
-                className={`${
-                  activePoint ? 'bg-green-500' : 'bg-gray-200'
-                } font-medium px-12 py-3 rounded-lg text-[18px] text-white outline-none focus:outline-none w-full`}
+                className={`${activePoint ? 'bg-green-500' : 'bg-gray-200'
+                  } font-medium px-12 py-3 rounded-lg text-[18px] text-white outline-none focus:outline-none w-full`}
                 disabled={!activePoint}
                 onClick={submitPickup}
               >

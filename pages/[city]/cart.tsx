@@ -120,7 +120,7 @@ export default function Cart() {
       configData = configData.toString('ascii')
       configData = JSON.parse(configData)
       setConfigData(configData)
-    } catch (e) {}
+    } catch (e) { }
   }
 
   const setCredentials = async () => {
@@ -307,7 +307,7 @@ export default function Cart() {
       )}
       {!isEmpty && (
         <>
-          <div className="md:p-10 p-5 md:rounded-2xl text-xl mt-5 bg-white md:mb-3">
+          <div className="md:p-0 p-5 md:rounded-2xl text-xl mt-5 bg-white md:mb-10">
             <div className="flex justify-between items-center">
               <div className="text-3xl">{tr('basket')} </div>
               {/* <div className="text-gray-400 text-sm flex cursor-pointer">
@@ -318,13 +318,13 @@ export default function Cart() {
               {data &&
                 data?.lineItems.map((lineItem: any) => (
                   <div
-                    className="flex justify-between items-center border-b pb-3"
+                    className="flex md:justify-between md:items-center border-b pb-3"
                     key={lineItem.id}
                   >
-                    <div className="md:flex items-center text-center">
+                    <div className="flex  md:items-center text-center">
                       {lineItem.child &&
-                      lineItem.child.length &&
-                      lineItem.child[0].variant?.product?.id !=
+                        lineItem.child.length &&
+                        lineItem.child[0].variant?.product?.id !=
                         lineItem?.variant?.product?.box_id ? (
                         <div className="h-28 w-28 flex relative">
                           <div className="w-12 relative overflow-hidden">
@@ -338,7 +338,7 @@ export default function Cart() {
                                 width="100"
                                 height="100"
                                 layout="fixed"
-                                className="absolute rounded-full"
+                                className="absolute rounded-xl w-max"
                               />
                             </div>
                           </div>
@@ -354,66 +354,51 @@ export default function Cart() {
                                 width="100"
                                 height="100"
                                 layout="fixed"
-                                className="rounded-full"
+                                className="rounded-xl"
                               />
                             </div>
                           </div>
                         </div>
                       ) : (
-                        <div className="h-24 w-24 flex relative mr-4">
+                        <div className="md:w-24 md:h-24 flex relative mr-4 w-max">
                           <Image
                             src={
                               lineItem?.variant?.product?.assets?.length
                                 ? `${webAddress}/storage/${lineItem?.variant?.product?.assets[0]?.location}/${lineItem?.variant?.product?.assets[0]?.filename}`
                                 : '/no_photo.svg'
                             }
-                            width={100}
-                            height={100}
-                            className="rounded-full"
+                            width={120}
+                            height={120}
+                            className="rounded-xl"
                           />
                         </div>
                       )}
-                      <div className="md:ml-7 ml-1 space-y-2 md:w-72 md:text-left">
-                        <div className="text-xl font-bold">
+                      <div className="md:ml-7 ml-1 space-y-2 md:w-72 md:text-left md:block hidden">
+                        <div className="md:text-xl font-medium text-base">
                           {lineItem.child && lineItem.child.length > 1
-                            ? `${
-                                lineItem?.variant?.product?.attribute_data
-                                  ?.name[channelName][locale || 'ru']
-                              } + ${lineItem?.child
-                                .filter(
-                                  (v: any) =>
-                                    lineItem?.variant?.product?.box_id !=
-                                    v?.variant?.product?.id
-                                )
-                                .map(
-                                  (v: any) =>
-                                    v?.variant?.product?.attribute_data?.name[
-                                      channelName
-                                    ][locale || 'ru']
-                                )
-                                .join(' + ')}`
+                            ? `${lineItem?.variant?.product?.attribute_data
+                              ?.name[channelName][locale || 'ru']
+                            } + ${lineItem?.child
+                              .filter(
+                                (v: any) =>
+                                  lineItem?.variant?.product?.box_id !=
+                                  v?.variant?.product?.id
+                              )
+                              .map(
+                                (v: any) =>
+                                  v?.variant?.product?.attribute_data?.name[
+                                  channelName
+                                  ][locale || 'ru']
+                              )
+                              .join(' + ')}`
                             : lineItem?.variant?.product?.attribute_data?.name[
-                                channelName
-                              ][locale || 'ru']}
+                            channelName
+                            ][locale || 'ru']}
                         </div>
                       </div>
-                      {lineItem.modifiers && (
-                        <div className="md:flex">
-                          {lineItem.modifiers
-                            .filter((mod: any) => mod.price > 0)
-                            .map((mod: any) => (
-                              <div
-                                className="bg-yellow rounded-full px-2 py-1 md:ml-2 text-xs text-white my-2"
-                                key={mod.id}
-                              >
-                                {locale == 'uz' ? mod.name_uz : mod.name}
-                              </div>
-                            ))}
-                        </div>
-                      )}
                     </div>
                     <div className="md:flex md:space-x-20 items-center hidden">
-                      <div className="text-xl font-medium text-center">
+                      <div className="md:text-xl text-base md:font-medium text-center w-max mx-auto">
                         {currency(lineItem.total, {
                           pattern: '# !',
                           separator: ' ',
@@ -423,7 +408,7 @@ export default function Cart() {
                         }).format()}
                         <div className="text-xs">Цена за 1 шт</div>
                       </div>
-                      <div className="w-32 ml-14 bg-gray-200 rounded-lg flex items-center p-1">
+                      <div className="md:w-32 w-24 md:ml-14 bg-gray-200 rounded-lg flex items-center p-1">
                         <div className="items-center flex justify-around bg-white text-gray-500 rounded-md p-1 ">
                           <MinusIcon
                             className="cursor-pointer w-4 "
@@ -440,83 +425,129 @@ export default function Cart() {
                           />
                         </div>
                       </div>
-                      <div className="text-xl font-medium">
+                      <div className="m-auto md:font-medium md:text-xl text-base w-max">
                         {lineItem.child && lineItem.child.length
                           ? currency(
-                              (+lineItem.total + +lineItem.child[0].total) *
-                                lineItem.quantity,
-                              {
-                                pattern: '# !',
-                                separator: ' ',
-                                decimal: '.',
-                                symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                                precision: 0,
-                              }
-                            ).format()
-                          : currency(lineItem.total * lineItem.quantity, {
+                            (+lineItem.total + +lineItem.child[0].total) *
+                            lineItem.quantity,
+                            {
                               pattern: '# !',
                               separator: ' ',
                               decimal: '.',
                               symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
                               precision: 0,
-                            }).format()}
+                            }
+                          ).format()
+                          : currency(lineItem.total * lineItem.quantity, {
+                            pattern: '# !',
+                            separator: ' ',
+                            decimal: '.',
+                            symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                            precision: 0,
+                          }).format()}
                       </div>
-                      <div className="bg-gray-200 p-2 rounded-md">
+                      <div className="bg-gray-200 p-2 rounded-md w-max md:block hidden">
                         <XIcon
                           className="cursor-pointer text-gray-400 w-5 "
                           onClick={() => destroyLine(lineItem.id)}
                         />
                       </div>
                     </div>
-                    <div className="md:space-x-10 items-center md:hidden">
-                      <XIcon
-                        className="cursor-pointer h-4 text-black w-4 ml-auto"
-                        onClick={() => destroyLine(lineItem.id)}
-                      />
-                      <div className="text-xl mb-2">
+                    <div className="md:hidden w-full space-y-3">
+                      <div className="flex justify-between">
+                        <div className="md:text-xl font-medium text-base">
+                          {lineItem.child && lineItem.child.length > 1
+                            ? `${lineItem?.variant?.product?.attribute_data
+                              ?.name[channelName][locale || 'ru']
+                            } + ${lineItem?.child
+                              .filter(
+                                (v: any) =>
+                                  lineItem?.variant?.product?.box_id !=
+                                  v?.variant?.product?.id
+                              )
+                              .map(
+                                (v: any) =>
+                                  v?.variant?.product?.attribute_data?.name[
+                                  channelName
+                                  ][locale || 'ru']
+                              )
+                              .join(' + ')}`
+                            : lineItem?.variant?.product?.attribute_data?.name[
+                            channelName
+                            ][locale || 'ru']}
+                        </div>
+                        <div className="bg-gray-200 p-1 rounded-md w-max md:hidden">
+                          <XIcon
+                            className="cursor-pointer text-gray-400 w-5 "
+                            onClick={() => destroyLine(lineItem.id)}
+                          />
+                        </div>
+                      </div>
+                      <div className="flex justify-between">
+                        <div className="md:text-xl text-base md:font-medium">
+                          {currency(lineItem.total, {
+                            pattern: '# !',
+                            separator: ' ',
+                            decimal: '.',
+                            symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                            precision: 0,
+                          }).format()}
+                          <div className="text-xs">Цена за 1 шт</div>
+                        </div>
+                        <div className="md:w-32 w-24 md:ml-14 bg-gray-200 rounded-lg flex items-center p-1">
+                          <div className="items-center flex justify-around bg-white text-gray-500 rounded-md p-1 ">
+                            <MinusIcon
+                              className="cursor-pointer w-4 "
+                              onClick={() => decreaseQuantity(lineItem)}
+                            />
+                          </div>
+                          <div className="flex-grow text-center text-gray-500 font-medium">
+                            {lineItem.quantity}
+                          </div>
+                          <div className=" items-center flex justify-around bg-white text-gray-500 rounded-md p-1">
+                            <PlusIcon
+                              className="cursor-pointer w-4 "
+                              onClick={() => increaseQuantity(lineItem.id)}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div></div>
+                      
+                      
+                      <div className="ml-auto md:font-medium md:text-xl text-base w-max">
                         {lineItem.child && lineItem.child.length
                           ? currency(
-                              (+lineItem.total + +lineItem.child[0].total) *
-                                lineItem.quantity,
-                              {
-                                pattern: '# !',
-                                separator: ' ',
-                                decimal: '.',
-                                symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                                precision: 0,
-                              }
-                            ).format()
-                          : currency(lineItem.total * lineItem.quantity, {
+                            (+lineItem.total + +lineItem.child[0].total) *
+                            lineItem.quantity,
+                            {
                               pattern: '# !',
                               separator: ' ',
                               decimal: '.',
                               symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
                               precision: 0,
-                            }).format()}
+                            }
+                          ).format()
+                          : currency(lineItem.total * lineItem.quantity, {
+                            pattern: '# !',
+                            separator: ' ',
+                            decimal: '.',
+                            symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                            precision: 0,
+                          }).format()}
                       </div>
-                      <div className="w-20 h-6 bg-yellow rounded-full flex items-center text-white ml-auto">
-                        <div className="w-6 h-6 items-center flex justify-around">
-                          <MinusIcon
-                            className="cursor-pointer w-5 h-5"
-                            onClick={() => decreaseQuantity(lineItem)}
-                          />
-                        </div>
-                        <div className="flex-grow text-center">
-                          {lineItem.quantity}
-                        </div>
-                        <div className="w-6 h-6 items-center flex justify-around">
-                          <PlusIcon
-                            className="cursor-pointer w-5 h-5"
-                            onClick={() => increaseQuantity(lineItem.id)}
-                          />
-                        </div>
+                      <div className="bg-gray-200 p-2 rounded-md w-max md:block hidden">
+                        <XIcon
+                          className="cursor-pointer text-gray-400 w-5 "
+                          onClick={() => destroyLine(lineItem.id)}
+                        />
                       </div>
                     </div>
                   </div>
                 ))}
             </div>
           </div>
-          <div className="rounded-2xl bg-gray-200 flex items-center justify-between px-10 py-16">
+          <div className="rounded-2xl md:bg-gray-200 md:flex items-center justify-between md:px-10 px-5 md:py-16">
             {/* <div className="md:w-72">
                 <form onSubmit={handleSubmit(onSubmit)} className="relative">
                   <input
@@ -530,9 +561,9 @@ export default function Cart() {
                   </button>
                 </form>
               </div> */}
-            <div className="flex font-bold items-center justify-between">
+            <div className="flex font-bold items-center justify-between bg-gray-200 rounded-xl p-4 md:p-0">
               <div className="text-lg">{tr('basket_order_price')}</div>
-              <div className="ml-7 text-3xl text-medium">
+              <div className="ml-7 md:text-3xl text-xl text-medium">
                 {currency(data.totalPrice, {
                   pattern: '# !',
                   separator: ' ',
@@ -543,7 +574,7 @@ export default function Cart() {
               </div>
             </div>
             <button
-              className={`bg-green-600 md:text-xl rounded-2xl text-white w-64 py-5 px-12 font-medium`}
+              className={`bg-green-600 md:text-xl rounded-2xl text-white md:w-64 w-full py-5 px-12 font-medium md:mt-0 mt-5 `}
               onClick={goToCheckout}
             >
               {tr('checkout')}

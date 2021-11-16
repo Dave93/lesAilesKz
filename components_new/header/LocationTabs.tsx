@@ -40,6 +40,8 @@ import useTranslation from 'next-translate/useTranslation'
 import { City } from '@commerce/types/cities'
 import router, { useRouter } from 'next/router'
 import SimpleBar from 'simplebar-react'
+import { chunk, sortBy } from 'lodash'
+import { DateTime } from 'luxon'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -67,6 +69,9 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
   )
   const [pickupIndex, setPickupIndex] = useState(1)
   const [pickupPoints, setPickupPoint] = useState([] as any[])
+  const map = useRef<any>(null)
+  const [ymaps, setYmaps] = useState<any>(null)
+  const objects = useRef<any>(null)
 
   const [geoSuggestions, setGeoSuggestions] = useState([])
   const [isSearchingTerminals, setIsSearchingTerminals] = useState(false)
@@ -143,8 +148,49 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
       `${webAddress}/api/terminals/pickup?city_id=${activeCity.id}`
     )
     let res: any[] = []
+    let currentTime = DateTime.local()
+    let weekDay = currentTime.weekday
     data.data.map((item: any) => {
       if (item.latitude) {
+        item.isWorking = false
+        if (weekDay >= 1 && weekDay < 6) {
+          let openWork = DateTime.fromISO(item.open_work)
+          openWork = openWork.set({ day: currentTime.day })
+          openWork = openWork.set({ year: currentTime.year })
+          openWork = openWork.set({ month: currentTime.month })
+          let closeWork = DateTime.fromISO(item.close_work)
+          closeWork = closeWork.set({ day: currentTime.day })
+          closeWork = closeWork.set({ year: currentTime.year })
+          closeWork = closeWork.set({ month: currentTime.month })
+          if (closeWork.hour < openWork.hour) {
+            closeWork = closeWork.set({ day: currentTime.day + 1 })
+          }
+
+          if (currentTime >= openWork && currentTime < closeWork) {
+            item.isWorking = true
+          }
+          item.workTimeStart = openWork.toFormat('HH:mm')
+          item.workTimeEnd = closeWork.toFormat('HH:mm')
+        } else {
+          let openWork = DateTime.fromISO(item.open_weekend)
+          openWork = openWork.set({ day: currentTime.day })
+          openWork = openWork.set({ year: currentTime.year })
+          openWork = openWork.set({ month: currentTime.month })
+          let closeWork = DateTime.fromISO(item.close_weekend)
+          closeWork = closeWork.set({ day: currentTime.day })
+          closeWork = closeWork.set({ year: currentTime.year })
+          closeWork = closeWork.set({ month: currentTime.month })
+          if (closeWork.hour < openWork.hour) {
+            closeWork = closeWork.set({ day: currentTime.day + 1 })
+          }
+
+          if (currentTime >= openWork && currentTime < closeWork) {
+            item.isWorking = true
+          }
+          item.workTimeStart = openWork.toFormat('HH:mm')
+          item.workTimeEnd = closeWork.toFormat('HH:mm')
+        }
+
         res.push(item)
       }
     })
@@ -298,12 +344,19 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
     saveDeliveryData(data, null)
   }
 
-  const choosePickupPoint = (pointId: number) => {
-    setActivePoint(pointId)
-    let terminalData = pickupPoints.find((pickup: any) => pickup.id == pointId)
+  const choosePickupPoint = (point: any) => {
+    if (!point.isWorking) {
+      toast.warn(tr('terminal_is_not_working'), {
+        position: toast.POSITION.BOTTOM_RIGHT,
+        hideProgressBar: true,
+      })
+      return
+    }
+    setActivePoint(point.id)
+    let terminalData = pickupPoints.find((pickup: any) => pickup.id == point.id)
     setLocationData({
       ...locationData,
-      terminal_id: pointId,
+      terminal_id: point.id,
       terminalData,
     })
   }
@@ -358,7 +411,7 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
         terminal_id: terminalsData.data.items[0].id,
         terminalData: terminalsData.data.items[0],
       })
-      setOpen(false)
+      hideAddress()
     }
   }
 
@@ -371,7 +424,7 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
       return
     }
 
-    setOpen(false)
+    hideAddress(false)
   }
 
   const { t: tr } = useTranslation('common')
@@ -394,28 +447,82 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
     reset(newFields)
   }
 
+  const loadPolygonsToMap = (ymaps: any) => {
+    setYmaps(ymaps)
+    var geolocation = ymaps.geolocation
+    geolocation
+      .get({
+        provider: 'yandex',
+        mapStateAutoApply: true,
+      })
+      .then((result: any) => {
+        console.log(result)
+      })
+    let geoObjects: any = {
+      type: 'FeatureCollection',
+      metadata: {
+        name: 'delivery',
+        creator: 'Yandex Map Constructor',
+      },
+      features: [],
+    }
+    cities.map((city: any) => {
+      if (city.polygons) {
+        let arrPolygons = city.polygons.split(',').map((poly: any) => +poly)
+        arrPolygons = chunk(arrPolygons, 2)
+        arrPolygons = arrPolygons.map((poly: any) => sortBy(poly))
+        let polygon: any = {
+          type: 'Feature',
+          id: 0,
+          geometry: {
+            type: 'Polygon',
+            coordinates: [arrPolygons],
+          },
+          properties: {
+            fill: '#FAAF04',
+            fillOpacity: 0.1,
+            stroke: '#FAAF04',
+            strokeWidth: '7',
+            strokeOpacity: 0.4,
+            slug: city.slug,
+          },
+        }
+        geoObjects.features.push(polygon)
+      }
+    })
+    let deliveryZones = ymaps.geoQuery(geoObjects).addToMap(map.current)
+    deliveryZones.each((obj: any) => {
+      obj.options.set({
+        fillColor: obj.properties.get('fill'),
+        fillOpacity: obj.properties.get('fillOpacity'),
+        strokeColor: obj.properties.get('stroke'),
+        strokeWidth: obj.properties.get('strokeWidth'),
+        strokeOpacity: obj.properties.get('strokeOpacity'),
+      })
+      obj.events.add('click', clickOnMap)
+    })
+    objects.current = deliveryZones
+  }
+
   return (
     <>
-      <div>
+      <div className="relative">
         <YMaps>
           <div>
             <Map
-              defaultState={{
-                center: [40.351706, 69.090118],
-                zoom: 7.2,
-                controls: [
-                  'zoomControl',
-                  'fullscreenControl',
-                  'geolocationControl',
-                ],
-              }}
+              state={mapState}
+              onLoad={(ymaps: any) => loadPolygonsToMap(ymaps)}
+              instanceRef={(ref) => (map.current = ref)}
               width="100%"
               height="100vh"
               modules={[
                 'control.ZoomControl',
                 'control.FullscreenControl',
                 'control.GeolocationControl',
+                'geoQuery',
+                'geolocation',
               ]}
+              onClick={clickOnMap}
             >
               {tabIndex == 'pickup'
                 ? pickupPoints.map((point) => (
@@ -467,6 +574,12 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
             </Map>
           </div>
         </YMaps>
+      </div>
+      <div
+        className="absolute bg-white right-20 rounded-2xl top-8 p-3 cursor-pointer"
+        onClick={hideAddress}
+      >
+        <XIcon className=" w-5" />
       </div>
       <div className="w-96 absolute top-8 bg-white rounded-3xl p-5 left-40">
         <div className="bg-gray-100 flex rounded-full w-full p-1">
@@ -769,25 +882,53 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
               </YMaps> */}
                 {/* )} */}
                 {/* {pickupIndex == 2 && ( */}
-                <div className="gap-2 grid">
+                <div className="gap-2 grid w-full">
                   {pickupPoints.map((point) => (
-                    <label className="inline-flex items-center">
+                    <label key={point.id}>
                       <div
-                        key={point.id}
-                        className={`border flex items-start p-3 rounded-[10px] cursor-pointer bg-gray-100 ${
+                        className={`border flex items-start p-3 rounded-[10px] cursor-pointer justify-between bg-gray-100 ${
                           activePoint && activePoint == point.id
                             ? 'border-gray-400'
                             : ''
-                        }`}
-                        onClick={() => choosePickupPoint(point.id)}
+                        }  ${!point.isWorking ? 'opacity-30' : ''}`}
+                        onClick={() => choosePickupPoint(point)}
                       >
                         <div>
                           <div className="text-[18px]">
                             {locale == 'ru' ? point.name : point.name_uz}
                           </div>
-                          <div className="text-gray-400 text-sm">
-                            {locale == 'ru' ? point.desc : point.desc_uz}
+                          {point.desc && (
+                            <div className="text-gray-400 text-sm">
+                              {tr('address')}:{' '}
+                              {locale == 'ru' ? point.desc : point.desc_uz}
+                            </div>
+                          )}
+                          {point.near && (
+                            <div className="text-gray-400 text-sm">
+                              {tr('nearLabel')}:{' '}
+                              {locale == 'ru' ? point.near : point.near_uz}
+                            </div>
+                          )}
+                          <div className="font-bold text-gray-700">
+                            {tr('terminalWorkTime', {
+                              workTimeStart: point.workTimeStart,
+                              workTimeEnd: point.workTimeEnd,
+                            })}
                           </div>
+                          {point.services && (
+                            <div className="flex py-2 space-x-3">
+                              {point.services
+                                .split(',')
+                                .map((service: string) => (
+                                  <span key={service}>
+                                    <img
+                                      src={`/assets/services/${service}.webp`}
+                                      alt=""
+                                    />
+                                  </span>
+                                ))}
+                            </div>
+                          )}
                         </div>
                         <div>
                           <input
@@ -797,8 +938,8 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
                                 ? ''
                                 : 'border'
                             } text-green-500 form-checkbox rounded-md w-5 h-5 `}
-                            defaultChecked={false}
-                            checked={activePoint == point.id}
+                            defaultChecked={activePoint == point.id}
+                            // checked={activePoint == point.id}
                           />
                         </div>
                       </div>
