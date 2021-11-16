@@ -226,21 +226,22 @@ const Layout: FC<Props> = ({
                       </div>
                     </div>
                     <div className="mb-10 mt-5 md:mt-0 md:mb-0">
-                      <ul className="flex  text-2xl">
+                      <ul className="flex  items-center text-2xl">
                         {socials.map((soc) => {
                           return (
-                            <li key={soc.code} className="mx-1">
+                            <li
+                              key={soc.code}
+                              className="mx-1 bg-gray-700 rounded-xl p-3"
+                            >
                               <a
                                 target="_blank"
                                 className="no-underline "
                                 href={soc.link}
                               >
-                                <div className="bg-gray-700 rounded-xl p-3">
                                   <FontAwesomeIcon
                                     icon={socIcons[soc.code]}
-                                    className="text-white flex items-center"
+                                    className="text-white w-5 h-5"
                                   />
-                                </div>
                               </a>
                             </li>
                           )

@@ -151,7 +151,7 @@ const CityModal: FC<Props> = ({ cities }) => {
               leaveTo="opacity-0 scale-95"
             >
               <div className="align-middle bg-white inline-block max-w-md mt-40 overflow-hidden p-10 rounded-2xl text-left transform transition-all w-full">
-                <Dialog.Title as="h3" className="text-3xl m-auto w-max">
+                <Dialog.Title as="h3" className="m-auto text-3xl text-center">
                   {tr('isThisYourCity', {
                     city: locale == 'uz' ? activeCity.name_uz : activeCity.name,
                   })}

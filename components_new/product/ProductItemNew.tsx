@@ -437,7 +437,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
               >
                 {isLoadingBasket ? (
                   <svg
-                    className="animate-spin w-10 text-white flex-grow text-center"
+                    className="animate-spin text-white flex-grow text-center"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"

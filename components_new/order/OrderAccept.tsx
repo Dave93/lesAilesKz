@@ -112,7 +112,7 @@ const OrderAccept: FC<OrderDetailProps> = ({ order, orderStatuses }) => {
 
   return (
     <div>
-      <div className="p-10 rounded-2xl text-xl mt-5 bg-white">
+      {/* <div className="p-10 rounded-2xl text-xl mt-5 bg-white">
         <div className=" flex justify-between">
           <div>
             <div className="text-base text-gray-500 mb-2">
@@ -159,58 +159,49 @@ const OrderAccept: FC<OrderDetailProps> = ({ order, orderStatuses }) => {
             </div>
           ))}
         </div>
-      </div>
-      <div className="p-10 rounded-2xl text-xl mt-5 bg-white">
-        <div className="text-lg mb-7 font-bold">{tr('delivery_address')}</div>
-        <div>
-          {order?.billing_address}
-          {order.house
-            ? ', ' + tr('house').toLocaleLowerCase() + ': ' + order.house
-            : ''}
-          {order.flat
-            ? ', ' + tr('flat').toLocaleLowerCase() + ': ' + order.flat
-            : ''}
-          {order.entrance
-            ? ', ' + tr('entrance').toLocaleLowerCase() + ': ' + order.entrance
-            : ''}
-          {order.door_code
-            ? ', ' +
-              tr('code_on_doors').toLocaleLowerCase() +
-              ': ' +
-              order.door_code
-            : ''}
+      </div> */}
+
+      <div className="p-10 rounded-2xl text-xl mt-5 shadow-2xl">
+        <div className="flex items-center justify-between">
+          <div className="text-3xl font-bold flex items-center">
+            <div>{tr('order_is_accepted')}</div>
+            <div className="md:ml-2"> № {order.id}</div>
+            <div className="text-base text-gray-400 md:ml-5">
+              {DateTime.fromISO(order?.created_at)
+                .setLocale(`${locale == 'uz' ? 'uz' : 'ru'}`)
+                .setZone('Asia/Tashkent')
+                .toLocaleString(DateTime.DATETIME_MED)}
+            </div>
+          </div>
+          <div className="bg-green-500 text-sm rounded-lg py-2 px-7 text-white">
+            {Object.keys(orderStatuses).map(
+              (status: any, key) =>
+                key === currentStatusIndex && (
+                  <div className="">{tr(`order_status_${status}`)}</div>
+                )
+            )}
+          </div>
         </div>
-        <div></div>
-      </div>
-      <div className="p-10 rounded-2xl text-xl mt-5 bg-white">
-        <div className="text-lg mb-10 font-bold">
-          {order?.basket?.lines.length} {tr('product')}{' '}
-          {locale == 'ru' ? 'на' : ''}{' '}
-          {currency(order?.order_total / 100, {
-            pattern: '# !',
-            separator: ' ',
-            decimal: '.',
-            symbol: `${tr('sum')}`,
-            precision: 0,
-          }).format()}
+        <div className="text-xl my-10 mx-12">
+          {order?.basket?.lines.length} {tr('product')}
         </div>
-        {order?.basket?.lines.map((pizza: any) => (
+        {order?.basket?.lines.map((item: any) => (
           <div
-            className="flex items-center justify-between border-b mt-4 pb-4"
-            key={pizza.id}
+            className="flex items-center justify-between border-b mt-4 pb-4 mx-12"
+            key={item.id}
           >
             <div className="flex items-center">
-              {pizza.child &&
-              pizza.child.length &&
-              pizza.child[0].variant?.product?.id !=
-                pizza?.variant?.product?.box_id ? (
+              {item.child &&
+              item.child.length &&
+              item.child[0].variant?.product?.id !=
+                item?.variant?.product?.box_id ? (
                 <div className="h-24 w-24 flex relative">
                   <div className="w-12 relative overflow-hidden">
                     <div>
                       <Image
                         src={
-                          pizza?.variant?.product?.assets?.length
-                            ? `${webAddress}/storage/${pizza?.variant?.product?.assets[0]?.location}/${pizza?.variant?.product?.assets[0]?.filename}`
+                          item?.variant?.product?.assets?.length
+                            ? `${webAddress}/storage/${item?.variant?.product?.assets[0]?.location}/${item?.variant?.product?.assets[0]?.filename}`
                             : '/no_photo.svg'
                         }
                         width="95"
@@ -224,8 +215,8 @@ const OrderAccept: FC<OrderDetailProps> = ({ order, orderStatuses }) => {
                     <div className="absolute right-0">
                       <Image
                         src={
-                          pizza?.child[0].variant?.product?.assets?.length
-                            ? `${webAddress}/storage/${pizza?.child[0].variant?.product?.assets[0]?.location}/${pizza?.child[0].variant?.product?.assets[0]?.filename}`
+                          item?.child[0].variant?.product?.assets?.length
+                            ? `${webAddress}/storage/${item?.child[0].variant?.product?.assets[0]?.location}/${item?.child[0].variant?.product?.assets[0]?.filename}`
                             : '/no_photo.svg'
                         }
                         width="95"
@@ -240,8 +231,8 @@ const OrderAccept: FC<OrderDetailProps> = ({ order, orderStatuses }) => {
                 <div>
                   <Image
                     src={
-                      pizza?.variant?.product?.assets?.length
-                        ? `${webAddress}/storage/${pizza?.variant?.product?.assets[0]?.location}/${pizza?.variant?.product?.assets[0]?.filename}`
+                      item?.variant?.product?.assets?.length
+                        ? `${webAddress}/storage/${item?.variant?.product?.assets[0]?.location}/${item?.variant?.product?.assets[0]?.filename}`
                         : '/no_photo.svg'
                     }
                     width={95}
@@ -252,46 +243,87 @@ const OrderAccept: FC<OrderDetailProps> = ({ order, orderStatuses }) => {
               )}
               <div className="ml-5">
                 <div className="text-xl font-bold">
-                  {pizza.child && pizza.child.length > 1
+                  {item.child && item.child.length > 1
                     ? `${
-                        pizza?.variant?.product?.attribute_data?.name[
+                        item?.variant?.product?.attribute_data?.name[
                           channelName
                         ][locale || 'ru']
                       } + ${
-                        pizza?.child[0].variant?.product?.attribute_data?.name[
+                        item?.child[0].variant?.product?.attribute_data?.name[
                           channelName
                         ][locale || 'ru']
                       }`
-                    : pizza?.variant?.product?.attribute_data?.name[
-                        channelName
-                      ][locale || 'ru']}
+                    : item?.variant?.product?.attribute_data?.name[channelName][
+                        locale || 'ru'
+                      ]}
                 </div>
               </div>
             </div>
-            <div>
-              {pizza.child && pizza.child.length
-                ? currency(
-                    (+pizza.total + +pizza.child[0].total) * pizza.quantity,
-                    {
-                      pattern: '# !',
-                      separator: ' ',
-                      decimal: '.',
-                      symbol: 'сум',
-                      precision: 0,
-                    }
-                  ).format()
-                : currency(pizza.total * pizza.quantity, {
+            <div className="flex items-center justify-between w-64">
+              <div className="text-green-500 mr-10">{item.quantity} шт</div>
+              <div>
+                {item.child &&
+                  currency(item.total * item.quantity, {
                     pattern: '# !',
                     separator: ' ',
                     decimal: '.',
                     symbol: 'сум',
                     precision: 0,
                   }).format()}
+              </div>
             </div>
           </div>
         ))}
+        <div className="flex justify-between mt-14">
+          <div className="p-5 rounded-2xl text-xl mt-5 bg-white border border-gray-200 w-3/4">
+            <div className="text-lg mb-7 font-bold">
+              {tr('delivery_address')}
+            </div>
+            <div>
+              {order?.billing_address}
+              {order.house
+                ? ', ' + tr('house').toLocaleLowerCase() + ': ' + order.house
+                : ''}
+              {order.flat
+                ? ', ' + tr('flat').toLocaleLowerCase() + ': ' + order.flat
+                : ''}
+              {order.entrance
+                ? ', ' +
+                  tr('entrance').toLocaleLowerCase() +
+                  ': ' +
+                  order.entrance
+                : ''}
+              {order.door_code
+                ? ', ' +
+                  tr('code_on_doors').toLocaleLowerCase() +
+                  ': ' +
+                  order.door_code
+                : ''}
+            </div>
+          </div>
+          <div className="p-5 rounded-2xl text-xl mt-5 bg-white border border-gray-200 w-1/4 ml-2">
+            <div className="text-xl mb-8">Сумма заказа</div>
+            <div>
+              <div className="text-base">Оплата картой </div>
+              {currency(order?.order_total / 100, {
+                pattern: '# !',
+                separator: ' ',
+                decimal: '.',
+                symbol: `${tr('sum')}`,
+                precision: 0,
+              }).format()}
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="p-10 rounded-2xl text-xl mt-5 bg-white mb-3">
+
+      <div
+        className="text-xl text-white bg-green-500 rounded-2xl mt-20 w-max m-auto py-5 px-16 cursor-pointer"
+        onClick={() => router.push(`/${activeCity}`)}
+      >
+        <div>{tr('to_main')}</div>
+      </div>
+      {/* <div className="p-10 rounded-2xl text-xl mt-5 bg-white mb-3 border border-gray-400">
         {reviewsData && reviewsData.length > 0 && (
           <div className="mt-2 mb-4">
             <div className="text-lg mb-4 font-bold">{tr('your_reviews')}</div>
@@ -354,10 +386,6 @@ const OrderAccept: FC<OrderDetailProps> = ({ order, orderStatuses }) => {
           </button>
         </form>
         <div className="flex justify-end mt-8">
-          {/* <button className="text-xl text-gray-500 bg-gray-100 flex h-12 items-center  rounded-full w-80 justify-evenly">
-            <img src="/left.png" />
-            <div>{tr('cancel_the_order')}</div>
-          </button> */}
           <button
             className="text-xl text-white bg-yellow flex h-12 items-center justify-evenly rounded-full md:w-80 w-full"
             onClick={() => router.push(`/${activeCity}`)}
@@ -366,7 +394,7 @@ const OrderAccept: FC<OrderDetailProps> = ({ order, orderStatuses }) => {
             <img src="/right.png" />
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }
