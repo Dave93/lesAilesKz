@@ -19,40 +19,47 @@ const UserData: FC = () => {
     }
   })
 
-  const logout = (e: React.SyntheticEvent<EventTarget>) => {
-    e.preventDefault()
-    e.stopPropagation()
-    localStorage.removeItem('mijoz')
-    setUserData(null)
-    router.push(`/${activeCity.slug}`)
-  }
+  console.log(router.asPath)
 
   return (
     <div className="px-20 py-3 bg-gray-200 my-5 rounded-2xl">
       <div className="flex justify-around">
         {items.map((item, id) => (
-          <div className="flex  bg-white rounded-lg p-4 items-center" key={id}>
+          <div
+            className={`${
+              router.asPath == '/' + activeCity.slug + item.href
+                ? 'bg-primary'
+                : 'bg-white'
+            } flex rounded-lg p-4 items-center`}
+            key={id}
+          >
             <img
-              src={`${pathname == item.href ? item.activeIcon : item.icon}`}
+              src={`${
+                router.asPath == '/' + activeCity.slug + item.href
+                  ? item.activeIcon
+                  : item.icon
+              }`}
+              className={`${
+                router.asPath == '/' + activeCity.slug + item.href
+                  ? 'text-white'
+                  : 'fill-current text-black'
+              }`}
             />
-            {item.href == '/profile/logout' ? (
-              <span
-                className="block ml-1 text-sm cursor-pointer text-gray-400"
-                onClick={logout}
+            <Link
+              href={'/' + activeCity.slug + item.href}
+              locale={locale}
+              prefetch={false}
+            >
+              <a
+                className={`${
+                  router.asPath == '/' + activeCity.slug + item.href
+                    ? 'text-white'
+                    : ''
+                } ml-1 text-sm`}
               >
                 {item.name}
-              </span>
-            ) : (
-              <Link href={item.href} locale={locale} prefetch={false}>
-                <a
-                  className={`${
-                    pathname == item.href ? 'text-yellow' : 'text-gray-400'
-                  } ml-1 text-sm`}
-                >
-                  {item.name}
-                </a>
-              </Link>
-            )}
+              </a>
+            </Link>
           </div>
         ))}
       </div>

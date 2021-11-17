@@ -15,14 +15,14 @@ const menuItems: profileMenuItem[] = [
 
   {
     href: '/profile/account',
-    icon: '/Setting.png',
-    activeIcon: '/activePersonal.png',
+    icon: '/setting.svg',
+    activeIcon: '/activeSetting.svg',
     langCode: 'profile_account',
   },
   {
     href: '/profile/orders',
-    icon: '/Bag.png',
-    activeIcon: '/activeOrder.png',
+    icon: '/inActivebag.svg',
+    activeIcon: '/bag.svg',
     langCode: 'profile_orders',
   },
   // {

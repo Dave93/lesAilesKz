@@ -43,7 +43,7 @@ const Orders: FC<OrdersListProps> = ({ orders }) => {
   }, [])
   return (
     <div>
-      <div className="text-2xl mt-8 mb-5">{tr('order_myOrders')}</div>
+      <div className="text-3xl my-12 m-auto w-max">{tr('order_myOrders')}</div>
       {orders.length === 0 && (
         <div className="flex justify-around">
           <div className="space-y-4 text-center">
@@ -54,263 +54,184 @@ const Orders: FC<OrdersListProps> = ({ orders }) => {
           </div>
         </div>
       )}
-      {orders.length &&
-        orders.map((order: any) => (
-          <div className="border  p-10 rounded-2xl text-xl mt-5" key={order.id}>
-            <Disclosure>
-              {({ open }) => (
-                <>
-                  <div className="flex  text-base justify-between border-b pb-8">
-                    {open ? (
-                      <div className="font-bold text-xl text-secondary">
-                        <Link href={`${'/order/' + hashids.encode(order.id)}`}>
-                          <a>
-                            {tr('order')} № {order.id}
-                          </a>
-                        </Link>
-                      </div>
-                    ) : (
-                      <div> № {order.id}</div>
-                    )}
 
-                    {!open && (
-                      <>
-                        <div>
-                          {DateTime.fromISO(order?.created_at)
-                            .setLocale('ru')
-                            .setZone('Asia/Tashkent')
-                            .toLocaleString(DateTime.DATETIME_MED)}
-                        </div>
-                        <div className="w-40">
-                          {order?.billing_address}
-                          {order.house
-                            ? ', ' +
-                              tr('house').toLocaleLowerCase() +
-                              ': ' +
-                              order.house
-                            : ''}
-                          {order.flat
-                            ? ', ' +
-                              tr('flat').toLocaleLowerCase() +
-                              ': ' +
-                              order.flat
-                            : ''}
-                          {order.entrance
-                            ? ', ' +
-                              tr('entrance').toLocaleLowerCase() +
-                              ': ' +
-                              order.entrance
-                            : ''}
-                          {order.door_code
-                            ? ', ' +
-                              tr('code_on_doors').toLocaleLowerCase() +
-                              ': ' +
-                              order.door_code
-                            : ''}
-                        </div>
-                        <div>
-                          {tr('prod-count', {
-                            count: order?.basket?.lines.length,
-                          })}
-                        </div>
-                        <div>
-                          {currency(order?.order_total / 100, {
-                            pattern: '# !',
-                            separator: ' ',
-                            decimal: '.',
-                            symbol: 'сум',
-                            precision: 0,
-                          }).format()}
-                        </div>
-                      </>
-                    )}
-                    <div className={`md:ml-56 `}>
-                      {tr(`order_status_${order?.status}`)}
+      {orders.length && (
+        <div>
+          <div className="bg-gray-200 flex items-center w-max m-auto p-1 rounded-full mb-12">
+            <div className="rounded-full py-4 px-12 cursor-pointer">Текущие заказы</div>
+            <div className="bg-white rounded-full py-4 px-12 cursor-pointer">История заказов</div>
+          </div>
+          {orders.map((order: any) => (
+            <div>
+              <div className="md:p-10 rounded-2xl text-xl mt-5 md:shadow-2xl bg-gray-100 md:bg-white mx-4 md:mx-0 px-4 py-8">
+                <div className="flex items-center justify-between">
+                  <div className="md:text-3xl text-2xl font-bold md:flex items-center">
+                    <div className="flex">
+                      <div>{tr('order')}</div>
+                      <div className="ml-2"> № {order.id}</div>
+                    </div>
+                    <div className="text-base text-gray-400 md:ml-5">
+                      {DateTime.fromISO(order?.created_at)
+                        .setLocale(`${locale == 'uz' ? 'uz' : 'ru'}`)
+                        .setZone('Asia/Tashkent')
+                        .toLocaleString(DateTime.DATETIME_MED)}
                     </div>
                   </div>
-                  {order?.basket?.lines.map((pizza: any) => (
-                    <Disclosure.Panel
-                      className="flex items-center justify-between border-b mt-4 pb-4"
-                      key={pizza.id}
-                    >
-                      <div className="flex items-center">
-                        {pizza.child &&
-                        pizza.child.length &&
-                        pizza.child[0].variant?.product?.id !=
-                          pizza?.variant?.product?.box_id ? (
-                          <div className="h-24 w-24 flex relative">
-                            <div className="w-12 relative overflow-hidden">
-                              <div>
-                                <Image
-                                  src={
-                                    pizza?.variant?.product?.assets?.length
-                                      ? `${webAddress}/storage/${pizza?.variant?.product?.assets[0]?.location}/${pizza?.variant?.product?.assets[0]?.filename}`
-                                      : '/no_photo.svg'
-                                  }
-                                  width="95"
-                                  height="95"
-                                  layout="fixed"
-                                  className="absolute rounded-full"
-                                />
-                              </div>
-                            </div>
-                            <div className="w-12 relative overflow-hidden">
-                              <div className="absolute right-0">
-                                <Image
-                                  src={
-                                    pizza?.child[0].variant?.product?.assets
-                                      ?.length
-                                      ? `${webAddress}/storage/${pizza?.child[0].variant?.product?.assets[0]?.location}/${pizza?.child[0].variant?.product?.assets[0]?.filename}`
-                                      : '/no_photo.svg'
-                                  }
-                                  width="95"
-                                  height="95"
-                                  layout="fixed"
-                                  className="rounded-full"
-                                />
-                              </div>
+                  <div className="bg-green-500 text-sm rounded-lg py-2 px-7 text-white">
+                    {/* {Object.keys(orderStatuses).map(
+                (status: any, key) =>
+                  key === currentStatusIndex && (
+                    <div className="">{tr(`order_status_${status}`)}</div>
+                  )
+              )} */}
+                  </div>
+                </div>
+                <div className="text-xl my-10 md:mx-12">
+                  {order?.basket?.lines.length} {tr('product')}
+                </div>
+                {order?.basket?.lines.map((item: any) => (
+                  <div
+                    className="flex items-center justify-between border-b border-gray-300 mt-4 md:pb-4 md:mx-12"
+                    key={item.id}
+                  >
+                    <div className="flex items-center">
+                      {item.child &&
+                      item.child.length &&
+                      item.child[0].variant?.product?.id !=
+                        item?.variant?.product?.box_id ? (
+                        <div className="h-24 w-24 flex relative">
+                          <div className="w-12 relative overflow-hidden">
+                            <div>
+                              <Image
+                                src={
+                                  item?.variant?.product?.assets?.length
+                                    ? `${webAddress}/storage/${item?.variant?.product?.assets[0]?.location}/${item?.variant?.product?.assets[0]?.filename}`
+                                    : '/no_photo.svg'
+                                }
+                                width="95"
+                                height="95"
+                                layout="fixed"
+                                className="absolute rounded-lg"
+                              />
                             </div>
                           </div>
-                        ) : (
-                          <div>
-                            <Image
-                              src={
-                                pizza?.variant?.product?.assets?.length
-                                  ? `${webAddress}/storage/${pizza?.variant?.product?.assets[0]?.location}/${pizza?.variant?.product?.assets[0]?.filename}`
-                                  : '/no_photo.svg'
-                              }
-                              width={95}
-                              height={95}
-                              className="rounded-full w-24"
-                            />
-                          </div>
-                        )}
-                        <div className="ml-5">
-                          <div className="text-xl font-bold">
-                            {pizza.child && pizza.child.length > 1
-                              ? `${
-                                  pizza?.variant?.product?.attribute_data?.name[
-                                    channelName
-                                  ][locale || 'ru']
-                                } + ${
-                                  pizza?.child[0].variant?.product
-                                    ?.attribute_data?.name[channelName][
-                                    locale || 'ru'
-                                  ]
-                                }`
-                              : pizza?.variant?.product?.attribute_data?.name[
-                                  channelName
-                                ][locale || 'ru']}
+                          <div className="w-12 relative overflow-hidden">
+                            <div className="absolute right-0">
+                              <Image
+                                src={
+                                  item?.child[0].variant?.product?.assets
+                                    ?.length
+                                    ? `${webAddress}/storage/${item?.child[0].variant?.product?.assets[0]?.location}/${item?.child[0].variant?.product?.assets[0]?.filename}`
+                                    : '/no_photo.svg'
+                                }
+                                width="95"
+                                height="95"
+                                layout="fixed"
+                                className="rounded-lg"
+                              />
+                            </div>
                           </div>
                         </div>
+                      ) : (
+                        <div>
+                          <Image
+                            src={
+                              item?.variant?.product?.assets?.length
+                                ? `${webAddress}/storage/${item?.variant?.product?.assets[0]?.location}/${item?.variant?.product?.assets[0]?.filename}`
+                                : '/no_photo.svg'
+                            }
+                            width={95}
+                            height={95}
+                            className="rounded-lg md:w-24 w-12"
+                          />
+                        </div>
+                      )}
+                      <div className="ml-5">
+                        <div className="md:text-xl text-sm font-bold">
+                          {item.child && item.child.length > 1
+                            ? `${
+                                item?.variant?.product?.attribute_data?.name[
+                                  channelName
+                                ][locale || 'ru']
+                              } + ${
+                                item?.child[0].variant?.product?.attribute_data
+                                  ?.name[channelName][locale || 'ru']
+                              }`
+                            : item?.variant?.product?.attribute_data?.name[
+                                channelName
+                              ][locale || 'ru']}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="md:flex items-center justify-between md:w-64">
+                      <div className="text-green-500 mr-10">
+                        {item.quantity} шт
                       </div>
                       <div>
-                        {pizza.child && pizza.child.length
-                          ? currency(
-                              (+pizza.total + +pizza.child[0].total) *
-                                pizza.quantity,
-                              {
-                                pattern: '# !',
-                                separator: ' ',
-                                decimal: '.',
-                                symbol: 'сум',
-                                precision: 0,
-                              }
-                            ).format()
-                          : currency(pizza.total * pizza.quantity, {
-                              pattern: '# !',
-                              separator: ' ',
-                              decimal: '.',
-                              symbol: 'сум',
-                              precision: 0,
-                            }).format()}
-                      </div>
-                    </Disclosure.Panel>
-                  ))}
-                  {open && (
-                    <>
-                      <div className="flex items-center justify-between border-b pt-7 pb-7">
-                        <div>{tr('order_price')}</div>
-                        <div className="font-bold">
-                          {currency(order?.order_total / 100, {
+                        {item.child &&
+                          currency(item.total * item.quantity, {
                             pattern: '# !',
                             separator: ' ',
                             decimal: '.',
                             symbol: 'сум',
                             precision: 0,
                           }).format()}
-                        </div>
                       </div>
-                      <div className="flex items-center justify-between border-b pt-7 pb-7 space-x-6 text-right">
-                        <div>{tr('order_address')}</div>
-                        <div>
-                          {order?.billing_address}
-                          {order.house
-                            ? ', ' +
-                              tr('house').toLocaleLowerCase() +
-                              ': ' +
-                              order.house
-                            : ''}
-                          {order.flat
-                            ? ', ' +
-                              tr('flat').toLocaleLowerCase() +
-                              ': ' +
-                              order.flat
-                            : ''}
-                          {order.entrance
-                            ? ', ' +
-                              tr('entrance').toLocaleLowerCase() +
-                              ': ' +
-                              order.entrance
-                            : ''}
-                          {order.door_code
-                            ? ', ' +
-                              tr('code_on_doors').toLocaleLowerCase() +
-                              ': ' +
-                              order.door_code
-                            : ''}
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between border-b pt-7 pb-7 space-x-6 text-right">
-                        <div>{tr('branch')}</div>
-                        <div>
-                          {locale == 'uz'
-                            ? order?.terminalData.name_uz
-                            : order?.terminalData.name}
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between border-b pt-7 pb-7">
-                        <div>{tr('order_time')}</div>
-                        <div>
-                          {DateTime.fromISO(order?.created_at)
-                            .setLocale('ru')
-                            .setZone('Asia/Tashkent')
-                            .toLocaleString(DateTime.DATETIME_MED)}
-                        </div>
-                      </div>
-                    </>
-                  )}
-
-                  <div className="flex justify-between mt-8">
-                    <Disclosure.Button className="border flex focus:outline-none items-center justify-between px-3 py-3 w-64 text-lg h-10 rounded-3xl bg-gray-100 text-gray-400">
-                      <div className="ml-auto">{tr('order_detail')}</div>
-                      <ChevronDownIcon
-                        className={`${
-                          open ? 'transform rotate-180' : ''
-                        } w-6 h-6 text-purple-500 ml-auto`}
-                      />
-                    </Disclosure.Button>
-                    {/* <Disclosure>
-                      <Disclosure.Button className="border flex focus:outline-none items-center justify-center px-3 py-3 w-64 text-lg h-10 rounded-3xl bg-yellow text-white">
-                        <div>{tr('order_repeat')}</div>
-                      </Disclosure.Button>
-                    </Disclosure> */}
+                    </div>
                   </div>
-                </>
-              )}
-            </Disclosure>
-          </div>
-        ))}
+                ))}
+                <div className="md:flex justify-between mt-14">
+                  <div className="md:p-5 pb-5 md:rounded-2xl text-xl mt-5 md:bg-white md:border md:border-gray-200 md:w-3/4 border-b border-gray-300">
+                    <div className="text-lg mb-7 font-bold">
+                      {tr('delivery_address')}
+                    </div>
+                    <div>
+                      {order?.billing_address}
+                      {order.house
+                        ? ', ' +
+                          tr('house').toLocaleLowerCase() +
+                          ': ' +
+                          order.house
+                        : ''}
+                      {order.flat
+                        ? ', ' +
+                          tr('flat').toLocaleLowerCase() +
+                          ': ' +
+                          order.flat
+                        : ''}
+                      {order.entrance
+                        ? ', ' +
+                          tr('entrance').toLocaleLowerCase() +
+                          ': ' +
+                          order.entrance
+                        : ''}
+                      {order.door_code
+                        ? ', ' +
+                          tr('code_on_doors').toLocaleLowerCase() +
+                          ': ' +
+                          order.door_code
+                        : ''}
+                    </div>
+                  </div>
+                  <div className="md:p-5 md:rounded-2xl text-xl mt-5 md:bg-white md:border border-gray-200 md:w-1/4 md:ml-2">
+                    <div className="text-xl mb-8">Сумма заказа</div>
+                    <div>
+                      <div className="text-base">Оплата картой </div>
+                      {currency(order?.order_total / 100, {
+                        pattern: '# !',
+                        separator: ' ',
+                        decimal: '.',
+                        symbol: `${tr('sum')}`,
+                        precision: 0,
+                      }).format()}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

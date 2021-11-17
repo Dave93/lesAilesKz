@@ -178,7 +178,9 @@ const Header: FC<{
                 <img src="/menu.svg" width="30" />
               </div>
             </div>
-            <SignInButton />
+            <div className="hidden md:block">
+              <SignInButton />
+            </div>
           </div>
         </div>
         {mobMenuOpen && (

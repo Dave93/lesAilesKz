@@ -1300,7 +1300,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       {/* pay */}
       <div className="w-full bg-white md:mb-10 mb-5 md:rounded-2xl py-7 md:px-10 px-5 relative shadow-xl">
         {!locationData?.terminal_id && (
-          <div className="absolute md:w-full h-full md:-ml-10 md:-mt-10 bg-opacity-60 bg-gray-100 z-20 items-center flex justify-around">
+          <div className="absolute md:w-full h-full md:-ml-10 md:-mt-10 bg-opacity-60 bg-gray-100 z-20 items-center flex justify-around bottom-0 left-0 md:left-auto text-center">
             <div className="text-yellow font-bold text-2xl">
               {tr('no_address_no_restaurant')}
             </div>
