@@ -8,7 +8,7 @@ import { useUI } from '@components/ui'
 const SetLocation: FC = () => {
   const { t: tr } = useTranslation('common')
   const [open, setOpen] = useState(false)
-  const { locationData } = useUI()
+  const { locationData, showAddressMobile, addressModalMobile, hideAddressMobile } = useUI()
 
   const cancelButtonRef = useRef(null)
   return (
@@ -16,7 +16,7 @@ const SetLocation: FC = () => {
       <button
         className="bg-primary truncate cursor-pointer flex items-center justify-center rounded-xl text-white w-64 h-12 md:h-[36px] outline-none focus:outline-none"
         onClick={() => {
-          setOpen(true)
+          showAddressMobile()
         }}
       >
         <div className="flex items-center mr-3">
@@ -26,14 +26,14 @@ const SetLocation: FC = () => {
           ? locationData.address
           : tr('chooseLocation')}
       </button>
-      <Transition.Root show={open} as={Fragment}>
+      <Transition.Root show={addressModalMobile} as={Fragment}>
         <Dialog
           as="div"
           static
           className="fixed z-10 inset-0 overflow-y-auto"
           initialFocus={cancelButtonRef}
-          open={open}
-          onClose={setOpen}
+          open={addressModalMobile}
+          onClose={hideAddressMobile}
         >
           <div className="flex items-end justify-center min-h-screen  text-center sm:block sm:p-0">
             <Transition.Child
@@ -65,7 +65,7 @@ const SetLocation: FC = () => {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <div className="bg-white text-left transform h-screen overflow-y-auto w-full overflow-hidden">
-                <MobLocationTabs setOpen={setOpen} />
+                <MobLocationTabs setOpen={addressModalMobile} />
               </div>
             </Transition.Child>
           </div>

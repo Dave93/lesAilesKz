@@ -19,10 +19,8 @@ const UserData: FC = () => {
     }
   })
 
-  console.log(router.asPath)
-
   return (
-    <div className="px-20 py-3 bg-gray-200 my-5 rounded-2xl">
+    <div className="px-20 py-3 bg-gray-200 my-5 rounded-2xl hidden md:block">
       <div className="flex justify-around">
         {items.map((item, id) => (
           <div

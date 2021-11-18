@@ -58,6 +58,9 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
     activeCity,
     setActiveCity,
     hideAddress,
+    showAddressMobile,
+    addressModalMobile,
+    hideAddressMobile,
   } = useUI()
   const [tabIndex, setTabIndex] = useState(
     locationData?.deliveryType || 'deliver'
@@ -354,7 +357,7 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
         terminal_id: terminalsData.data.items[0].id,
         terminalData: terminalsData.data.items[0],
       })
-      setOpen(false)
+      hideAddressMobile()
     }
   }
 
@@ -367,7 +370,7 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
       return
     }
 
-    setOpen(false)
+    hideAddressMobile()
   }
 
   const { t: tr } = useTranslation('common')
@@ -471,7 +474,7 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
           </div>
         </YMaps>
       </div>
-      <div className="absolute bg-white right-10 rounded-2xl top-8 p-3 cursor-pointer" onClick={() => setOpen(false)}>
+      <div className="absolute bg-white right-10 rounded-2xl top-8 p-3 cursor-pointer" onClick={() => hideAddressMobile()}>
         <XIcon className=" w-5" />
       </div>
       <div className="left-0 absolute bottom-0 bg-white rounded-t-3xl p-5 w-full overflow-y-auto">

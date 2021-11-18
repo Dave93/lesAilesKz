@@ -20,17 +20,23 @@ const menuItems: profileMenuItem[] = [
     langCode: 'profile_account',
   },
   {
+    href: '/profile/address',
+    icon: '/inactiveLocation.svg',
+    activeIcon: '/assets/location.svg',
+    langCode: 'profile_address',
+  },
+  {
+    href: '/profile/creditcard',
+    icon: '/creditcard.svg',
+    activeIcon: '/activeCreditcard.svg',
+    langCode: 'profile_mycreditcard',
+  },
+  {
     href: '/profile/orders',
     icon: '/inActivebag.svg',
     activeIcon: '/bag.svg',
     langCode: 'profile_orders',
   },
-  // {
-  //   href: '/profile/address',
-  //   icon: '/address.png',
-  //   activeIcon: '/activeAddress.png',
-  //   langCode: 'profile_address',
-  // },
 ]
 
 export default menuItems

@@ -132,7 +132,6 @@ const Header: FC<{
       locale,
     })
   }
-
   return (
     <>
       <header
@@ -141,14 +140,22 @@ const Header: FC<{
       >
         <div className="container mx-auto">
           <div className="flex justify-between items-center">
-            <div className="hidden md:block md:w-48 ml-4 md:ml-0">
+            <div
+              className={`${
+                router.asPath == '/' + activeCity.slug ? 'hidden' : ''
+              } md:block md:w-48 ml-4 md:ml-0`}
+            >
               <Link href={`/${chosenCity.slug}`} prefetch={false}>
                 <a className="flex">
                   <Image src="/assets/main_logo.svg" width="188" height="68" />
                 </a>
               </Link>
             </div>
-            <div className="md:hidden">
+            <div
+              className={`${
+                router.asPath == '/' + activeCity.slug ? 'md:hidden block' : 'hidden'
+              }`}
+            >
               <MobSetLocation />
             </div>
             <div className=" md:flex hidden">

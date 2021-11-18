@@ -330,7 +330,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
   return (
     <>
       <div
-        className={`py-3  md:py-3 overflow-hidden bg-white rounded-[15px] hover:shadow-xl group items-center justify-between md:flex md:flex-col shadow-lg`}
+        className={`py-3  md:py-3 overflow-hidden bg-white rounded-[15px] hover:shadow-xl group items-center justify-between flex flex-col shadow-lg`}
         id={`prod-${store.id}`}
       >
         <div>

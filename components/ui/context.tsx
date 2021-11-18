@@ -109,6 +109,7 @@ const initialState = {
   showSignInModal: false,
   overlay: false,
   addressModal: false,
+  addressModalMobile: false,
 }
 
 type Action =
@@ -175,6 +176,12 @@ type Action =
     }
   | {
       type: 'HIDE_ADDRESS'
+    }
+  | {
+      type: 'SHOW_ADDRESS_MOBILE'
+    }
+  | {
+      type: 'HIDE_ADDRESS_MOBILE'
     }
 
 type MODAL_VIEWS =
@@ -328,6 +335,18 @@ function uiReducer(state: State, action: Action) {
         addressModal: false,
       }
     }
+    case 'SHOW_ADDRESS_MOBILE': {
+      return {
+        ...state,
+        addressModalMobile: true,
+      }
+    }
+    case 'HIDE_ADDRESS_MOBILE': {
+      return {
+        ...state,
+        addressModalMobile: false,
+      }
+    }
   }
 }
 
@@ -429,6 +448,8 @@ export const UIProvider: FC<UIProviderProps> = (props) => {
   const hideOverlay = useCallback(() => dispatch({ type: 'HIDE_OVERLAY'}), [dispatch])
   const showAddress = useCallback(() => dispatch({ type: 'SHOW_ADDRESS'}), [dispatch])
   const hideAddress = useCallback(() => dispatch({ type: 'HIDE_ADDRESS'}), [dispatch])
+  const showAddressMobile = useCallback(() => dispatch({ type: 'SHOW_ADDRESS_MOBILE'}), [dispatch])
+  const hideAddressMobile = useCallback(() => dispatch({ type: 'HIDE_ADDRESS_MOBILE'}), [dispatch])
 
   const value = useMemo(
     () => ({
@@ -453,7 +474,9 @@ export const UIProvider: FC<UIProviderProps> = (props) => {
       showOverlay,
       hideOverlay,
       showAddress,
-      hideAddress
+      hideAddress,
+      showAddressMobile,
+      hideAddressMobile,
     }),
     [state]
   )

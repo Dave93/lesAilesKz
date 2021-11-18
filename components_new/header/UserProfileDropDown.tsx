@@ -17,7 +17,6 @@ const UserProfileDropDown: FC = () => {
   const [popoverShow, setPopoverShow] = React.useState(false)
   const btnRef = useRef<any>(null)
   const popoverRef = useRef<any>(null)
-  console.log(router)
 
   const { user, setUserData, activeCity, showOverlay, hideOverlay, overlay } =
     useUI()

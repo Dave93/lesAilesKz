@@ -57,9 +57,13 @@ const Orders: FC<OrdersListProps> = ({ orders }) => {
 
       {orders.length && (
         <div>
-          <div className="bg-gray-200 flex items-center w-max m-auto p-1 rounded-full mb-12">
-            <div className="rounded-full py-4 px-12 cursor-pointer">Текущие заказы</div>
-            <div className="bg-white rounded-full py-4 px-12 cursor-pointer">История заказов</div>
+          <div className="bg-gray-200 flex items-center md:w-max m-auto md:p-1 p-[2px] rounded-full mb-12 mx-4 md:mx-auto justify-center">
+            <div className="rounded-full md:py-4 py-2 md:px-12 px-5 cursor-pointer w-full md:w-auto text-center">
+              Текущие заказы
+            </div>
+            <div className="bg-white rounded-full md:py-4 py-2 md:px-12 px-5 cursor-pointer w-full md:w-auto text-center">
+              История заказов
+            </div>
           </div>
           {orders.map((order: any) => (
             <div>
@@ -77,13 +81,8 @@ const Orders: FC<OrdersListProps> = ({ orders }) => {
                         .toLocaleString(DateTime.DATETIME_MED)}
                     </div>
                   </div>
-                  <div className="bg-green-500 text-sm rounded-lg py-2 px-7 text-white">
-                    {/* {Object.keys(orderStatuses).map(
-                (status: any, key) =>
-                  key === currentStatusIndex && (
-                    <div className="">{tr(`order_status_${status}`)}</div>
-                  )
-              )} */}
+                  <div className="bg-green-500 text-sm md:rounded-lg rounded-full py-2 px-7 text-white">
+                    <div className="">{tr(`order_status_${order.status}`)}</div>
                   </div>
                 </div>
                 <div className="text-xl my-10 md:mx-12">
