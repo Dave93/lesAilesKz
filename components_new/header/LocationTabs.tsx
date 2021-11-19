@@ -127,7 +127,7 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
         entrance: locationData?.entrance || '',
         door_code: locationData?.door_code || '',
         floor: locationData?.floor || '',
-        address_name: locationData?.address_name || '',
+        label: locationData?.label || '',
         comments: locationData?.comments || '',
       },
     })
@@ -742,7 +742,7 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
                   <div className="flex">
                     <input
                       type="text"
-                      {...register('address_name')}
+                      {...register('label')}
                       placeholder="Например, Дом или Работа"
                       className="bg-gray-100 mt-2 w-full outline-none focus:outline-none"
                     />
