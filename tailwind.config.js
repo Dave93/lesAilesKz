@@ -55,6 +55,8 @@ module.exports = {
       },
       gradientColorStops: (theme) => ({
         ...theme('colors'),
+        cardGradient:
+          'linear-gradient(to right, #4C65D4, #C4309F, #DA2E7D, #F56338, #FED272)',
       }),
     },
   },
