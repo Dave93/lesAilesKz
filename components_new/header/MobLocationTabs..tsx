@@ -37,6 +37,7 @@ import { toast } from 'react-toastify'
 import { City } from '@commerce/types/cities'
 import router, { useRouter } from 'next/router'
 import SimpleBar from 'simplebar-react'
+import Cookies from 'js-cookie'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -61,6 +62,9 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
     showAddressMobile,
     addressModalMobile,
     hideAddressMobile,
+    user,
+    addressId,
+    setAddressId,
   } = useUI()
   const [tabIndex, setTabIndex] = useState(
     locationData?.deliveryType || 'deliver'
@@ -75,14 +79,14 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
   const [selectedCoordinates, setSelectedCoordinates] = useState(
     locationData && locationData.location
       ? [
-        {
-          coordinates: {
-            lat: locationData.location[0],
-            long: locationData.location[1],
+          {
+            coordinates: {
+              lat: locationData.location[0],
+              long: locationData.location[1],
+            },
+            key: `${locationData.location[0]}${locationData.location[1]}`,
           },
-          key: `${locationData.location[0]}${locationData.location[1]}`,
-        },
-      ]
+        ]
       : ([] as any)
   )
 
@@ -102,7 +106,7 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
 
   const [configData, setConfigData] = useState({} as any)
 
-  const [searchAddress, setSearchAddress] = useState(true);
+  const [searchAddress, setSearchAddress] = useState(true)
 
   let currentAddress = ''
   if (activeCity.active) {
@@ -121,6 +125,9 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
         house: locationData?.house || '',
         entrance: locationData?.entrance || '',
         door_code: locationData?.door_code || '',
+        floor: locationData?.floor || '',
+        label: locationData?.label || '',
+        comments: locationData?.comments || '',
       },
     })
 
@@ -147,6 +154,30 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
     setPickupPoint(res)
   }
 
+  const setCredentials = async () => {
+    let csrf = Cookies.get('X-XSRF-TOKEN')
+    if (!csrf) {
+      const csrfReq = await axios(`${webAddress}/api/keldi`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          crossDomain: true,
+        },
+        withCredentials: true,
+      })
+      let { data: res } = csrfReq
+      csrf = Buffer.from(res.result, 'base64').toString('ascii')
+
+      var inTenMinutes = new Date(new Date().getTime() + 10 * 60 * 1000)
+      Cookies.set('X-XSRF-TOKEN', csrf, {
+        expires: inTenMinutes,
+      })
+    }
+    axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+    axios.defaults.headers.common['X-CSRF-TOKEN'] = csrf
+    axios.defaults.headers.common['XCSRF-TOKEN'] = csrf
+  }
+
   const fetchConfig = async () => {
     let configData
     if (!sessionStorage.getItem('configData')) {
@@ -162,7 +193,7 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
       configData = configData.toString('ascii')
       configData = JSON.parse(configData)
       setConfigData(configData)
-    } catch (e) { }
+    } catch (e) {}
   }
 
   useEffect(() => {
@@ -247,6 +278,7 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
   const clickOnMap = async (event: any) => {
     const coords = event.get('coords')
     setMapCenter(coords)
+    setSearchAddress(false)
     setSelectedCoordinates([
       {
         key: `${coords[0]}${coords[1]}`,
@@ -277,7 +309,6 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
       address: data.data.formatted,
       house,
     })
-    setSearchAddress(false)
   }
 
   const mapState = useMemo<MapState>(() => {
@@ -359,6 +390,72 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
       })
       hideAddressMobile()
     }
+
+    const otpToken = Cookies.get('opt_token')
+    if (otpToken) {
+      if (addressId) {
+        await setCredentials()
+        await axios.post(
+          `${webAddress}/api/address/${addressId}`,
+
+          {
+            ...data,
+            lat: locationData.location[0],
+            lon: locationData.location[1],
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${otpToken}`,
+            },
+          }
+        )
+      } else {
+        await setCredentials()
+        const { data: addressData } = await axios.post(
+          `${webAddress}/api/address/new`,
+          {
+            ...data,
+            lat: locationData.location[0],
+            lon: locationData.location[1],
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${otpToken}`,
+            },
+          }
+        )
+
+        // console.log(addressData)
+
+        setAddressId(addressData.data.id)
+      }
+
+      // console.log(data)
+      // if (!data.success) {
+      //   setErrorMessage(data.message)
+      // } else {
+      //   setAddressList(data.data)
+      // }
+      // const { data: otpData } = await axios.post(
+      //   `${webAddress}/api/otp/check`,
+      //   {
+      //     otp_token: otpToken,
+      //   },
+      //   {
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //     },
+      //   }
+      // )
+      // if (otpData.data.status == 'success') {
+      //   setLocationData({
+      //     ...locationData,
+      //     otp_token: otpToken,
+      //   })
+      // } else {
+      //   Cookies.remove('opt_token')
+      // }
+    }
   }
 
   const submitPickup = () => {
@@ -398,97 +495,95 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
     setGeoSuggestions([])
     setSearchAddress(true)
   }
-
   return (
     <>
       <div className="relative">
         <YMaps>
           <div>
             <Map
-              defaultState={{
-                center: [40.351706, 69.090118],
-                zoom: 7.2,
-                controls: [
-                  'zoomControl',
-                  'fullscreenControl',
-                  'geolocationControl',
-                ],
-              }}
+              state={mapState}
               width="100%"
               height="100vh"
               modules={[
                 'control.ZoomControl',
                 'control.FullscreenControl',
                 'control.GeolocationControl',
+                'geoQuery',
+                'geolocation',
               ]}
               onClick={clickOnMap}
             >
               {tabIndex == 'pickup'
                 ? pickupPoints.map((point) => (
-                  <Placemark
-                    modules={['geoObject.addon.balloon']}
-                    defaultGeometry={[point.latitude, point.longitude]}
-                    key={point.id}
-                    onClick={() => choosePickupPoint(point.id)}
-                    // options={{
-                    //   iconColor:
-                    //     activePoint && activePoint == point.id
-                    //       ? '#FAAF04'
-                    //       : '#1E98FF',
-                    // }}
-                    properties={{
-                      balloonContentBody: `<b>${point.name}</b> <br />
+                    <Placemark
+                      modules={['geoObject.addon.balloon']}
+                      defaultGeometry={[point.latitude, point.longitude]}
+                      key={point.id}
+                      onClick={() => choosePickupPoint(point.id)}
+                      // options={{
+                      //   iconColor:
+                      //     activePoint && activePoint == point.id
+                      //       ? '#FAAF04'
+                      //       : '#1E98FF',
+                      // }}
+                      properties={{
+                        balloonContentBody: `<b>${point.name}</b> <br />
                           ${point.desc}
                           `,
-                    }}
-                    defaultOptions={{
-                      iconLayout: 'default#image',
-                      iconImageHref: '/map_placemark_pickup.png',
-                      iconImageSize:
-                        activePoint && activePoint == point.id
-                          ? [100, 100]
-                          : [50, 50],
-                    }}
-                  />
-                ))
+                      }}
+                      defaultOptions={{
+                        iconLayout: 'default#image',
+                        iconImageHref: '/map_placemark_pickup.png',
+                        iconImageSize:
+                          activePoint && activePoint == point.id
+                            ? [100, 100]
+                            : [50, 50],
+                      }}
+                    />
+                  ))
                 : selectedCoordinates.map((item: any, index: number) => (
-                  <Placemark
-                    modules={['geoObject.addon.balloon']}
-                    defaultGeometry={[
-                      item?.coordinates?.lat,
-                      item?.coordinates?.long,
-                    ]}
-                    geomerty={[
-                      item?.coordinates?.lat,
-                      item?.coordinates?.long,
-                    ]}
-                    key={item.key}
-                    defaultOptions={{
-                      iconLayout: 'default#image',
-                      iconImageHref: '/map_placemark.png',
-                      iconImageSize: [50, 50],
-                    }}
-                  />
-                ))}
+                    <Placemark
+                      modules={['geoObject.addon.balloon']}
+                      defaultGeometry={[
+                        item?.coordinates?.lat,
+                        item?.coordinates?.long,
+                      ]}
+                      geomerty={[
+                        item?.coordinates?.lat,
+                        item?.coordinates?.long,
+                      ]}
+                      key={item.key}
+                      defaultOptions={{
+                        iconLayout: 'default#image',
+                        iconImageHref: '/map_placemark.png',
+                        iconImageSize: [50, 50],
+                      }}
+                    />
+                  ))}
             </Map>
           </div>
         </YMaps>
       </div>
-      <div className="absolute bg-white right-10 rounded-2xl top-8 p-3 cursor-pointer" onClick={() => hideAddressMobile()}>
+      <div
+        className="absolute bg-white right-10 rounded-2xl top-8 p-3 cursor-pointer"
+        onClick={() => hideAddressMobile()}
+      >
         <XIcon className=" w-5" />
       </div>
       <div className="left-0 absolute bottom-0 bg-white rounded-t-3xl p-5 w-full overflow-y-auto">
         <div className="bg-gray-100 flex rounded-full w-full p-1">
           <button
-            className={`${tabIndex == 'deliver' ? 'bg-white' : ''
-              } flex-1 font-medium py-3 rounded-full outline-none focus:outline-none`}
+            className={`${
+              tabIndex == 'deliver' ? 'bg-white' : ''
+            } flex-1 font-medium py-3 rounded-full outline-none focus:outline-none`}
             onClick={() => changeTabIndex('deliver')}
           >
             {tr('delivery')}
           </button>
           <button
-            className={`${tabIndex == 'pickup' ? 'bg-white' : ''
-              } flex-1 font-medium py-3  rounded-full outline-none focus:outline-none`}
+            className={`${
+              tabIndex == 'pickup' ? 'bg-white' : ''
+            } flex-1 font-medium py-3  rounded-full outline-none focus:outline-none`}
             onClick={() => changeTabIndex('pickup')}
           >
             {tr('pickup')}
@@ -498,10 +593,8 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
           <div className="mt-2">
             <div className="mt-2">
               <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="mt-8">
-                  <div
-                    className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl"
-                  >
+                <div className={`mt-8 ${searchAddress ? '' : ''}`}>
+                  <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl">
                     <div className="text-xs text-gray-400">
                       {tr('chooseLocation')}
                     </div>
@@ -518,37 +611,31 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
                         onClick={cleanAddress}
                       />
                     </div>
-
-
                   </div>
-                  <ul
-                    className={searchAddress ? "p-4" : ''}
-                  >
-                    {geoSuggestions.map(
-                      (item: any, index: number) => (
-                        <li
-                          key={index}
-                          onClick=
-                          {() => { setSelectedAddress(item) }}
-                          className="border-b pb-2"
-                        >
-                          <div>
-                            <div>{item.title}</div>
-                            <div className="text-sm">
-                              {item.description}
-                            </div>
-                          </div>
-                        </li>
-                      )
-                    )
-                    }
+                  <ul className={searchAddress ? 'p-4' : ''}>
+                    {geoSuggestions.map((item: any, index: number) => (
+                      <li
+                        key={index}
+                        onClick={() => {
+                          setSelectedAddress(item)
+                        }}
+                        className="border-b pb-2"
+                      >
+                        <div>
+                          <div>{item.title}</div>
+                          <div className="text-sm">{item.description}</div>
+                        </div>
+                      </li>
+                    ))}
                   </ul>
                 </div>
                 {!searchAddress && (
                   <div>
                     <div className="flex mt-2 space-x-2">
                       <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl">
-                        <div className="text-xs text-gray-400">{tr('house')}</div>
+                        <div className="text-xs text-gray-400">
+                          {tr('house')}
+                        </div>
                         <input
                           type="text"
                           {...register('house')}
@@ -557,7 +644,9 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
                         />
                       </div>
                       <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl">
-                        <div className="text-xs text-gray-400">{tr('flat')}</div>
+                        <div className="text-xs text-gray-400">
+                          {tr('flat')}
+                        </div>
                         <input
                           type="text"
                           {...register('flat')}
@@ -580,7 +669,9 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
                           />
                         </div>
                         <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl">
-                          <div className="text-xs text-gray-400">{tr('floor')}</div>
+                          <div className="text-xs text-gray-400">
+                            {tr('floor')}
+                          </div>
                           <input
                             type="text"
                             {...register('floor')}
@@ -591,11 +682,13 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
                       </div>
                     </div>
                     <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl mt-2">
-                      <div className="text-xs text-gray-400">Название адреса</div>
+                      <div className="text-xs text-gray-400">
+                        Название адреса
+                      </div>
                       <div className="flex">
                         <input
                           type="text"
-                          {...register('address_name')}
+                          {...register('label')}
                           placeholder="Например, Дом или Работа"
                           className="bg-gray-100 mt-2 w-full outline-none focus:outline-none"
                         />
@@ -618,8 +711,9 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
                     <div className="mt-3">
                       <button
                         type="submit"
-                        className={`${haveAddress ? 'bg-green-500' : 'bg-gray-400'
-                          } font-medium px-12 py-3 rounded-xl text-[18px] text-white outline-none focus:outline-none w-full`}
+                        className={`${
+                          haveAddress ? 'bg-green-500' : 'bg-gray-400'
+                        } font-medium px-12 py-3 rounded-xl text-[18px] text-white outline-none focus:outline-none w-full`}
                         disabled={isSearchingTerminals}
                         onClick={(event: React.MouseEvent) => {
                           saveDeliveryData(undefined, event)
@@ -741,10 +835,11 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
                     <label className="inline-flex items-center">
                       <div
                         key={point.id}
-                        className={`border flex items-start p-3 rounded-[10px] cursor-pointer bg-gray-100 ${activePoint && activePoint == point.id
-                          ? 'border-gray-400'
-                          : ''
-                          }`}
+                        className={`border flex items-start p-3 rounded-[10px] cursor-pointer bg-gray-100 ${
+                          activePoint && activePoint == point.id
+                            ? 'border-gray-400'
+                            : ''
+                        }`}
                         onClick={() => choosePickupPoint(point.id)}
                       >
                         <div>
@@ -758,10 +853,11 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
                         <div>
                           <input
                             type="checkbox"
-                            className={`${activePoint && activePoint == point.id
-                              ? ''
-                              : 'border'
-                              } text-green-500 form-checkbox rounded-md w-5 h-5 `}
+                            className={`${
+                              activePoint && activePoint == point.id
+                                ? ''
+                                : 'border'
+                            } text-green-500 form-checkbox rounded-md w-5 h-5 `}
                             defaultChecked={false}
                             checked={activePoint == point.id}
                           />
@@ -776,8 +872,9 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
             <div className="flex mt-4 justify-end">
               <button
                 type="submit"
-                className={`${activePoint ? 'bg-green-500' : 'bg-gray-200'
-                  } font-medium px-12 py-3 rounded-lg text-[18px] text-white outline-none focus:outline-none w-full`}
+                className={`${
+                  activePoint ? 'bg-green-500' : 'bg-gray-200'
+                } font-medium px-12 py-3 rounded-lg text-[18px] text-white outline-none focus:outline-none w-full`}
                 disabled={!activePoint}
                 onClick={submitPickup}
               >
