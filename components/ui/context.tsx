@@ -72,7 +72,8 @@ export interface LocationData {
   flat: string
   house: string
   entrance: string
-  door_code: string
+  door_code?: string
+  floor?: string
   deliveryType: 'pickup' | 'deliver'
   location?: number[]
   terminalId?: number
@@ -93,6 +94,7 @@ export interface State {
   showSignInModal: boolean
   overlay: boolean
   addressModal: boolean
+  addressId: number | null
 }
 
 const initialState = {
@@ -110,6 +112,7 @@ const initialState = {
   overlay: false,
   addressModal: false,
   addressModalMobile: false,
+  addressId: null,
 }
 
 type Action =
@@ -182,6 +185,10 @@ type Action =
     }
   | {
       type: 'HIDE_ADDRESS_MOBILE'
+    }
+  | {
+      type: 'SET_ADDRESS_ID'
+      value: number
     }
 
 type MODAL_VIEWS =
@@ -347,6 +354,12 @@ function uiReducer(state: State, action: Action) {
         addressModalMobile: false,
       }
     }
+    case 'SET_ADDRESS_ID': {
+      return {
+        ...state,
+        addressId: action.value,
+      }
+    }
   }
 }
 
@@ -444,12 +457,34 @@ export const UIProvider: FC<UIProviderProps> = (props) => {
     [dispatch]
   )
 
-  const showOverlay = useCallback(() => dispatch({ type: 'SHOW_OVERLAY'}), [dispatch])
-  const hideOverlay = useCallback(() => dispatch({ type: 'HIDE_OVERLAY'}), [dispatch])
-  const showAddress = useCallback(() => dispatch({ type: 'SHOW_ADDRESS'}), [dispatch])
-  const hideAddress = useCallback(() => dispatch({ type: 'HIDE_ADDRESS'}), [dispatch])
-  const showAddressMobile = useCallback(() => dispatch({ type: 'SHOW_ADDRESS_MOBILE'}), [dispatch])
-  const hideAddressMobile = useCallback(() => dispatch({ type: 'HIDE_ADDRESS_MOBILE'}), [dispatch])
+  const showOverlay = useCallback(
+    () => dispatch({ type: 'SHOW_OVERLAY' }),
+    [dispatch]
+  )
+  const hideOverlay = useCallback(
+    () => dispatch({ type: 'HIDE_OVERLAY' }),
+    [dispatch]
+  )
+  const showAddress = useCallback(
+    () => dispatch({ type: 'SHOW_ADDRESS' }),
+    [dispatch]
+  )
+  const hideAddress = useCallback(
+    () => dispatch({ type: 'HIDE_ADDRESS' }),
+    [dispatch]
+  )
+  const showAddressMobile = useCallback(
+    () => dispatch({ type: 'SHOW_ADDRESS_MOBILE' }),
+    [dispatch]
+  )
+  const hideAddressMobile = useCallback(
+    () => dispatch({ type: 'HIDE_ADDRESS_MOBILE' }),
+    [dispatch]
+  )
+  const setAddressId = useCallback(
+    (value: number) => dispatch({ type: 'SET_ADDRESS_ID', value }),
+    [dispatch]
+  )
 
   const value = useMemo(
     () => ({
@@ -477,6 +512,7 @@ export const UIProvider: FC<UIProviderProps> = (props) => {
       hideAddress,
       showAddressMobile,
       hideAddressMobile,
+      setAddressId,
     }),
     [state]
   )

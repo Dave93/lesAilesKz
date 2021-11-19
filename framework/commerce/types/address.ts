@@ -1,0 +1,33 @@
+export interface Address {
+  id: number
+  addressable_type: string
+  addressable_id: number
+  salutation?: null
+  firstname: string
+  lastname: string
+  company_name?: null
+  phone: string
+  email?: null
+  address: string
+  address_two?: null
+  address_three?: null
+  city: string
+  state: string
+  postal_code: string
+  country_id: number
+  shipping: number
+  billing: number
+  default: number
+  delivery_instructions?: null
+  last_used_at?: null
+  meta?: null
+  created_at: string
+  updated_at: string
+  lat?: null
+  lon?: null
+  label?: null
+  flat?: null
+  house?: null
+  entrance?: null
+  door_code?: null
+}
