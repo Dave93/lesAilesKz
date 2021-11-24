@@ -1,18 +1,12 @@
 import React, {
   useState,
-  useCallback,
-  useContext,
-  Fragment,
   FC,
   useEffect,
   useMemo,
 } from 'react'
-import SetLocation from '@components_new/header/SetLocation'
 import Link from 'next/link'
-import ChooseCityDropDown from './header/ChooseCityDropDown'
 import {
   ChevronRightIcon,
-  MenuIcon,
   UserCircleIcon,
   XIcon,
 } from '@heroicons/react/outline'
@@ -20,23 +14,17 @@ import HeaderMenu from '@components_new/header/HeaderMenu'
 import SignInButton from './header/SignInButton'
 import LanguageDropDown from './header/LanguageDropDown'
 import Image from 'next/image'
-import type { APILinkItem, LinkItem } from '@commerce/types/headerMenu'
-import MobHeaderMenu from './header/MobHeaderMenu'
-import MobChooseCityDropDown from './header/MobChooseCityDropDown'
-import MobLanguageDropDown from './header/MobLanguageDropDown'
-import HeaderPhone from './header/HeaderPhone'
+import type { APILinkItem } from '@commerce/types/headerMenu'
 import useTranslation from 'next-translate/useTranslation'
 import getConfig from 'next/config'
 import axios from 'axios'
 import { useUI } from '@components/ui/context'
-import parsePhoneNumber from 'libphonenumber-js'
 import defaultChannel from '@lib/defaultChannel'
-import { faTelegram } from '@fortawesome/free-brands-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import MobSetLocation from './header/MobSetLocation'
 import menuItems from '@commerce/data/profileMenu'
+import LocationButton from './header/LocationButton'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -159,19 +147,7 @@ const Header: FC<{
               <MobSetLocation />
             </div>
             <div className=" md:flex hidden">
-              <button
-                className="bg-primary truncate cursor-pointer flex items-center justify-center rounded-xl text-white w-64 h-12 md:h-[36px] outline-none focus:outline-none"
-                onClick={() => {
-                  showAddress()
-                }}
-              >
-                <div className="flex items-center mr-3">
-                  <Image src="/assets/location.svg" width="14" height="16" />
-                </div>
-                {locationData && locationData.address
-                  ? locationData.address
-                  : tr('chooseLocation')}
-              </button>
+              <LocationButton />
             </div>
             <div className="hidden md:flex">
               <HeaderMenu menuItems={menu} />

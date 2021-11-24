@@ -4,10 +4,12 @@ import { TrashIcon } from '@heroicons/react/outline'
 import { PlusIcon } from '@heroicons/react/solid'
 import { Dialog, Transition } from '@headlessui/react'
 import { useForm, SubmitHandler } from 'react-hook-form'
+import NumberFormat from 'react-number-format'
 const CreditCardComponent: FC = () => {
   const { t: tr } = useTranslation('common')
 
   const [isOpen, setIsOpen] = React.useState(false)
+  const [onChangeCardNumber, setOnChangeCardNumber] = React.useState('')
 
   const openModal = () => setIsOpen(true)
   const closeModal = () => setIsOpen(false)
@@ -22,6 +24,8 @@ const CreditCardComponent: FC = () => {
     console.log(data)
     closeModal()
   }
+
+  const cardNumberField = register('cardNumber', { required: true })
 
   return (
     <>
@@ -85,22 +89,30 @@ const CreditCardComponent: FC = () => {
               >
                 <div className="inline-block w-max p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
                   <div className="flex space-x-2">
-                    <input
-                      {...register('cardNumber')}
-                      className="rounded-2xl bg-gray-200 outline-none p-4"
-                      placeholder="Номер карты"
-                    />
-                    <input
-                      {...register('validity')}
-                      className="rounded-2xl bg-gray-200 outline-none p-4"
-                      placeholder="Срок действия"
-                    />
+                    <form className="flex space-x-2">
+                      <NumberFormat
+                        format="#### #### #### ####"
+                        className="rounded-lg bg-gray-200 p-1 outline-none"
+                        placeholder="Номер карты"
+                        onValueChange={(values) => {
+                          console.log(values)
+                        }}
+                      />
+                      <NumberFormat
+                        format="##/##"
+                        className="rounded-lg bg-gray-200 p-1 outline-none"
+                        placeholder="Срок действия"
+                        onValueChange={(values) => {
+                          console.log(values)
+                        }}
+                      />
+                    </form>
                   </div>
 
                   <div className="mt-4">
                     <button
                       type="submit"
-                      className="bg-green-500 p-4 rounded-xl"
+                      className="bg-green-500 p-2 rounded-xl"
                       onClick={handleSubmit(onSubmit)}
                     >
                       Добавить

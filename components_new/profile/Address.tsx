@@ -42,7 +42,7 @@ const Address: FC = () => {
       addressType: '',
     },
   })
-  const { showAddressMobile, setAddressId, setLocationData } = useUI()
+  const { showAddressMobile, setAddressId, setLocationData, showAddress } = useUI()
 
   const getAddressList = async () => {
     // get opt_token from cookies
@@ -73,7 +73,7 @@ const Address: FC = () => {
   const addNewAddress = () => {
     setLocationData(null)
     setAddressId(null)
-    showAddressMobile()
+    window.innerWidth < 768 ? showAddressMobile() : showAddress()
   }
 
   const editAddress = (address: Address) => {
@@ -83,7 +83,7 @@ const Address: FC = () => {
       location: [address.lat, address.lon],
     })
     setAddressId(address.id)
-    showAddressMobile()
+    window.innerWidth < 768 ? showAddressMobile() : showAddress()
   }
 
   useEffect(() => {

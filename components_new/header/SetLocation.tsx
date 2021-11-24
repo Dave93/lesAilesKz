@@ -14,7 +14,7 @@ const SetLocation: FC = () => {
 
   return (
     <>
-          <LocationTabs setOpen={setOpen} />
+      <LocationTabs setOpen={setOpen} />
     </>
   )
 }
