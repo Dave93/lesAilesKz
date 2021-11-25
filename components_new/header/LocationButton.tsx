@@ -5,7 +5,7 @@ import Cookies from 'js-cookie'
 import axios from 'axios'
 import getConfig from 'next/config'
 import { Listbox, Transition } from '@headlessui/react'
-import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
+import { CheckIcon, ChevronDownIcon } from '@heroicons/react/solid'
 import { Address } from '@commerce/types/address'
 
 const LocationButton: FC = () => {
@@ -74,15 +74,23 @@ const LocationButton: FC = () => {
       ) : (
         <Listbox value={selectedAddress} onChange={changeAddress}>
           <div className="relative">
-            <Listbox.Button className="relative w-full py-2 pl-3 pr-10 text-left bg-white rounded-lg shadow-md cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm">
-              <span className="block truncate">
-                {locationData && locationData.address
-                  ? locationData.address
-                  : tr('chooseLocation')}
-              </span>
-              <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                <SelectorIcon
-                  className="w-5 h-5 text-gray-400"
+            <Listbox.Button className="py-2 pl-3 pr-10 bg-gray-100 rounded-lg w-64 border-gray-200 border">
+              <div className="flex items-center">
+                <img
+                  src="/assets/location_primary.svg"
+                  width="14"
+                  height="16"
+                  className="mr-2"
+                />
+                <span className="block truncate">
+                  {locationData && locationData.address
+                    ? locationData.address
+                    : tr('chooseLocation')}
+                </span>
+              </div>
+              <span className="absolute inset-y-0 right-0 flex items-center pointer-events-none pr-2">
+                <ChevronDownIcon
+                  className="bg-white rounded-md h-5 w-5"
                   aria-hidden="true"
                 />
               </span>
@@ -93,7 +101,7 @@ const LocationButton: FC = () => {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Listbox.Options className="absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-50">
+              <Listbox.Options className="absolute py-1 mt-1 overflow-auto bg-white rounded-2xl max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
                 {addressList.map((address) => (
                   <Listbox.Option
                     key={address.id}
@@ -101,7 +109,7 @@ const LocationButton: FC = () => {
                       `${
                         active ? 'text-amber-900 bg-amber-100' : 'text-gray-900'
                       }
-                          cursor-default select-none relative py-2 pl-10 pr-4`
+                           select-none relative px-6 cursor-pointer`
                     }
                     value={address}
                   >
@@ -110,7 +118,7 @@ const LocationButton: FC = () => {
                         <span
                           className={`${
                             selected ? 'font-medium' : 'font-normal'
-                          } block truncate`}
+                          } block border-b border-gray-200 py-4`}
                         >
                           {address.address}
                         </span>
@@ -119,15 +127,23 @@ const LocationButton: FC = () => {
                             className={`${
                               active ? 'text-amber-600' : 'text-amber-600'
                             }
-                                absolute inset-y-0 left-0 flex items-center pl-3`}
+                                absolute inset-y-0 right-0 flex items-center pl-3`}
                           >
-                            <CheckIcon className="w-5 h-5" aria-hidden="true" />
+                            <input
+                              type="checkbox"
+                              className={`${
+                                selected ? '' : 'border border-gray-200'
+                              } text-green-500 form-checkbox rounded-md w-4 h-4 mr-4`}
+                              defaultChecked={false}
+                              checked={selected}
+                            />
                           </span>
                         ) : null}
                       </>
                     )}
                   </Listbox.Option>
                 ))}
+                <div className="bg-green-500 px-6 py-4 text-white w-max rounded-xl my-2 m-auto cursor-pointer">Добавить новый адрес</div>
               </Listbox.Options>
             </Transition>
           </div>
