@@ -9163,6 +9163,11 @@ url-parse-lax@^3.0.0:
   dependencies:
     prepend-http "^2.0.0"
 
+use-reducer-async@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/use-reducer-async/-/use-reducer-async-2.0.2.tgz#e4e5598cb63b6d0dfe94ec82fd55af7a43e5829f"
+  integrity sha512-jw+uHVoUFVzwoGDo3V8jfRhs2fP2ZnimwntqllSR4EmCGFZvHPxGuFNBQnk9nxec1lHeIgjcRWGNjjMAfwuvAA==
+
 use-subscription@1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/use-subscription/-/use-subscription-1.5.1.tgz#73501107f02fad84c6dd57965beb0b75c68c42d1"

@@ -49,8 +49,6 @@ const Address: FC = () => {
 
     let otpToken: any = Cookies.get('opt_token')
     axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
-
-    let orderData = []
     try {
       const { data } = await axios.get(
         `${webAddress}/api/address/my_addresses`,

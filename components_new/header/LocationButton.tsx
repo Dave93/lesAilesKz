@@ -11,9 +11,22 @@ import { Address } from '@commerce/types/address'
 const LocationButton: FC = () => {
   const [addressList, setAddressList] = useState<Address[]>([])
   const [selectedAddress, setSelectedAddress] = useState<Address>()
-  const { showAddress, locationData, user, setAddressId, setLocationData } =
-    useUI()
   const { t: tr } = useTranslation('common')
+  const {
+    showAddress,
+    locationData,
+    user,
+    setAddressId,
+    setLocationData,
+    showAddressMobile,
+  } = useUI()
+
+  const addNewAddress = () => {
+    setLocationData(null)
+    setAddressId(null)
+    window.innerWidth < 768 ? showAddressMobile() : showAddress()
+  }
+
   const fetchAddress = async () => {
     const { publicRuntimeConfig } = getConfig()
     let webAddress = publicRuntimeConfig.apiUrl
@@ -61,7 +74,7 @@ const LocationButton: FC = () => {
         <button
           className="bg-primary truncate cursor-pointer flex items-center justify-center rounded-xl text-white w-64 h-12 md:h-[36px] outline-none focus:outline-none"
           onClick={() => {
-            showAddress()
+            addNewAddress()
           }}
         >
           <div className="flex items-center mr-3">
@@ -83,7 +96,9 @@ const LocationButton: FC = () => {
                   className="mr-2"
                 />
                 <span className="block truncate">
-                  {locationData && locationData.address
+                  {locationData && locationData.label
+                    ? locationData.label
+                    : locationData.address
                     ? locationData.address
                     : tr('chooseLocation')}
                 </span>
@@ -101,7 +116,7 @@ const LocationButton: FC = () => {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Listbox.Options className="absolute py-1 mt-1 overflow-auto bg-white rounded-2xl max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+              <Listbox.Options className="absolute py-1 mt-1 overflow-auto bg-white rounded-2xl max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none z-50 w-64">
                 {addressList.map((address) => (
                   <Listbox.Option
                     key={address.id}
@@ -118,16 +133,16 @@ const LocationButton: FC = () => {
                         <span
                           className={`${
                             selected ? 'font-medium' : 'font-normal'
-                          } block border-b border-gray-200 py-4`}
+                          } block border-b border-gray-200 py-4 truncate ml-3`}
                         >
-                          {address.address}
+                          {address.label ? address.label : address.address}
                         </span>
                         {selected ? (
                           <span
                             className={`${
                               active ? 'text-amber-600' : 'text-amber-600'
                             }
-                                absolute inset-y-0 right-0 flex items-center pl-3`}
+                                absolute inset-y-0 left-0 flex items-center pl-3`}
                           >
                             <input
                               type="checkbox"
@@ -143,7 +158,14 @@ const LocationButton: FC = () => {
                     )}
                   </Listbox.Option>
                 ))}
-                <div className="bg-green-500 px-6 py-4 text-white w-max rounded-xl my-2 m-auto cursor-pointer">Добавить новый адрес</div>
+                <div
+                  className="bg-green-500 px-6 py-4 text-white w-max rounded-xl my-2 m-auto cursor-pointer"
+                  onClick={() => {
+                    addNewAddress()
+                  }}
+                >
+                  Добавить новый адрес
+                </div>
               </Listbox.Options>
             </Transition>
           </div>

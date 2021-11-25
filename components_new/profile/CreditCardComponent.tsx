@@ -5,27 +5,73 @@ import { PlusIcon } from '@heroicons/react/solid'
 import { Dialog, Transition } from '@headlessui/react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import NumberFormat from 'react-number-format'
+import Cookies from 'js-cookie'
+import axios from 'axios'
+import getConfig from 'next/config'
+
+const { publicRuntimeConfig } = getConfig()
+let webAddress = publicRuntimeConfig.apiUrl
+
 const CreditCardComponent: FC = () => {
   const { t: tr } = useTranslation('common')
 
   const [isOpen, setIsOpen] = React.useState(false)
-  const [onChangeCardNumber, setOnChangeCardNumber] = React.useState('')
+  const [cardNumber, setCardNumber] = React.useState('')
+  const [validity, setValidity] = React.useState('')
 
   const openModal = () => setIsOpen(true)
   const closeModal = () => setIsOpen(false)
 
-  type FormValues = {
-    cardNumber: number
-    validity: number
+
+  const setCredentials = async () => {
+    let csrf = Cookies.get('X-XSRF-TOKEN')
+    if (!csrf) {
+      const csrfReq = await axios(`${webAddress}/api/keldi`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          crossDomain: true,
+        },
+        withCredentials: true,
+      })
+      let { data: res } = csrfReq
+      csrf = Buffer.from(res.result, 'base64').toString('ascii')
+
+      var inTenMinutes = new Date(new Date().getTime() + 10 * 60 * 1000)
+      Cookies.set('X-XSRF-TOKEN', csrf, {
+        expires: inTenMinutes,
+      })
+    }
+    axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+    axios.defaults.headers.common['X-CSRF-TOKEN'] = csrf
+    axios.defaults.headers.common['XCSRF-TOKEN'] = csrf
   }
 
-  const { register, handleSubmit } = useForm<FormValues>()
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    console.log(data)
-    closeModal()
+  const saveNewCard = async () => {
+    console.log(cardNumber)
+    console.log(validity)
+  //  let otpToken: any = Cookies.get('opt_token')
+  //  axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+  //   try {
+  //    await setCredentials()
+  //    const { data } = await axios.post(
+  //      `${webAddress}/api/payment_card/new`,
+  //      {},
+  //      {
+  //        headers: {
+  //          Authorization: `Bearer ${otpToken}`,
+  //        },
+  //      }
+  //    )
+  //    console.log(data)
+  //    if (!data.success) {
+  //      setErrorMessage(data.message)
+  //    } else {
+  //      setAddressList(data.data)
+  //    }
+  //    // orderData = data.data
+  //  } catch (e) {} 
   }
-
-  const cardNumberField = register('cardNumber', { required: true })
 
   return (
     <>
@@ -94,16 +140,16 @@ const CreditCardComponent: FC = () => {
                         format="#### #### #### ####"
                         className="rounded-lg bg-gray-200 p-1 outline-none"
                         placeholder="Номер карты"
-                        onValueChange={(values) => {
-                          console.log(values)
+                        onValueChange={(values: any) => {
+                          setCardNumber(values.value)
                         }}
                       />
                       <NumberFormat
                         format="##/##"
                         className="rounded-lg bg-gray-200 p-1 outline-none"
                         placeholder="Срок действия"
-                        onValueChange={(values) => {
-                          console.log(values)
+                        onValueChange={(values: any) => {
+                          setValidity(values.value)
                         }}
                       />
                     </form>
@@ -113,7 +159,7 @@ const CreditCardComponent: FC = () => {
                     <button
                       type="submit"
                       className="bg-green-500 p-2 rounded-xl"
-                      onClick={handleSubmit(onSubmit)}
+                      onClick={saveNewCard}
                     >
                       Добавить
                     </button>
