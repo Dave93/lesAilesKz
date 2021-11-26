@@ -1,6 +1,6 @@
-import React, { memo, FC, Fragment } from 'react'
+import React, { memo, FC, Fragment, useEffect } from 'react'
 import useTranslation from 'next-translate/useTranslation'
-import { TrashIcon } from '@heroicons/react/outline'
+import { TrashIcon, XIcon } from '@heroicons/react/outline'
 import { PlusIcon } from '@heroicons/react/solid'
 import { Dialog, Transition } from '@headlessui/react'
 import { useForm, SubmitHandler } from 'react-hook-form'
@@ -18,10 +18,12 @@ const CreditCardComponent: FC = () => {
   const [isOpen, setIsOpen] = React.useState(false)
   const [cardNumber, setCardNumber] = React.useState('')
   const [validity, setValidity] = React.useState('')
+  const [errorMessage, setErrorMessage] = React.useState('')
+  const [respCardNumber, setRespCardNumber] = React.useState('')
+  const [cardList, setCardList] = React.useState([])
 
   const openModal = () => setIsOpen(true)
   const closeModal = () => setIsOpen(false)
-
 
   const setCredentials = async () => {
     let csrf = Cookies.get('X-XSRF-TOKEN')
@@ -50,28 +52,55 @@ const CreditCardComponent: FC = () => {
   const saveNewCard = async () => {
     console.log(cardNumber)
     console.log(validity)
-  //  let otpToken: any = Cookies.get('opt_token')
-  //  axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
-  //   try {
-  //    await setCredentials()
-  //    const { data } = await axios.post(
-  //      `${webAddress}/api/payment_card/new`,
-  //      {},
-  //      {
-  //        headers: {
-  //          Authorization: `Bearer ${otpToken}`,
-  //        },
-  //      }
-  //    )
-  //    console.log(data)
-  //    if (!data.success) {
-  //      setErrorMessage(data.message)
-  //    } else {
-  //      setAddressList(data.data)
-  //    }
-  //    // orderData = data.data
-  //  } catch (e) {} 
+    let otpToken: any = Cookies.get('opt_token')
+    axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+    try {
+      await setCredentials()
+      const { data } = await axios.post(
+        `${webAddress}/api/payment_cards`,
+        {
+          cardNumber,
+          validity,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${otpToken}`,
+          },
+        }
+      )
+      console.log(data)
+      if (!data.success) {
+        setErrorMessage(data.message)
+      } else {
+      }
+      // orderData = data.data
+    } catch (e) {}
   }
+
+  const getCardList = async () => {
+    // get opt_token from cookies
+    let otpToken: any = Cookies.get('opt_token')
+    axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+    try {
+      const { data } = await axios.get(`${webAddress}/api/payment_cards`, {
+        headers: {
+          Authorization: `Bearer ${otpToken}`,
+        },
+      })
+      console.log(data)
+      if (!data.success) {
+        setErrorMessage(data.message)
+      } else {
+        setCardList(data.data)
+      }
+      // orderData = data.data
+    } catch (e) {}
+  }
+
+  useEffect(() => {
+    getCardList()
+    return () => {}
+  }, [])
 
   return (
     <>
@@ -79,18 +108,27 @@ const CreditCardComponent: FC = () => {
         {tr('profile_mycreditcard')}
       </div>
       <div className="grid grid-cols-4 gap-3 font-sans">
-        <div className=" m-auto bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 rounded-3xl text-white bg-red-400 w-72 h-44 p-5">
-          <div className="text-2xl mt-10">8600 53** **** 0036</div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-end mt-8">
-              <div className="text-sm">Срок действия</div>
-              <div className="ml-2 text-2xl">05/25</div>
+        {cardList &&
+          cardList.length > 0 &&
+          cardList.map((item: any) => (
+            <div
+              key={item.id}
+              className=" m-auto bg-gradient-to-br from-yellow via-red-500 to-indigo-700 rounded-3xl text-white w-72 h-44 p-5"
+            >
+              <div className="text-2xl mt-10">
+                {respCardNumber} 8600 53** **** 0036
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-end mt-8">
+                  <div className="text-sm">Срок действия</div>
+                  <div className="ml-2 text-2xl">05/25</div>
+                </div>
+                <div className="border border-red-500 p-2 rounded-xl mt-5 cursor-pointer">
+                  <TrashIcon className="w-5" />
+                </div>
+              </div>
             </div>
-            <div className="border border-primary p-2 rounded-xl mt-5 cursor-pointer">
-              <TrashIcon className="w-5" />
-            </div>
-          </div>
-        </div>
+          ))}
         <div
           className="w-72 h-44 p-5 border border-gray-400 bg-gray-200 rounded-3xl flex items-center m-auto justify-center cursor-pointer"
           onClick={openModal}
@@ -133,36 +171,54 @@ const CreditCardComponent: FC = () => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <div className="inline-block w-max p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
-                  <div className="flex space-x-2">
-                    <form className="flex space-x-2">
+                <div className="inline-block w-max px-10 py-8 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl relative">
+                  <XIcon
+                    className="w-6 h-6 absolute right-6 top-6 text-gray-400 cursor-pointer"
+                    onClick={closeModal}
+                  />
+                  <div className="text-3xl w-max m-auto pb-8">
+                    Добавить карту
+                  </div>
+                  {errorMessage && (
+                    <div className="text-red-500 mb-2 w-max m-auto">
+                      <div>{errorMessage}</div>
+                    </div>
+                  )}
+                  <div className=" rounded-3xl bg-gradient-to-br from-indigo-700 via-red-500 to-yellow py-12 px-16">
+                    <div className="">
                       <NumberFormat
                         format="#### #### #### ####"
-                        className="rounded-lg bg-gray-200 p-1 outline-none"
-                        placeholder="Номер карты"
+                        className="rounded-lg bg-white py-3 px-6 outline-none text-center"
+                        placeholder="0000 0000 0000 0000"
                         onValueChange={(values: any) => {
                           setCardNumber(values.value)
                         }}
                       />
+                    </div>
+                    <div className="w-max ml-auto flex mt-7 items-center">
+                      <div className="font-semibold text-white">
+                        Срок действия
+                      </div>
                       <NumberFormat
                         format="##/##"
-                        className="rounded-lg bg-gray-200 p-1 outline-none"
-                        placeholder="Срок действия"
+                        className="rounded-lg bg-white p-3 outline-none w-24 text-center ml-2"
+                        placeholder="ММ/ГГ"
                         onValueChange={(values: any) => {
                           setValidity(values.value)
                         }}
                       />
-                    </form>
+                    </div>
                   </div>
 
-                  <div className="mt-4">
-                    <button
-                      type="submit"
-                      className="bg-green-500 p-2 rounded-xl"
-                      onClick={saveNewCard}
-                    >
-                      Добавить
-                    </button>
+                  <div
+                    className={`${
+                      cardNumber.length == 16 ? 'bg-green-500' : 'bg-gray-400'
+                    } py-4 rounded-xl mt-4 text-center text-white text-xl font-medium cursor-pointer`}
+                    onClick={() =>
+                      cardNumber.length == 16 ? saveNewCard() : null
+                    }
+                  >
+                    Продолжить
                   </div>
                 </div>
               </Transition.Child>
