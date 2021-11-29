@@ -72,6 +72,7 @@ type FormData = {
   delivery_schedule: string
   comment_to_address: string
   comment_to_order: string
+  addressId: number | null
 }
 
 interface SelectItem {
@@ -138,6 +139,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     activeCity,
     setActiveCity,
     openSignInModal,
+    addressId
   } = useUI()
   let cartId: string | null = null
   if (typeof window !== 'undefined') {
@@ -158,6 +160,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       currentAddress = "O'zbekiston, " + activeCity.name_uz + ','
     }
   }
+
   const {
     register,
     handleSubmit,
@@ -192,6 +195,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       delivery_time: '',
       pay_type: '',
       delivery_schedule: 'now',
+      addressId: addressId || null,
     },
   })
 
@@ -317,6 +321,36 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     if (locationData && locationData.deliveryType == 'pickup') {
       loadPickupItems()
     }
+
+    let formValues = getValues()
+
+    if (formValues.addressId != addressId) {
+      reset({
+        name: user?.user?.name,
+        phone: user?.user?.phone,
+        email: '',
+        address: locationData?.address || currentAddress,
+        flat: locationData?.flat || '',
+        house: locationData?.house || '',
+        entrance: locationData?.entrance || '',
+        door_code: locationData?.door_code || '',
+        floor: locationData?.floor || '',
+        comment_to_address: '',
+        comment_to_order: '',
+        change: '',
+        notes: '',
+        card_number: '',
+        card_month: '',
+        holder_name: '',
+        cvv_code: '',
+        delivery_day: '',
+        delivery_time: '',
+        pay_type: '',
+        delivery_schedule: 'now',
+        addressId: addressId,
+      })
+    }
+
     return
   }, [locationData])
 
@@ -758,7 +792,6 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     setNoChange(true)
     resetField('change')
   }
-
   return (
     <div className="md:mx-0 pt-1 md:pt-0 pb-1">
       {/* Contacts */}

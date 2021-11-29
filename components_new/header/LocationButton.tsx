@@ -1,4 +1,4 @@
-import { FC, Fragment, memo, useEffect, useState } from 'react'
+import { FC, Fragment, memo, useEffect, useMemo, useState } from 'react'
 import { useUI } from '@components/ui/context'
 import useTranslation from 'next-translate/useTranslation'
 import Cookies from 'js-cookie'
@@ -19,6 +19,7 @@ const LocationButton: FC = () => {
     setAddressId,
     setLocationData,
     showAddressMobile,
+    addressId,
   } = useUI()
 
   const addNewAddress = () => {
@@ -45,9 +46,13 @@ const LocationButton: FC = () => {
             },
           }
         )
-        console.log(data)
         if (data.success) {
           setAddressList(data.data)
+          data.data.map((address: Address) => {
+            if (address.id == addressId) {
+              setSelectedAddress(address)
+            }
+          })
         }
         // orderData = data.data
       } catch (e) {}
@@ -65,6 +70,16 @@ const LocationButton: FC = () => {
     setSelectedAddress(address)
   }
 
+  const locationLabel = useMemo(() => {
+    let res = ''
+    if (locationData) {
+      res = locationData.label ? locationData.label : locationData.address
+    } else {
+      res = tr('chooseLocation')
+    }
+    return res
+  }, [locationData]);
+
   useEffect(() => {
     fetchAddress()
   }, [])
@@ -80,9 +95,7 @@ const LocationButton: FC = () => {
           <div className="flex items-center mr-3">
             <img src="/assets/location.svg" width="14" height="16" />
           </div>
-          {locationData && locationData.address
-            ? locationData.address
-            : tr('chooseLocation')}
+          {locationLabel}
         </button>
       ) : (
         <Listbox value={selectedAddress} onChange={changeAddress}>
@@ -95,13 +108,7 @@ const LocationButton: FC = () => {
                   height="16"
                   className="mr-2"
                 />
-                <span className="block truncate">
-                  {locationData && locationData.label
-                    ? locationData.label
-                    : locationData.address
-                    ? locationData.address
-                    : tr('chooseLocation')}
-                </span>
+                <span className="block truncate">{locationLabel}</span>
               </div>
               <span className="absolute inset-y-0 right-0 flex items-center pointer-events-none pr-2">
                 <ChevronDownIcon
@@ -149,8 +156,7 @@ const LocationButton: FC = () => {
                               className={`${
                                 selected ? '' : 'border border-gray-200'
                               } text-green-500 form-checkbox rounded-md w-4 h-4 mr-4`}
-                              defaultChecked={false}
-                              checked={selected}
+                              defaultChecked={selected}
                             />
                           </span>
                         ) : null}

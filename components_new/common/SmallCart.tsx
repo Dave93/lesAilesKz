@@ -274,7 +274,7 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
       openModal()
     } else {
       router.push(`/${activeCity.slug}/cart/`)
-      closeModal()
+      closePopover()
     }
   }
 
