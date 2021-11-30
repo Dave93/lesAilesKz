@@ -1,6 +1,7 @@
 import { City } from '@commerce/types/cities'
 import React, { FC, useCallback, useMemo } from 'react'
 import Cookies from 'js-cookie'
+import { Address } from '@commerce/types/address'
 
 let userData: any = null
 
@@ -12,6 +13,7 @@ let locationData: any = {
   door_code: '',
   deliveryType: 'deliver',
   location: [],
+  label: '',
 }
 
 let activeCity: City | null = null
@@ -78,6 +80,7 @@ export interface LocationData {
   location?: number[]
   terminalId?: number
   terminalData?: AnyObject
+  label?: string
 }
 
 export interface State {
@@ -95,6 +98,7 @@ export interface State {
   overlay: boolean
   addressModal: boolean
   addressId: number | null
+  addressList: Address[] | null
 }
 
 const initialState = {
@@ -113,6 +117,7 @@ const initialState = {
   addressModal: false,
   addressModalMobile: false,
   addressId: null,
+  addressList: null,
 }
 
 type Action =
@@ -189,6 +194,10 @@ type Action =
   | {
       type: 'SET_ADDRESS_ID'
       value: number
+    }
+  | {
+      type: 'SET_ADDRESS_LIST'
+      value: Address[]
     }
 
 type MODAL_VIEWS =
@@ -360,6 +369,12 @@ function uiReducer(state: State, action: Action) {
         addressId: action.value,
       }
     }
+    case 'SET_ADDRESS_LIST': {
+      return {
+        ...state,
+        addressList: action.value,
+      }
+    }
   }
 }
 
@@ -486,6 +501,11 @@ export const UIProvider: FC<UIProviderProps> = (props) => {
     [dispatch]
   )
 
+  const setAddressList = useCallback(
+    (value: Address[]) => dispatch({ type: 'SET_ADDRESS_LIST', value }),
+    [dispatch]
+  )
+
   const value = useMemo(
     () => ({
       ...state,
@@ -513,6 +533,7 @@ export const UIProvider: FC<UIProviderProps> = (props) => {
       showAddressMobile,
       hideAddressMobile,
       setAddressId,
+      setAddressList,
     }),
     [state]
   )

@@ -7,6 +7,7 @@ import { useUI } from '@components/ui/context'
 import Cookies from 'js-cookie'
 import axios from 'axios'
 import getConfig from 'next/config'
+import getAddressList from '@lib/load_addreses'
 
 const { publicRuntimeConfig } = getConfig()
 let webAddress = publicRuntimeConfig.apiUrl
@@ -14,7 +15,6 @@ axios.defaults.withCredentials = true
 
 const Address: FC = () => {
   const { t: tr } = useTranslation('common')
-  const [addressList, setAddressList] = useState<Address[]>([])
   const [errorMessage, setErrorMessage] = useState('')
 
   // let items = AddresItems.map((item) => {
@@ -42,32 +42,21 @@ const Address: FC = () => {
       addressType: '',
     },
   })
-  const { showAddressMobile, setAddressId, setLocationData } = useUI()
+  const {
+    showAddressMobile,
+    setAddressId,
+    setLocationData,
+    setAddressList,
+    addressList,
+  } = useUI()
 
-  const getAddressList = async () => {
-    // get opt_token from cookies
-
-    let otpToken: any = Cookies.get('opt_token')
-    axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
-
-    let orderData = []
-    try {
-      const { data } = await axios.get(
-        `${webAddress}/api/address/my_addresses`,
-        {
-          headers: {
-            Authorization: `Bearer ${otpToken}`,
-          },
-        }
-      )
-      console.log(data)
-      if (!data.success) {
-        setErrorMessage(data.message)
-      } else {
-        setAddressList(data.data)
-      }
-      // orderData = data.data
-    } catch (e) {}
+  const loadAddresses = async () => {
+    const addresses = await getAddressList()
+    if (!addresses) {
+      setErrorMessage(tr('user_must_login'))
+    } else {
+      setAddressList(addresses)
+    }
   }
 
   const addNewAddress = () => {
@@ -77,7 +66,6 @@ const Address: FC = () => {
   }
 
   const editAddress = (address: Address) => {
-    console.log(address)
     setLocationData({
       ...address,
       location: [address.lat, address.lon],
@@ -87,7 +75,7 @@ const Address: FC = () => {
   }
 
   useEffect(() => {
-    getAddressList()
+    loadAddresses()
     return () => {}
   }, [])
 
@@ -102,7 +90,7 @@ const Address: FC = () => {
       <div className="w-11/12 md:w-5/12 m-auto">
         {!errorMessage && addressList.length > 0 && (
           <>
-            {addressList.map((item) => {
+            {addressList.map((item: Address) => {
               return (
                 <div
                   className="flex items-center py-2 px-4 bg-gray-200 rounded-lg justify-between mb-2"

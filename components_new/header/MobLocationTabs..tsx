@@ -425,36 +425,8 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
           }
         )
 
-        // console.log(addressData)
-
         setAddressId(addressData.data.id)
       }
-
-      // console.log(data)
-      // if (!data.success) {
-      //   setErrorMessage(data.message)
-      // } else {
-      //   setAddressList(data.data)
-      // }
-      // const { data: otpData } = await axios.post(
-      //   `${webAddress}/api/otp/check`,
-      //   {
-      //     otp_token: otpToken,
-      //   },
-      //   {
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //     },
-      //   }
-      // )
-      // if (otpData.data.status == 'success') {
-      //   setLocationData({
-      //     ...locationData,
-      //     otp_token: otpToken,
-      //   })
-      // } else {
-      //   Cookies.remove('opt_token')
-      // }
     }
   }
 
