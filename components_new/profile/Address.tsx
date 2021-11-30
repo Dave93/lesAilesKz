@@ -48,6 +48,7 @@ const Address: FC = () => {
     setLocationData,
     setAddressList,
     addressList,
+    showAddress,
   } = useUI()
 
   const loadAddresses = async () => {
@@ -62,7 +63,7 @@ const Address: FC = () => {
   const addNewAddress = () => {
     setLocationData(null)
     setAddressId(null)
-    showAddressMobile()
+    window.innerWidth < 768 ? showAddressMobile() : showAddress()
   }
 
   const editAddress = (address: Address) => {
@@ -71,7 +72,7 @@ const Address: FC = () => {
       location: [address.lat, address.lon],
     })
     setAddressId(address.id)
-    showAddressMobile()
+    window.innerWidth < 768 ? showAddressMobile() : showAddress()
   }
 
   useEffect(() => {

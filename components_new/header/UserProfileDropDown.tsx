@@ -44,6 +44,7 @@ const UserProfileDropDown: FC = () => {
     e.stopPropagation()
     localStorage.removeItem('mijoz')
     setUserData(null)
+    closePopover()
   }
 
   const goTo = (link: string) => {

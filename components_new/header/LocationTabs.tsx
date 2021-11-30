@@ -42,19 +42,16 @@ import router, { useRouter } from 'next/router'
 import SimpleBar from 'simplebar-react'
 import { chunk, sortBy } from 'lodash'
 import { DateTime } from 'luxon'
+import Cookies from 'js-cookie'
 
 const { publicRuntimeConfig } = getConfig()
 
 let webAddress = publicRuntimeConfig.apiUrl
-interface Props {
-  setOpen?: any
-}
-
 interface AnyObject {
   [key: string]: any
 }
 
-const LocationTabs: FC<Props> = ({ setOpen }) => {
+const LocationTabs: FC = () => {
   const { locale, pathname, query } = useRouter()
   const {
     locationData,
@@ -63,6 +60,8 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
     activeCity,
     setActiveCity,
     hideAddress,
+    addressId,
+    setAddressId,
   } = useUI()
   const [tabIndex, setTabIndex] = useState(
     locationData?.deliveryType || 'deliver'
@@ -361,6 +360,30 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
     })
   }
 
+  const setCredentials = async () => {
+    let csrf = Cookies.get('X-XSRF-TOKEN')
+    if (!csrf) {
+      const csrfReq = await axios(`${webAddress}/api/keldi`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          crossDomain: true,
+        },
+        withCredentials: true,
+      })
+      let { data: res } = csrfReq
+      csrf = Buffer.from(res.result, 'base64').toString('ascii')
+
+      var inTenMinutes = new Date(new Date().getTime() + 10 * 60 * 1000)
+      Cookies.set('X-XSRF-TOKEN', csrf, {
+        expires: inTenMinutes,
+      })
+    }
+    axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+    axios.defaults.headers.common['X-CSRF-TOKEN'] = csrf
+    axios.defaults.headers.common['XCSRF-TOKEN'] = csrf
+  }
+
   const saveDeliveryData = async (
     data: Object = {},
     event: React.MouseEvent | null
@@ -412,6 +435,46 @@ const LocationTabs: FC<Props> = ({ setOpen }) => {
         terminalData: terminalsData.data.items[0],
       })
       hideAddress()
+    }
+
+    const otpToken = Cookies.get('opt_token')
+    if (otpToken) {
+      if (addressId) {
+        await setCredentials()
+        await axios.post(
+          `${webAddress}/api/address/${addressId}`,
+
+          {
+            ...data,
+            lat: locationData.location[0],
+            lon: locationData.location[1],
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${otpToken}`,
+            },
+          }
+        )
+      } else {
+        await setCredentials()
+        const { data: addressData } = await axios.post(
+          `${webAddress}/api/address/new`,
+          {
+            ...data,
+            lat: locationData.location[0],
+            lon: locationData.location[1],
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${otpToken}`,
+            },
+          }
+        )
+
+        // console.log(addressData)
+
+        setAddressId(addressData.data.id)
+      }
     }
   }
 

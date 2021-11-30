@@ -169,6 +169,7 @@ const SignInButton: FC = () => {
       setOtpShowCode(otpTime.current)
       startTimeout()
       setIsShowPasswordForm(true)
+      hideOverlay()
     }
   }
 
