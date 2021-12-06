@@ -275,14 +275,15 @@ const SignInButton: FC = () => {
                 <button
                   className="px-3 py-2 flex focus:outline-none items-center md:bg-gray-100 outline-none rounded-lg border border-grey"
                   type="button"
-                  onClick={() => {
-                    popoverShow ? closePopover() : openPopover()
-                  }}
+                  onMouseEnter={() => openPopover()}
+                  onMouseLeave={() => closePopover()}
                   ref={btnRef}
                 >
                   <Image src="/profile.svg" width="17" height="21" />
                 </button>
                 <div
+                  onMouseEnter={() => openPopover()}
+                  onMouseLeave={() => closePopover()}
                   className={
                     (popoverShow ? '' : 'hidden ') +
                     'z-50 transform translate-x-0 inset-x-auto'
