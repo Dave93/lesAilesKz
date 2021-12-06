@@ -57,55 +57,58 @@ const UserProfileDropDown: FC = () => {
   return (
     <>
       <div>
-        <button
-          onClick={() => {
-            popoverShow ? closePopover() : openPopover()
-          }}
+        <button          
+          onMouseEnter={() => openPopover()}
+          onMouseLeave={() => closePopover()}
           className="bg-gray-200 px-8 outline-none focus:outline-none mb-5 md:mb-0 py-2 rounded-xl hidden md:block"
         >
           {user.user.name}
         </button>
       </div>
       <div
+        onMouseEnter={() => openPopover()}
+        onMouseLeave={() => closePopover()}
         className={
           popoverShow
-            ? 'z-20 rounded-2xl p-3 mt-8 bg-white absolute'
+            ? 'z-20 absolute'
             : 'hidden '
         }
       >
-        <div className="flex items-center ml-5">
-          <UserCircleIcon className="h-10 w-10 text-gray-400" />
-          <div className="text-lg ml-5">{user.user.name}</div>
-        </div>
-        {items.map((item) => {
-          let href = `${item.href}`
+        <div className={'mt-8 rounded-2xl p-3 bg-white'}>
+          <div className="flex items-center ml-5">
+            <UserCircleIcon className="h-10 w-10 text-gray-400" />
+            <div className="text-lg ml-5">{user.user.name}</div>
+          </div>
+          {items.map((item) => {
+            let href = `${item.href}`
 
-          if (href.indexOf('http') < 0) {
-            href = `/${activeCity.slug}${item.href}`
-          }
+            if (href.indexOf('http') < 0) {
+              href = `/${activeCity.slug}${item.href}`
+            }
 
-          return (
-              <div className="cursor-pointer flex items-center py-4 px-5 justify-between" onClick={() => goTo(href)}>
-                <div className="flex items-center">
-                  <img src={item.icon} />
-                  <div className="ml-3">{item.name}</div>
+            return (
+                <div className="cursor-pointer flex items-center py-4 px-5 justify-between" onClick={() => goTo(href)}>
+                  <div className="flex items-center">
+                    <img src={item.icon} />
+                    <div className="ml-3">{item.name}</div>
+                  </div>
+                  <div>
+                    <ChevronRightIcon className=" w-5 text-blue-500" />
+                  </div>
                 </div>
-                <div>
-                  <ChevronRightIcon className=" w-5 text-blue-500" />
-                </div>
-              </div>
-          )
-        })}
+            )
+          })}
 
-        <div className="bg-white mt-8 overflow-hidden rounded-2xl text-center w-max">
-          <LanguageDropDown />
-          <button
-            className="bg-gray-200 rounded-xl w-full text-gray-400 py-4 mt-5"
-            onClick={logout}
-          >
-            Выйти
-          </button>
-        </div>
+          <div className="bg-white mt-8 overflow-hidden rounded-2xl text-center w-max">
+            <LanguageDropDown />
+            <button
+              className="bg-gray-200 rounded-xl w-full text-gray-400 py-4 mt-5"
+              onClick={logout}
+            >
+              Выйти
+            </button>
+          </div>
+          </div>
       </div>
     </>
   )
