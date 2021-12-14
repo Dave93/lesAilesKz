@@ -183,7 +183,7 @@ const Layout: FC<Props> = ({
                                   <ul className="space-y-5" key={`footer_${i}`}>
                                     {item.map((link: any, i) => {
                                       const keyTyped =
-                                        `name_${locale}` as keyof typeof item
+                                        `name_${locale}` as keyof typeof link
                                       let href = link.href
                                       if (href.indexOf('http') < 0) {
                                         href = `/${currentCity?.slug}${link.href}`
@@ -238,10 +238,10 @@ const Layout: FC<Props> = ({
                                 className="no-underline "
                                 href={soc.link}
                               >
-                                  <FontAwesomeIcon
-                                    icon={socIcons[soc.code]}
-                                    className="text-white w-5 h-5"
-                                  />
+                                <FontAwesomeIcon
+                                  icon={socIcons[soc.code]}
+                                  className="text-white w-5 h-5"
+                                />
                               </a>
                             </li>
                           )

@@ -6,7 +6,12 @@ import axios from 'axios'
 import getConfig from 'next/config'
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronDownIcon } from '@heroicons/react/solid'
+import { toast } from 'react-toastify'
 import { Address } from '@commerce/types/address'
+
+const { publicRuntimeConfig } = getConfig()
+
+let webAddress = publicRuntimeConfig.apiUrl
 
 const LocationButton: FC = () => {
   const [addressList, setAddressList] = useState<Address[]>([])
@@ -20,6 +25,7 @@ const LocationButton: FC = () => {
     setLocationData,
     showAddressMobile,
     addressId,
+    selectAddress,
   } = useUI()
 
   const addNewAddress = () => {
@@ -61,13 +67,103 @@ const LocationButton: FC = () => {
     }
   }
 
-  const changeAddress = (address: Address) => {
-    setLocationData({
-      ...address,
-      location: [address.lat, address.lon],
-    })
-    setAddressId(address.id)
-    setSelectedAddress(address)
+  const searchTerminal = async (
+    locationData: any = {},
+    returnResult: boolean = false
+  ) => {
+    if (!locationData || !locationData.location) {
+      toast.warn(tr('no_address_specified'), {
+        position: toast.POSITION.BOTTOM_RIGHT,
+        hideProgressBar: true,
+      })
+      // if returnResult is true, return object else return setLocationData
+      return returnResult
+        ? {
+            terminal_id: undefined,
+            terminalData: undefined,
+          }
+        : setLocationData({
+            ...locationData,
+            terminal_id: undefined,
+            terminalData: undefined,
+          })
+    }
+
+    const { data: terminalsData } = await axios.get(
+      `${webAddress}/api/terminals/find_nearest?lat=${locationData.location[0]}&lon=${locationData.location[1]}`
+    )
+
+    if (terminalsData.data && !terminalsData.data.items.length) {
+      toast.warn(
+        terminalsData.data.message
+          ? terminalsData.data.message
+          : tr('restaurant_not_found'),
+        {
+          position: toast.POSITION.BOTTOM_RIGHT,
+          hideProgressBar: true,
+        }
+      )
+
+      // if returnResult is true, return object else return setLocationData
+      return returnResult
+        ? {
+            terminal_id: undefined,
+            terminalData: undefined,
+          }
+        : setLocationData({
+            ...locationData,
+            terminal_id: undefined,
+            terminalData: undefined,
+          })
+    }
+
+    if (terminalsData.data) {
+      // if returnResult is true, return object else return setLocationData
+      return returnResult
+        ? {
+            terminal_id: terminalsData.data.items[0].id,
+            terminalData: terminalsData.data.items[0],
+          }
+        : setLocationData({
+            ...locationData,
+            terminal_id: terminalsData.data.items[0].id,
+            terminalData: terminalsData.data.items[0],
+          })
+    }
+  }
+
+  const changeAddress = async (address: Address) => {
+    if (address.id == addressId) {
+      setAddressId(null)
+    } else {
+      if (address.lat && address.lon) {
+        let terminalData = await searchTerminal(
+          {
+            location: [address.lat, address.lon],
+          },
+          true
+        )
+        selectAddress({
+          locationData: {
+            ...address,
+            location: [address.lat, address.lon],
+            terminal_id: terminalData.terminal_id,
+            terminalData: terminalData.terminalData,
+          },
+          addressId: address.id,
+        })
+      } else {
+        selectAddress({
+          locationData: {
+            ...address,
+            location: [],
+            terminal_id: undefined,
+            terminalData: undefined,
+          },
+          addressId: address.id,
+        })
+      }
+    }
   }
 
   const locationLabel = useMemo(() => {
@@ -78,7 +174,7 @@ const LocationButton: FC = () => {
       res = tr('chooseLocation')
     }
     return res
-  }, [locationData]);
+  }, [locationData])
 
   useEffect(() => {
     fetchAddress()

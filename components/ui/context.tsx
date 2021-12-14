@@ -199,6 +199,10 @@ type Action =
       type: 'SET_ADDRESS_LIST'
       value: Address[]
     }
+  | {
+      type: 'SELECT_ADDRESS'
+      value: AnyObject
+    }
 
 type MODAL_VIEWS =
   | 'SIGNUP_VIEW'
@@ -375,6 +379,13 @@ function uiReducer(state: State, action: Action) {
         addressList: action.value,
       }
     }
+    case 'SELECT_ADDRESS': {
+      return {
+        ...state,
+        locationData: action.value.locationData,
+        addressId: action.value.addressId,
+      }
+    }
   }
 }
 
@@ -506,6 +517,11 @@ export const UIProvider: FC<UIProviderProps> = (props) => {
     [dispatch]
   )
 
+  const selectAddress = useCallback(
+    (value: Address) => dispatch({ type: 'SELECT_ADDRESS', value }),
+    [dispatch]
+  )
+
   const value = useMemo(
     () => ({
       ...state,
@@ -534,6 +550,7 @@ export const UIProvider: FC<UIProviderProps> = (props) => {
       hideAddressMobile,
       setAddressId,
       setAddressList,
+      selectAddress,
     }),
     [state]
   )

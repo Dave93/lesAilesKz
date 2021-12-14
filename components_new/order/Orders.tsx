@@ -52,7 +52,7 @@ axios.defaults.withCredentials = true
 
 type FormData = {
   name: string
-  address: string
+  address: string | null | undefined
   phone: string
   email: string
   flat: string
@@ -139,7 +139,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     activeCity,
     setActiveCity,
     openSignInModal,
-    addressId
+    addressId,
   } = useUI()
   let cartId: string | null = null
   if (typeof window !== 'undefined') {
@@ -271,14 +271,14 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
   const [selectedCoordinates, setSelectedCoordinates] = useState(
     locationData && locationData.location
       ? [
-        {
-          coordinates: {
-            lat: locationData.location[0],
-            long: locationData.location[1],
+          {
+            coordinates: {
+              lat: locationData.location[0],
+              long: locationData.location[1],
+            },
+            key: `${locationData.location[0]}${locationData.location[1]}`,
           },
-          key: `${locationData.location[0]}${locationData.location[1]}`,
-        },
-      ]
+        ]
       : ([] as any)
   )
 
@@ -313,13 +313,23 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       configData = configData.toString('ascii')
       configData = JSON.parse(configData)
       setConfigData(configData)
-    } catch (e) { }
+    } catch (e) {}
+  }
+
+  const getDeliveryPrice = async () => {
+    let { data } = await axios.get(
+      `${webAddress}/api/orders/calc_basket_delivery?lat=${locationData?.location[0]}&lon=${locationData?.location[1]}&terminal_id=${locationData.terminal_id}`
+    )
   }
 
   useEffect(() => {
     fetchConfig()
     if (locationData && locationData.deliveryType == 'pickup') {
       loadPickupItems()
+    }
+    console.log(locationData)
+    if (locationData && locationData.deliveryType == 'deliver') {
+      getDeliveryPrice()
     }
 
     let formValues = getValues()
@@ -797,8 +807,10 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       {/* Contacts */}
       <div className="md:flex justify-between md:mt-12 md:px-0 px-5">
         <div className="text-3xl">Оформление заказа</div>
-        <div className="cursor-pointer"
-          onClick={() => router.push(`/${activeCity.slug}/cart`)}>
+        <div
+          className="cursor-pointer"
+          onClick={() => router.push(`/${activeCity.slug}/cart`)}
+        >
           Вернуться в корзину
         </div>
       </div>
@@ -873,19 +885,21 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
         <div className="bg-white flex rounded-2xl w-full items-center py-7 md:px-10 px-5 h-32 mb-5">
           <div className="bg-gray-100 flex  w-full rounded-xl">
             <button
-              className={`${tabIndex == 'deliver'
-                ? 'bg-green-600 text-white'
-                : ' text-gray-400'
-                } flex-1 font-bold py-3 text-[18px] rounded-xl outline-none focus:outline-none`}
+              className={`${
+                tabIndex == 'deliver'
+                  ? 'bg-green-600 text-white'
+                  : ' text-gray-400'
+              } flex-1 font-bold py-3 text-[18px] rounded-xl outline-none focus:outline-none`}
               onClick={() => changeTabIndex('deliver')}
             >
               {tr('delivery')}
             </button>
             <button
-              className={`${tabIndex == 'pickup'
-                ? 'bg-green-600 text-white'
-                : ' text-gray-400'
-                } flex-1 font-bold py-3 text-[18px] rounded-xl outline-none focus:outline-none`}
+              className={`${
+                tabIndex == 'pickup'
+                  ? 'bg-green-600 text-white'
+                  : ' text-gray-400'
+              } flex-1 font-bold py-3 text-[18px] rounded-xl outline-none focus:outline-none`}
               onClick={() => changeTabIndex('pickup')}
             >
               {tr('pickup')}
@@ -921,10 +935,11 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                         <Menu.Item key={city.id}>
                           <span
                             onClick={() => setActive(city)}
-                            className={`block px-4 py-2 text-sm cursor-pointer ${city.id == chosenCity.id
-                              ? 'bg-secondary text-white'
-                              : 'text-secondary'
-                              }`}
+                            className={`block px-4 py-2 text-sm cursor-pointer ${
+                              city.id == chosenCity.id
+                                ? 'bg-secondary text-white'
+                                : 'text-secondary'
+                            }`}
                           >
                             {locale == 'uz' ? city.name_uz : city.name}
                           </span>
@@ -945,9 +960,13 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                       itemToString={(item) =>
                         item ? item.formatted : watch('address')
                       }
-                      initialInputValue={
-                        locationData?.address || currentAddress
-                      }
+                      initialInputValue={watch('address') || currentAddress}
+                      inputValue={watch('address')}
+                      onStateChange={(changes, stateAndHelpers) => {
+                        if (changes.hasOwnProperty('inputValue')) {
+                          setValue('address', changes.inputValue)
+                        }
+                      }}
                     >
                       {({
                         getInputProps,
@@ -982,33 +1001,35 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                             >
                               {isOpen
                                 ? geoSuggestions.map(
-                                  (item: any, index: number) => (
-                                    <li
-                                      {...getItemProps({
-                                        key: index,
-                                        index,
-                                        item,
-                                        className: `py-2 px-4 flex items-center ${highlightedIndex == index
-                                          ? 'bg-gray-100'
-                                          : 'bg-white'
+                                    (item: any, index: number) => (
+                                      <li
+                                        {...getItemProps({
+                                          key: index,
+                                          index,
+                                          item,
+                                          className: `py-2 px-4 flex items-center ${
+                                            highlightedIndex == index
+                                              ? 'bg-gray-100'
+                                              : 'bg-white'
                                           }`,
-                                      })}
-                                    >
-                                      <CheckIcon
-                                        className={`w-5 text-yellow font-bold mr-2 ${highlightedIndex == index
-                                          ? ''
-                                          : 'invisible'
+                                        })}
+                                      >
+                                        <CheckIcon
+                                          className={`w-5 text-yellow font-bold mr-2 ${
+                                            highlightedIndex == index
+                                              ? ''
+                                              : 'invisible'
                                           }`}
-                                      />
-                                      <div>
-                                        <div>{item.title}</div>
-                                        <div className="text-sm">
-                                          {item.description}
+                                        />
+                                        <div>
+                                          <div>{item.title}</div>
+                                          <div className="text-sm">
+                                            {item.description}
+                                          </div>
                                         </div>
-                                      </div>
-                                    </li>
+                                      </li>
+                                    )
                                   )
-                                )
                                 : null}
                             </ul>
                           </div>
@@ -1192,23 +1213,26 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 {pickupPoints.map((point) => (
                   <div
                     key={point.id}
-                    className={`border flex items-start p-3 rounded-[15px] cursor-pointer ${activePoint && activePoint == point.id
-                      ? 'border-yellow'
-                      : 'border-gray-400'
-                      }`}
+                    className={`border flex items-start p-3 rounded-[15px] cursor-pointer ${
+                      activePoint && activePoint == point.id
+                        ? 'border-yellow'
+                        : 'border-gray-400'
+                    }`}
                     onClick={() => choosePickupPoint(point.id)}
                   >
                     <div
-                      className={`border mr-4 mt-1 rounded-xl ${activePoint && activePoint == point.id
-                        ? 'border-yellow'
-                        : 'border-gray-400'
-                        }`}
+                      className={`border mr-4 mt-1 rounded-xl ${
+                        activePoint && activePoint == point.id
+                          ? 'border-yellow'
+                          : 'border-gray-400'
+                      }`}
                     >
                       <div
-                        className={`h-3 m-1 rounded-xl w-3 ${activePoint && activePoint == point.id
-                          ? 'bg-yellow'
-                          : 'bg-gray-400'
-                          }`}
+                        className={`h-3 m-1 rounded-xl w-3 ${
+                          activePoint && activePoint == point.id
+                            ? 'bg-yellow'
+                            : 'bg-gray-400'
+                        }`}
                       ></div>
                     </div>
                     <div>
@@ -1265,8 +1289,9 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             >
               <input
                 type="checkbox"
-                className={`${deliveryActive == 'now' ? '' : 'border'
-                  } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                className={`${
+                  deliveryActive == 'now' ? '' : 'border'
+                } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
                 defaultChecked={false}
                 checked={deliveryActive == 'now'}
               />
@@ -1279,8 +1304,9 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             >
               <input
                 type="checkbox"
-                className={`${deliveryActive == 'later' ? '' : 'border'
-                  } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                className={`${
+                  deliveryActive == 'later' ? '' : 'border'
+                } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
                 defaultChecked={false}
                 checked={deliveryActive == 'later'}
               />
@@ -1348,8 +1374,9 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             >
               <input
                 type="checkbox"
-                className={`${openTab !== 1 ? '' : 'border'
-                  } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                className={`${
+                  openTab !== 1 ? '' : 'border'
+                } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
                 defaultChecked={false}
                 checked={openTab == 1}
               />
@@ -1361,8 +1388,9 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             >
               <input
                 type="checkbox"
-                className={`${openTab !== 2 ? '' : 'border'
-                  } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                className={`${
+                  openTab !== 2 ? '' : 'border'
+                } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
                 defaultChecked={false}
                 checked={openTab == 2}
               />
@@ -1374,8 +1402,9 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             >
               <input
                 type="checkbox"
-                className={`${openTab !== 3 ? '' : 'border'
-                  } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                className={`${
+                  openTab !== 3 ? '' : 'border'
+                } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
                 defaultChecked={false}
                 checked={openTab == 3}
               />
@@ -1383,15 +1412,19 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             </div>
           </div>
           <div>
-            <div className={openTab === 1 ? 'md:flex md:h-14' : 'hidden'} id="link1">
+            <div
+              className={openTab === 1 ? 'md:flex md:h-14' : 'hidden'}
+              id="link1"
+            >
               <div
                 className="bg-gray-100 flex items-center rounded-2xl p-4  cursor-pointer mr-2 w-max"
                 onClick={setNoChangeHandler}
               >
                 <input
                   type="checkbox"
-                  className={`${openTab !== 1 ? '' : 'border'
-                    } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                  className={`${
+                    openTab !== 1 ? '' : 'border'
+                  } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
                   defaultChecked={false}
                   checked={noChange}
                 />
@@ -1403,8 +1436,9 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               >
                 <input
                   type="checkbox"
-                  className={`${openTab !== 1 ? '' : 'border'
-                    } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                  className={`${
+                    openTab !== 1 ? '' : 'border'
+                  } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
                   defaultChecked={false}
                   checked={!noChange}
                 />
@@ -1422,8 +1456,9 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             <div className={openTab === 2 ? 'block' : 'hidden'} id="link2">
               <div className="grid grid-cols-2 w-60 pt-8 items-center">
                 <label
-                  className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${payType == 'uzcard' ? 'border-yellow' : 'border-gray-200'
-                    } border cursor-pointer`}
+                  className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
+                    payType == 'uzcard' ? 'border-yellow' : 'border-gray-200'
+                  } border cursor-pointer`}
                 >
                   <img src="/assets/uzcard.png" />
                   <input
@@ -1449,8 +1484,9 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               />
             </label> */}
                 <label
-                  className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${payType == 'humo' ? 'border-yellow' : 'border-gray-200'
-                    } border cursor-pointer`}
+                  className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
+                    payType == 'humo' ? 'border-yellow' : 'border-gray-200'
+                  } border cursor-pointer`}
                 >
                   <img src="/assets/humo.png" />
                   <input
@@ -1517,10 +1553,11 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                     )
                     .map((payment: string) => (
                       <label
-                        className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${payType == payment
-                          ? 'border-yellow'
-                          : 'border-gray-200'
-                          } border cursor-pointer`}
+                        className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
+                          payType == payment
+                            ? 'border-yellow'
+                            : 'border-gray-200'
+                        } border cursor-pointer`}
                         key={payment}
                       >
                         <img src={`/assets/${payment}.png`} />
@@ -1550,8 +1587,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               key={lineItem.id}
             >
               {lineItem.child &&
-                lineItem.child.length &&
-                lineItem.child[0].variant?.product?.id !=
+              lineItem.child.length &&
+              lineItem.child[0].variant?.product?.id !=
                 lineItem?.variant?.product?.box_id ? (
                 <div className="h-11 w-11 flex relative">
                   <div className="w-5 relative overflow-hidden">
@@ -1602,25 +1639,26 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               <div className="flex flex-grow items-center mx-2">
                 <div className="font-bold text-xl">
                   {lineItem.child && lineItem.child.length > 1
-                    ? `${lineItem?.variant?.product?.attribute_data?.name[
-                    channelName
-                    ][locale || 'ru']
-                    } + ${lineItem?.child
-                      .filter(
-                        (v: any) =>
-                          lineItem?.variant?.product?.box_id !=
-                          v?.variant?.product?.id
-                      )
-                      .map(
-                        (v: any) =>
-                          v?.variant?.product?.attribute_data?.name[
+                    ? `${
+                        lineItem?.variant?.product?.attribute_data?.name[
                           channelName
-                          ][locale || 'ru']
-                      )
-                      .join(' + ')}`
+                        ][locale || 'ru']
+                      } + ${lineItem?.child
+                        .filter(
+                          (v: any) =>
+                            lineItem?.variant?.product?.box_id !=
+                            v?.variant?.product?.id
+                        )
+                        .map(
+                          (v: any) =>
+                            v?.variant?.product?.attribute_data?.name[
+                              channelName
+                            ][locale || 'ru']
+                        )
+                        .join(' + ')}`
                     : lineItem?.variant?.product?.attribute_data?.name[
-                    channelName
-                    ][locale || 'ru']}
+                        channelName
+                      ][locale || 'ru']}
                 </div>
                 {lineItem.modifiers &&
                   lineItem.modifiers
@@ -1637,23 +1675,23 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               <div className="text-xl">
                 {lineItem.child && lineItem.child.length
                   ? currency(
-                    (+lineItem.total + +lineItem.child[0].total) *
-                    lineItem.quantity,
-                    {
+                      (+lineItem.total + +lineItem.child[0].total) *
+                        lineItem.quantity,
+                      {
+                        pattern: '# !',
+                        separator: ' ',
+                        decimal: '.',
+                        symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                        precision: 0,
+                      }
+                    ).format()
+                  : currency(lineItem.total * lineItem.quantity, {
                       pattern: '# !',
                       separator: ' ',
                       decimal: '.',
                       symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
                       precision: 0,
-                    }
-                  ).format()
-                  : currency(lineItem.total * lineItem.quantity, {
-                    pattern: '# !',
-                    separator: ' ',
-                    decimal: '.',
-                    symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                    precision: 0,
-                  }).format()}
+                    }).format()}
               </div>
             </div>
           ))}
@@ -1725,7 +1763,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
         <Dialog
           as="div"
           className="fixed inset-0 z-50 overflow-y-auto"
-          onClose={() => { }}
+          onClose={() => {}}
           initialFocus={authButtonRef}
         >
           <div className="min-h-screen px-4 text-center">
@@ -1804,8 +1842,9 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                         </div>
                         <div className="mt-10">
                           <button
-                            className={`py-3 px-20 text-white font-bold text-xl text-center rounded-xl w-full outline-none focus:outline-none ${otpCode.length >= 4 ? 'bg-yellow' : 'bg-gray-400'
-                              }`}
+                            className={`py-3 px-20 text-white font-bold text-xl text-center rounded-xl w-full outline-none focus:outline-none ${
+                              otpCode.length >= 4 ? 'bg-yellow' : 'bg-gray-400'
+                            }`}
                             disabled={otpCode.length < 4}
                             ref={authButtonRef}
                           >
