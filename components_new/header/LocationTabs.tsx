@@ -25,6 +25,8 @@ import {
   MapState,
   MapStateBase,
   MapStateCenter,
+  GeolocationControl,
+  ZoomControl,
   PlacemarkGeometry,
 } from 'react-yandex-maps'
 import { useForm, SubmitHandler } from 'react-hook-form'
@@ -328,7 +330,7 @@ const LocationTabs: FC = () => {
 
   const mapState = useMemo<MapState>(() => {
     const baseState: MapStateBase = {
-      controls: ['zoomControl', 'fullscreenControl', 'geolocationControl'],
+      controls: ['fullscreenControl'],
     }
     const mapStateCenter: MapStateCenter = {
       center: mapCenter || [],
@@ -633,7 +635,9 @@ const LocationTabs: FC = () => {
                         iconImageSize: [100, 100],
                       }}
                     />
-                  ))}
+                  ))} 
+                  <GeolocationControl options={{ float: 'left' }} />
+                  <ZoomControl options={{ size: 'small' }} />
             </Map>
           </div>
         </YMaps>
@@ -644,7 +648,7 @@ const LocationTabs: FC = () => {
       >
         <XIcon className=" w-5" />
       </div>
-      <div className="w-96 absolute top-8 bg-white rounded-3xl p-5 left-40">
+      <div className="w-96 absolute top-8 bg-white rounded-3xl p-5 left-40 shadow-2xl">
         <div className="bg-gray-100 flex rounded-full w-full p-1">
           <button
             className={`${
@@ -704,7 +708,6 @@ const LocationTabs: FC = () => {
                               {...getInputProps({
                                 onChange: debouncedAddressInputChangeHandler,
                               })}
-                              placeholder={tr('chooseLocation')}
                               className="bg-gray-100 mt-2 w-full outline-none focus:outline-none"
                             />
                             <XIcon
@@ -760,7 +763,6 @@ const LocationTabs: FC = () => {
                       <input
                         type="text"
                         {...register('house')}
-                        placeholder={tr('house')}
                         className="bg-gray-100 w-full mt-2 focus:outline-none"
                       />
                     </div>
@@ -769,7 +771,6 @@ const LocationTabs: FC = () => {
                       <input
                         type="text"
                         {...register('flat')}
-                        placeholder={tr('flat')}
                         className="bg-gray-100 w-full mt-2 focus:outline-none"
                       />
                     </div>
@@ -785,7 +786,6 @@ const LocationTabs: FC = () => {
                       <input
                         type="text"
                         {...register('entrance')}
-                        placeholder={tr('entrance')}
                         className="bg-gray-100 w-full mt-2 focus:outline-none"
                       />
                     </div>
@@ -794,7 +794,6 @@ const LocationTabs: FC = () => {
                       <input
                         type="text"
                         {...register('floor')}
-                        placeholder={tr('floor')}
                         className="bg-gray-100 w-full mt-2 focus:outline-none"
                       />
                     </div>
@@ -806,7 +805,6 @@ const LocationTabs: FC = () => {
                     <input
                       type="text"
                       {...register('label')}
-                      placeholder="Например, Дом или Работа"
                       className="bg-gray-100 mt-2 w-full outline-none focus:outline-none"
                     />
                   </div>
@@ -819,8 +817,6 @@ const LocationTabs: FC = () => {
                     <input
                       type="text"
                       {...register('comments')}
-                      placeholder="Например, Код от домофона 2233
-"
                       className="bg-gray-100 mt-2 w-full outline-none focus:outline-none"
                     />
                   </div>

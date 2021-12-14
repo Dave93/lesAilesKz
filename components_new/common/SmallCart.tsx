@@ -443,7 +443,8 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
       <button
         className="outline-none focus:outline-none bottom-20 right-4 divide-x-2 md:flex px-4 bg-primary h-10 items-center justify-around rounded-xl text-white hidden"
         type="button"
-        onClick={openCart}
+        onMouseEnter={() => !isEmpty && openPopover()}
+        onMouseLeave={() => closePopover()}
         ref={btnRef}
       >
         <div className="pr-2">Корзина</div>
@@ -456,6 +457,8 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
         </div>
       </button>
       <div
+        onMouseEnter={() => openPopover()}
+        onMouseLeave={() => closePopover()}
         className={
           (popoverShow ? '' : 'hidden ') +
           'z-50 transform translate-x-0 inset-x-auto w-72'

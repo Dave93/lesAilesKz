@@ -6,6 +6,7 @@ import React, {
   FC,
   useMemo,
   useRef,
+  useEffect,
 } from 'react'
 import Image from 'next/image'
 import ProductOptionSelector from './ProductOptionSelector'
@@ -327,6 +328,16 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
     }
     return null
   }, [data])
+
+  let mobWidthImg = 390
+  let mobHeightImg = 390
+
+  if (typeof window !== 'undefined') {
+    if (window.innerWidth < 768) {
+      mobWidthImg = 250
+      mobHeightImg = 250
+    }
+  }
   return (
     <>
       <div
@@ -518,14 +529,14 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                     <div>
                       <img
                         src={store.image}
-                        width={390}
-                        height={390}
+                        width={mobWidthImg}
+                        height={mobHeightImg}
                         alt={
                           store?.attribute_data?.name[channelName][
                             locale || 'ru'
                           ]
                         }
-                        className="transform motion-safe:group-hover:scale-105 transition duration-500"
+                        className="m-auto transform motion-safe:group-hover:scale-105 transition duration-500"
                       />
                     </div>
                     <div className="flex flex-col md:ml-8 ">
@@ -537,7 +548,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                         }
                       </div>
                       <div
-                        className="mt-7 text-xs flex-grow"
+                        className="max-w-md mt-7 text-xs md:text-xl flex-grow"
                         dangerouslySetInnerHTML={{
                           __html: store?.attribute_data?.description
                             ? store?.attribute_data?.description[channelName][
@@ -546,8 +557,8 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                             : '',
                         }}
                       ></div>
-                      <div className="flex items-center justify-between">
-                        <div className=" font-medium text-3xl">
+                      <div className="flex items-center justify-between pt-5">
+                        <div className=" font-bold text-2xl md:text-3xl">
                           {currency(store.price, {
                             pattern: '# !',
                             separator: ' ',
