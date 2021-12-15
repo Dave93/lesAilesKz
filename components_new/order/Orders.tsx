@@ -147,13 +147,14 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
   }
 
   const router = useRouter()
-  const { locale } = router
+  const { locale, query } = router
   const downshiftControl = useRef<any>(null)
   const { data, isLoading, isEmpty, mutate } = useCart({
     cartId,
   })
 
   const [deliveryPrice, setDeliveryPrice] = useState(0)
+  const [deliveryDistance, setDeliveryDistance] = useState(0)
 
   let currentAddress = ''
   if (activeCity.active) {
@@ -320,11 +321,14 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
   }
 
   const getDeliveryPrice = async () => {
-    let { data: deliveryPriceData } = await axios.get(
-      `${webAddress}/api/orders/calc_basket_delivery?lat=${locationData?.location[0]}&lon=${locationData?.location[1]}&terminal_id=${locationData.terminal_id}&total_price=${data.totalPrice}`
-    )
+    if (locationData.terminal_id) {
+      let { data: deliveryPriceData } = await axios.get(
+        `${webAddress}/api/orders/calc_basket_delivery?lat=${locationData?.location[0]}&lon=${locationData?.location[1]}&terminal_id=${locationData.terminal_id}&total_price=${data.totalPrice}`
+      )
 
-    setDeliveryPrice(deliveryPriceData.totalPrice)
+      setDeliveryPrice(deliveryPriceData.totalPrice)
+      setDeliveryDistance(deliveryPriceData.distance)
+    }
   }
 
   useEffect(() => {
@@ -806,6 +810,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     setNoChange(true)
     resetField('change')
   }
+
+  console.log(query)
 
   return (
     <div className="md:mx-0 pt-1 md:pt-0 pb-1">
@@ -1740,6 +1746,11 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                     symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
                     precision: 0,
                   }).format()}
+                  {query && query.debug && (
+                    <div className="text-xs text-gray-600">
+                      {deliveryDistance} км
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex items-center justify-between">
