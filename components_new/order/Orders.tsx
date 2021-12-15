@@ -152,6 +152,9 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
   const { data, isLoading, isEmpty, mutate } = useCart({
     cartId,
   })
+
+  const [deliveryPrice, setDeliveryPrice] = useState(0)
+
   let currentAddress = ''
   if (activeCity.active) {
     if (locale == 'ru') {
@@ -317,9 +320,12 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
   }
 
   const getDeliveryPrice = async () => {
-    let { data } = await axios.get(
-      `${webAddress}/api/orders/calc_basket_delivery?lat=${locationData?.location[0]}&lon=${locationData?.location[1]}&terminal_id=${locationData.terminal_id}`
+    let { data: deliveryPriceData } = await axios.get(
+      `${webAddress}/api/orders/calc_basket_delivery?lat=${locationData?.location[0]}&lon=${locationData?.location[1]}&terminal_id=${locationData.terminal_id}&total_price=${data.totalPrice}`
     )
+
+    console.log(deliveryPriceData)
+    setDeliveryPrice(deliveryPriceData.totalPrice)
   }
 
   useEffect(() => {
@@ -327,9 +333,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     if (locationData && locationData.deliveryType == 'pickup') {
       loadPickupItems()
     }
-    console.log(locationData)
-    if (locationData && locationData.deliveryType == 'deliver') {
-      getDeliveryPrice()
+    if (locationData && locationData.deliveryType == 'deliver' && data) {
+      getDeliveryPrice(data)
     }
 
     let formValues = getValues()
@@ -802,6 +807,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     setNoChange(true)
     resetField('change')
   }
+
   return (
     <div className="md:mx-0 pt-1 md:pt-0 pb-1">
       {/* Contacts */}
@@ -1728,7 +1734,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               <div className="flex items-center justify-between">
                 <div className="text-lg">Доставка:</div>
                 <div className="ml-7 text-lg">
-                  {currency(data.totalPrice, {
+                  {currency(deliveryPrice, {
                     pattern: '# !',
                     separator: ' ',
                     decimal: '.',
@@ -1740,7 +1746,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               <div className="flex items-center justify-between">
                 <div className="text-lg font-medium">Итого:</div>
                 <div className="ml-7 text-2xl font-medium">
-                  {currency(data.totalPrice, {
+                  {currency(data.totalPrice + deliveryPrice, {
                     pattern: '# !',
                     separator: ' ',
                     decimal: '.',
