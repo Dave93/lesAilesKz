@@ -324,7 +324,6 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       `${webAddress}/api/orders/calc_basket_delivery?lat=${locationData?.location[0]}&lon=${locationData?.location[1]}&terminal_id=${locationData.terminal_id}&total_price=${data.totalPrice}`
     )
 
-    console.log(deliveryPriceData)
     setDeliveryPrice(deliveryPriceData.totalPrice)
   }
 
@@ -334,7 +333,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       loadPickupItems()
     }
     if (locationData && locationData.deliveryType == 'deliver' && data) {
-      getDeliveryPrice(data)
+      getDeliveryPrice()
     }
 
     let formValues = getValues()
