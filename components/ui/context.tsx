@@ -99,6 +99,7 @@ export interface State {
   addressModal: boolean
   addressId: number | null
   addressList: Address[] | null
+  stopProducts: number[]
 }
 
 const initialState = {
@@ -118,6 +119,7 @@ const initialState = {
   addressModalMobile: false,
   addressId: null,
   addressList: null,
+  stopProducts: [],
 }
 
 type Action =
@@ -202,6 +204,10 @@ type Action =
   | {
       type: 'SELECT_ADDRESS'
       value: AnyObject
+    }
+  | {
+      type: 'SET_STOP_PRODUCTS'
+      value: number[]
     }
 
 type MODAL_VIEWS =
@@ -386,6 +392,12 @@ function uiReducer(state: State, action: Action) {
         addressId: action.value.addressId,
       }
     }
+    case 'SET_STOP_PRODUCTS': {
+      return {
+        ...state,
+        stopProducts: action.value,
+      }
+    }
   }
 }
 
@@ -522,6 +534,11 @@ export const UIProvider: FC<UIProviderProps> = (props) => {
     [dispatch]
   )
 
+   const setStopProducts = useCallback(
+     (value: number[]) => dispatch({ type: 'SET_STOP_PRODUCTS', value }),
+     [dispatch]
+   )
+
   const value = useMemo(
     () => ({
       ...state,
@@ -551,6 +568,7 @@ export const UIProvider: FC<UIProviderProps> = (props) => {
       setAddressId,
       setAddressList,
       selectAddress,
+      setStopProducts,
     }),
     [state]
   )

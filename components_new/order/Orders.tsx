@@ -73,6 +73,7 @@ type FormData = {
   comment_to_address: string
   comment_to_order: string
   addressId: number | null
+  additional_phone: string
 }
 
 interface SelectItem {
@@ -140,6 +141,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     setActiveCity,
     openSignInModal,
     addressId,
+    setStopProducts,
+    stopProducts,
   } = useUI()
   let cartId: string | null = null
   if (typeof window !== 'undefined') {
@@ -200,6 +203,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       pay_type: '',
       delivery_schedule: 'now',
       addressId: addressId || null,
+      additional_phone: '',
     },
   })
 
@@ -240,6 +244,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
   const authName = watch('name')
   const authPhone = watch('phone')
   const authEmail = watch('email')
+  const additionalPhone = watch('additional_phone')
 
   const resetField = (fieldName: string) => {
     const newFields: any = {
@@ -331,7 +336,23 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     }
   }
 
+   const stopList = async () => {
+     if (locationData?.terminalData) {
+       const { data: terminalStock } = await axios.get(
+         `${webAddress}/api/terminals/get_stock?terminal_id=${locationData?.terminalData.id}`
+       )
+
+       if (!terminalStock.success) {
+         return
+       } else {
+         setStopProducts(terminalStock.data)
+       }
+       return
+     }
+   }
+
   useEffect(() => {
+    stopList()
     fetchConfig()
     if (locationData && locationData.deliveryType == 'pickup') {
       loadPickupItems()
@@ -706,6 +727,12 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     setIsSavingOrder(true)
     await setCredentials()
     const otpToken = Cookies.get('opt_token')
+
+    let sourceType = 'web'
+    if (window.innerWidth < 768) {
+      sourceType = 'mobile_web'
+    }
+
     try {
       const { data } = await axios.post(
         `${webAddress}/api/orders`,
@@ -716,6 +743,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             pay_type: payType,
             sms_sub: sms,
             email_sub: newsletter,
+            sourceType,
           },
           code: otpCode,
           basket_id: cartId,
@@ -794,6 +822,34 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       return true
     return false
   }, [configData])
+
+  const isProductInStop = useMemo(() => {
+    let res: number[] = []
+    if (!isEmpty) {
+      data.lineItems.map((item: any) => {
+        if (stopProducts.includes(item.variant.product_id)) {
+          res.push(item.id)
+        }
+      })
+    }
+    return res
+  }, [stopProducts, data])
+
+  const totalPrice = useMemo(() => {
+    let total = 0
+    if (!isEmpty) {
+      data.lineItems.map((lineItem: any) => {
+        if (!stopProducts.includes(lineItem.variant.product_id)) {
+          total +=
+            lineItem.child && lineItem.child.length
+              ? (+lineItem.total + +lineItem.child[0].total) * lineItem.quantity
+              : lineItem.total * lineItem.quantity
+        }
+      })
+    }
+    return total
+  }, [stopProducts, data])
+
 
   if (!isWorkTime) {
     return (
@@ -888,6 +944,30 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 )}
               </div>
             </div>
+            <div className=" bg-gray-100 rounded-xl py-2 px-4 relative md:ml-2 md:w-72 h-16">
+              <div className="text-gray-400 text-xs">
+                {tr('additional_phone')}
+              </div>
+              <Input
+                defaultCountry="UZ"
+                country="UZ"
+                international
+                withCountryCallingCode
+                value={additionalPhone}
+                className="focus:outline-none outline-none  bg-gray-100 w-56"
+                onChange={(e: any) => {
+                  setValue('additional_phone', e)
+                }}
+              />
+              {additionalPhone && (
+                <button
+                  className="absolute focus:outline-none outline-none right-4 text-gray-400"
+                  onClick={() => resetField('additional_phone')}
+                >
+                  <XIcon className="cursor-pointer h-5 text-gray-400 w-5" />
+                </button>
+              )}
+            </div>
           </form>
         </div>
       </div>
@@ -963,7 +1043,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             </div>
             <div className="mt-3">
               <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="mt-3 space-y-6">
+                <div className="mt-3">
                   <div className="md:flex justify-between md:w-full space-y-2 md:space-y-0">
                     <Downshift
                       onChange={(selection) => setSelectedAddress(selection)}
@@ -1601,7 +1681,11 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               lineItem.child.length &&
               lineItem.child[0].variant?.product?.id !=
                 lineItem?.variant?.product?.box_id ? (
-                <div className="h-11 w-11 flex relative">
+                <div
+                  className={`${
+                    isProductInStop.includes(lineItem.id) ? 'opacity-25' : ''
+                  } h-11 w-11 flex relative`}
+                >
                   <div className="w-5 relative overflow-hidden">
                     <div>
                       <Image
@@ -1634,7 +1718,11 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                   </div>
                 </div>
               ) : (
-                <div>
+                <div
+                  className={`${
+                    isProductInStop.includes(lineItem.id) ? 'opacity-25' : ''
+                  } flex items-center`}
+                >
                   <Image
                     src={
                       lineItem?.variant?.product?.assets?.length
@@ -1643,33 +1731,45 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                     }
                     width={40}
                     height={40}
-                    className="rounded-xl"
+                    className="rounded-full"
                   />
                 </div>
               )}
               <div className="flex flex-grow items-center mx-2">
                 <div className="font-bold text-xl">
-                  {lineItem.child && lineItem.child.length > 1
-                    ? `${
-                        lineItem?.variant?.product?.attribute_data?.name[
-                          channelName
-                        ][locale || 'ru']
-                      } + ${lineItem?.child
-                        .filter(
-                          (v: any) =>
-                            lineItem?.variant?.product?.box_id !=
-                            v?.variant?.product?.id
-                        )
-                        .map(
-                          (v: any) =>
-                            v?.variant?.product?.attribute_data?.name[
-                              channelName
-                            ][locale || 'ru']
-                        )
-                        .join(' + ')}`
-                    : lineItem?.variant?.product?.attribute_data?.name[
+                  {lineItem.child && lineItem.child.length > 1 ? (
+                    `${
+                      lineItem?.variant?.product?.attribute_data?.name[
                         channelName
-                      ][locale || 'ru']}
+                      ][locale || 'ru']
+                    } + ${lineItem?.child
+                      .filter(
+                        (v: any) =>
+                          lineItem?.variant?.product?.box_id !=
+                          v?.variant?.product?.id
+                      )
+                      .map(
+                        (v: any) =>
+                          v?.variant?.product?.attribute_data?.name[
+                            channelName
+                          ][locale || 'ru']
+                      )
+                      .join(' + ')}`
+                  ) : (
+                    <div
+                      className={
+                        isProductInStop.includes(lineItem.id)
+                          ? 'opacity-25'
+                          : ''
+                      }
+                    >
+                      {isProductInStop.includes(lineItem.id)
+                        ? tr('stop_product')
+                        : lineItem?.variant?.product?.attribute_data?.name[
+                            channelName
+                          ][locale || 'ru']}
+                    </div>
+                  )}
                 </div>
                 {lineItem.modifiers &&
                   lineItem.modifiers
@@ -1683,20 +1783,22 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                       </div>
                     ))}
               </div>
-              <div className="text-xl">
+              <div
+                className={`${
+                  isProductInStop.includes(lineItem.id) ? 'opacity-25' : ''
+                }  text-xl`}
+              >
                 {lineItem.child && lineItem.child.length
-                  ? currency(
-                      (+lineItem.total + +lineItem.child[0].total) *
-                        lineItem.quantity,
-                      {
-                        pattern: '# !',
-                        separator: ' ',
-                        decimal: '.',
-                        symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                        precision: 0,
-                      }
-                    ).format()
-                  : currency(lineItem.total * lineItem.quantity, {
+                  ? (lineItem.total > 0 ? lineItem.quantity + ' X ' : '') +
+                    currency(+lineItem.total + +lineItem.child[0].total, {
+                      pattern: '# !',
+                      separator: ' ',
+                      decimal: '.',
+                      symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                      precision: 0,
+                    }).format()
+                  : (lineItem.total > 0 ? lineItem.quantity + ' X ' : '') +
+                    currency(lineItem.total * lineItem.quantity, {
                       pattern: '# !',
                       separator: ' ',
                       decimal: '.',
@@ -1727,7 +1829,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               <div className="flex items-center justify-between">
                 <div className="text-lg">{tr('basket_order_price')}</div>
                 <div className="ml-7 text-lg">
-                  {currency(data.totalPrice, {
+                  {currency(totalPrice, {
                     pattern: '# !',
                     separator: ' ',
                     decimal: '.',
@@ -1756,7 +1858,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               <div className="flex items-center justify-between">
                 <div className="text-lg font-medium">Итого:</div>
                 <div className="ml-7 text-2xl font-medium">
-                  {currency(data.totalPrice + deliveryPrice, {
+                  {currency(totalPrice + deliveryPrice, {
                     pattern: '# !',
                     separator: ' ',
                     decimal: '.',

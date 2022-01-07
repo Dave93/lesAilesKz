@@ -233,6 +233,8 @@ export default function Cart() {
 
       await mutate(basketResult, false)
       setIsCartLoading(false)
+
+      console.log(basket)
     }
   }
 

@@ -19,6 +19,13 @@ import defaultChannel from '@lib/defaultChannel'
 import { useCart } from '@framework/cart'
 import dynamic from 'next/dynamic'
 import CreateYourPizza from '@components_new/product/CreateYourPizza'
+import { useUI } from '@components/ui/context'
+import getConfig from 'next/config'
+import axios from 'axios'
+
+const { publicRuntimeConfig } = getConfig()
+
+let webAddress = publicRuntimeConfig.apiUrl
 
 const HalfPizzaNoSSR = dynamic(
   () => import('@components_new/product/CreateYourPizzaCommon'),
@@ -103,6 +110,15 @@ export default function Home({
   const { locale } = router
   const [channelName, setChannelName] = useState('chopar')
   const [isStickySmall, setIsStickySmall] = useState(false)
+  const {
+    setCitiesData,
+    activeCity,
+    setActiveCity,
+    openLocationTabs,
+    openMobileLocationTabs,
+    setStopProducts,
+    locationData,
+  } = useUI()
 
   const getChannel = async () => {
     const channelData = await defaultChannel()
@@ -117,10 +133,34 @@ export default function Home({
     }
   }
 
+  const showLocationTabsController = async () => {
+    if (locationData?.terminalData) {
+      const { data: terminalStock } = await axios.get(
+        `${webAddress}/api/terminals/get_stock?terminal_id=${locationData?.terminalData.id}`
+      )
+
+      if (!terminalStock.success) {
+        return
+      } else {
+        setStopProducts(terminalStock.data)
+      }
+      return
+    }
+
+    // setTimeout(() => {
+    //   if (window.innerWidth < 768) {
+    //     openMobileLocationTabs()
+    //   } else {
+    //     openLocationTabs()
+    //   }
+    // }, 400)
+  }
+
   useEffect(() => {
     getChannel()
 
     window.addEventListener('scroll', hideCreatePizza)
+    showLocationTabsController()
     return () => {
       window.removeEventListener('scroll', hideCreatePizza)
     }

@@ -27,6 +27,7 @@ import { PlusIcon, XIcon } from '@heroicons/react/solid'
 import styles from './ProductItemNew.module.css'
 import { ChevronDownIcon, MinusIcon } from '@heroicons/react/outline'
 import Hashids from 'hashids'
+import { useUI } from '@components/ui/context'
 // import SessionContext from 'react-storefront/session/SessionContext'
 
 type ProductItem = {
@@ -45,6 +46,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
   const [open, setOpen] = useState(false)
   const cancelButtonRef = useRef(null)
   const [quantity, setQuantity] = useState(1)
+  const { stopProducts } = useUI()
 
   let cartId: string | null = null
   if (typeof window !== 'undefined') {
@@ -233,7 +235,26 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
     return price
   }, [store.price, store.variants])
 
+  const isProductInStop = useMemo(() => {
+    if (store.variants && store.variants.length) {
+      let selectedVariant = store.variants.find((v: any) => v.active == true)
+      let selectedProdId = selectedVariant.id
+      if (stopProducts.includes(selectedProdId)) {
+        return true
+      }
+    } else {
+      let selectedProdId = +store.id
+      if (stopProducts.includes(selectedProdId)) {
+        return true
+      }
+    }
+    return false
+  }, [stopProducts, store])
+
   const handleSubmit = async (event: React.MouseEvent<HTMLElement>) => {
+    if (isProductInStop) {
+      return
+    }
     event.preventDefault() // prevent the page location from changing
     // setAddToCartInProgress(true) // disable the add to cart button until the request is finished
 
@@ -341,7 +362,9 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
   return (
     <>
       <div
-        className={`py-3  md:py-3 overflow-hidden bg-white rounded-[15px] hover:shadow-xl group items-center justify-between flex flex-col shadow-lg`}
+        className={` ${
+          isProductInStop ? 'opacity-25' : ''
+        } py-3  md:py-3 overflow-hidden bg-white rounded-[15px] hover:shadow-xl group items-center justify-between flex flex-col shadow-lg`}
         id={`prod-${store.id}`}
       >
         <div>
@@ -354,6 +377,9 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                 alt={store?.attribute_data?.name[channelName][locale || 'ru']}
                 className="transform motion-safe:group-hover:scale-105 transition duration-500 cursor-pointer"
                 onClick={() => {
+                  if (isProductInStop) {
+                    return
+                  }
                   setOpen(true)
                 }}
               />
@@ -372,6 +398,9 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
           <div
             className="mt-4 font-bold md:text-2xl flex-grow cursor-pointer"
             onClick={() => {
+              if (isProductInStop) {
+                return
+              }
               setOpen(true)
             }}
           >
