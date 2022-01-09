@@ -286,7 +286,7 @@ const Layout: FC<Props> = ({
             </div>
           </footer>
         </div>
-        <CityModal cities={cities} />
+        {/* <CityModal cities={cities} /> */}
       </div>
       <div className={cn(styles.root)}>
         {/* <Navbar links={navBarlinks} />
