@@ -38,6 +38,7 @@ import { City } from '@commerce/types/cities'
 import router, { useRouter } from 'next/router'
 import SimpleBar from 'simplebar-react'
 import Cookies from 'js-cookie'
+import { DateTime } from 'luxon'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -141,18 +142,61 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
     setTabIndex(index)
   }
 
-  const loadPickupItems = async () => {
-    const { data } = await axios.get(
-      `${webAddress}/api/terminals/pickup?city_id=${activeCity.id}`
-    )
-    let res: any[] = []
-    data.data.map((item: any) => {
-      if (item.latitude) {
-        res.push(item)
-      }
-    })
-    setPickupPoint(res)
-  }
+ const loadPickupItems = async () => {
+   setPickupPoint([])
+   const { data } = await axios.get(
+     `${webAddress}/api/terminals/pickup?city_id=${activeCity.id}`
+   )
+   let res: any[] = []
+   let currentTime = DateTime.local()
+   let weekDay = currentTime.weekday
+   data.data.map((item: any) => {
+     if (item.latitude) {
+       item.isWorking = false
+       if (weekDay >= 1 && weekDay < 6) {
+         let openWork = DateTime.fromISO(item.open_work)
+         openWork = openWork.set({ day: currentTime.day })
+         openWork = openWork.set({ year: currentTime.year })
+         openWork = openWork.set({ month: currentTime.month })
+         let closeWork = DateTime.fromISO(item.close_work)
+         closeWork = closeWork.set({ day: currentTime.day })
+         closeWork = closeWork.set({ year: currentTime.year })
+         closeWork = closeWork.set({ month: currentTime.month })
+         if (closeWork.hour < openWork.hour) {
+           closeWork = closeWork.set({ day: currentTime.day + 1 })
+         }
+
+         if (currentTime >= openWork && currentTime < closeWork) {
+           item.isWorking = true
+         }
+         item.workTimeStart = openWork.toFormat('HH:mm')
+         item.workTimeEnd = closeWork.toFormat('HH:mm')
+       } else {
+         let openWork = DateTime.fromISO(item.open_weekend)
+         openWork = openWork.set({ day: currentTime.day })
+         openWork = openWork.set({ year: currentTime.year })
+         openWork = openWork.set({ month: currentTime.month })
+         let closeWork = DateTime.fromISO(item.close_weekend)
+         closeWork = closeWork.set({ day: currentTime.day })
+         closeWork = closeWork.set({ year: currentTime.year })
+         closeWork = closeWork.set({ month: currentTime.month })
+         if (closeWork.hour < openWork.hour) {
+           closeWork = closeWork.set({ day: currentTime.day + 1 })
+         }
+
+         if (currentTime >= openWork && currentTime < closeWork) {
+           item.isWorking = true
+         }
+         item.workTimeStart = openWork.toFormat('HH:mm')
+         item.workTimeEnd = closeWork.toFormat('HH:mm')
+       }
+
+       res.push(item)
+     }
+   })
+   setPickupPoint(res)
+ }
+
 
   const setCredentials = async () => {
     let csrf = Cookies.get('X-XSRF-TOKEN')
@@ -328,12 +372,19 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
     saveDeliveryData(data, null)
   }
 
-  const choosePickupPoint = (pointId: number) => {
-    setActivePoint(pointId)
-    let terminalData = pickupPoints.find((pickup: any) => pickup.id == pointId)
+  const choosePickupPoint = (point: any) => {
+    if (!point.isWorking) {
+      toast.warn(tr('terminal_is_not_working'), {
+        position: toast.POSITION.BOTTOM_RIGHT,
+        hideProgressBar: true,
+      })
+      return
+    }
+    setActivePoint(point.id)
+    let terminalData = pickupPoints.find((pickup: any) => pickup.id == point.id)
     setLocationData({
       ...locationData,
-      terminal_id: pointId,
+      terminal_id: point.id,
       terminalData,
     })
   }
@@ -727,7 +778,7 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
         {tabIndex == 'pickup' && (
           <div className="mt-2">
             <div className="flex">
-              <div className=" text-x">
+              <div className="text-base">
                 Выберите ближайший вам ресторан для выдачи заказа
               </div>
               {/* <div
@@ -812,7 +863,7 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
                             ? 'border-gray-400'
                             : ''
                         }`}
-                        onClick={() => choosePickupPoint(point.id)}
+                        onClick={() => choosePickupPoint(point)}
                       >
                         <div>
                           <div className="text-[18px]">
