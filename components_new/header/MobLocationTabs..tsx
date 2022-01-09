@@ -66,6 +66,7 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
     user,
     addressId,
     setAddressId,
+    setStopProducts,
   } = useUI()
   const [tabIndex, setTabIndex] = useState(
     locationData?.deliveryType || 'deliver'
@@ -439,6 +440,23 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
         terminal_id: terminalsData.data.items[0].id,
         terminalData: terminalsData.data.items[0],
       })
+
+      const { data: terminalStock } = await axios.get(
+        `${webAddress}/api/terminals/get_stock?terminal_id=${terminalsData.data.items[0].id}`
+      )
+
+      if (!terminalStock.success) {
+        toast.warn(terminalStock.message, {
+          position: toast.POSITION.BOTTOM_RIGHT,
+          hideProgressBar: true,
+        })
+        return
+      } else {
+        setStopProducts(terminalStock.data)
+      }
+
+
+
       hideAddressMobile()
     }
 
@@ -481,7 +499,7 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
     }
   }
 
-  const submitPickup = () => {
+  const submitPickup = async () => {
     if (!activePoint) {
       toast.warn(`${tr('pickup_point_not_selected')}`, {
         position: toast.POSITION.BOTTOM_RIGHT,
@@ -489,6 +507,20 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
       })
       return
     }
+
+     const { data: terminalStock } = await axios.get(
+       `${webAddress}/api/terminals/get_stock?terminal_id=${activePoint}`
+     )
+
+     if (!terminalStock.success) {
+       toast.warn(terminalStock.message, {
+         position: toast.POSITION.BOTTOM_RIGHT,
+         hideProgressBar: true,
+       })
+       return
+     } else {
+       setStopProducts(terminalStock.data)
+     }
 
     hideAddressMobile()
   }
