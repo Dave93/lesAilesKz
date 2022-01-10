@@ -42,6 +42,7 @@ export type Product = {
   categoryId: string
   description: string
   descriptionHtml?: string
+  weight?: number
   // sku?: string
   // slug?: string
   // path?: string

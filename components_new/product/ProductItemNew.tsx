@@ -469,7 +469,9 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
             </div>
           ) : (
             <div className="flex justify-between items-center mt-3">
-              <div>350 гр</div>
+              <div>
+                {store.weight} {tr('weight')}
+              </div>
               <button
                 className="bg-primary focus:outline-none outline-none rounded-xl md:w-10 w-8 text-white uppercase md:inline-flex items-center"
                 onClick={handleSubmit}
