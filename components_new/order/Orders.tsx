@@ -336,20 +336,20 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     }
   }
 
-   const stopList = async () => {
-     if (locationData?.terminalData) {
-       const { data: terminalStock } = await axios.get(
-         `${webAddress}/api/terminals/get_stock?terminal_id=${locationData?.terminalData.id}`
-       )
+  const stopList = async () => {
+    if (locationData?.terminalData) {
+      const { data: terminalStock } = await axios.get(
+        `${webAddress}/api/terminals/get_stock?terminal_id=${locationData?.terminalData.id}`
+      )
 
-       if (!terminalStock.success) {
-         return
-       } else {
-         setStopProducts(terminalStock.data)
-       }
-       return
-     }
-   }
+      if (!terminalStock.success) {
+        return
+      } else {
+        setStopProducts(terminalStock.data)
+      }
+      return
+    }
+  }
 
   useEffect(() => {
     stopList()
@@ -850,7 +850,6 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     return total
   }, [stopProducts, data])
 
-
   if (!isWorkTime) {
     return (
       <div className="bg-white flex py-20 text-xl text-yellow font-bold md:px-10 px-5">
@@ -910,7 +909,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 </div>
               )}
             </div>
-            <div className=" bg-gray-100 rounded-xl py-2 px-4 relative md:ml-2 md:w-72 h-16">
+            <div className=" bg-gray-100 rounded-xl py-2 px-4 relative md:ml-2 md:w-72 h-16 mb-2 md:mb-0">
               <label className="text-sm text-gray-400 block">
                 {tr('personal_phone')}
               </label>
@@ -1471,21 +1470,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 defaultChecked={false}
                 checked={openTab == 1}
               />
-              <div>Наличными</div>
-            </div>
-            <div
-              className="bg-gray-100 flex items-center w-64 rounded-2xl p-4  cursor-pointer"
-              onClick={() => setOpenTab(2)}
-            >
-              <input
-                type="checkbox"
-                className={`${
-                  openTab !== 2 ? '' : 'border'
-                } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
-                defaultChecked={false}
-                checked={openTab == 2}
-              />
-              <div>Картой онлайн</div>
+              <div>{tr('in_cash')}</div>
             </div>
             <div
               className="bg-gray-100 flex items-center w-64 rounded-2xl p-4  cursor-pointer"
@@ -1499,7 +1484,21 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 defaultChecked={false}
                 checked={openTab == 3}
               />
-              <div>Картой курьеру</div>
+              <div>{tr('online')}</div>
+            </div>
+            <div
+              className="bg-gray-100 flex items-center w-64 rounded-2xl p-4  cursor-pointer"
+              onClick={() => setOpenTab(2)}
+            >
+              <input
+                type="checkbox"
+                className={`${
+                  openTab !== 2 ? '' : 'border'
+                } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                defaultChecked={false}
+                checked={openTab == 2}
+              />
+              <div>{tr('by_card')}</div>
             </div>
           </div>
           <div>
@@ -1545,7 +1544,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               </div>
             </div>
             <div className={openTab === 2 ? 'block' : 'hidden'} id="link2">
-              <div className="grid grid-cols-2 w-60 pt-8 items-center">
+              <div className="grid grid-cols-2 gap-2 pt-8 items-center">
                 <label
                   className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
                     payType == 'uzcard' ? 'border-yellow' : 'border-gray-200'
@@ -1560,20 +1559,6 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                     className="hidden"
                   />
                 </label>
-                {/* <label
-              className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
-                payType == 'visa' ? 'border-yellow' : 'border-gray-200'
-              } border cursor-pointer`}
-            >
-              <img src="/assets/visa.png" />
-              <input
-                type="radio"
-                defaultValue="visa"
-                onChange={onValueChange}
-                checked={payType === 'visa'}
-                className="hidden"
-              />
-            </label> */}
                 <label
                   className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
                     payType == 'humo' ? 'border-yellow' : 'border-gray-200'
@@ -1588,54 +1573,10 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                     className="hidden"
                   />
                 </label>
-                {/* <label
-              className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
-                payType == 'mastercard' ? 'border-yellow' : 'border-gray-200'
-              } border cursor-pointer`}
-            >
-              <img src="/assets/mastercard.png" />
-              <input
-                type="radio"
-                defaultValue="mastercard"
-                onChange={onValueChange}
-                checked={payType === 'mastercard'}
-                className="hidden"
-              />
-            </label> */}
               </div>
-              {/* <div className="md:w-[460px] pt-10">
-            <div className="flex justify-between">
-              <input
-                type="text"
-                {...register('card_number')}
-                placeholder="Номер карты"
-                className="bg-gray-100 px-8 py-2 rounded-xl w-80  outline-none focus:outline-none"
-              />
-              <input
-                type="text"
-                {...register('card_month')}
-                placeholder="ММ/ГГ"
-                className="bg-gray-100 px-10 py-2 rounded-xl w-32  outline-none focus:outline-none"
-              />
-            </div>
-            <div className="flex justify-between pt-5">
-              <input
-                type="text"
-                {...register('holder_name')}
-                placeholder={tr('holder_name')}
-                className="bg-gray-100 px-8 py-2 rounded-xl w-80  outline-none focus:outline-none"
-              />
-              <input
-                type="text"
-                {...register('cvv_code')}
-                placeholder="CVV код"
-                className="bg-gray-100 px-10 py-2 rounded-xl w-32  outline-none focus:outline-none"
-              />
-            </div>
-          </div> */}
             </div>
             <div className={openTab === 3 ? 'block' : 'hidden'} id="link3">
-              <div className="justify-between pt-8 items-center grid grid-cols-4 w-6/12">
+              <div className="justify-between pt-8 items-center grid grid-cols-2 gap-2">
                 {locationData?.terminal_id &&
                   paymentTypes
                     .filter(
