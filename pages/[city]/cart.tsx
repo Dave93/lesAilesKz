@@ -15,6 +15,9 @@ import Cookies from 'js-cookie'
 import defaultChannel from '@lib/defaultChannel'
 import currency from 'currency.js'
 import { useUI } from '@components/ui/context'
+import Slider from 'react-slick'
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
 
 export async function getServerSideProps({
   preview,
@@ -120,7 +123,7 @@ export default function Cart() {
       configData = configData.toString('ascii')
       configData = JSON.parse(configData)
       setConfigData(configData)
-    } catch (e) { }
+    } catch (e) {}
   }
 
   const setCredentials = async () => {
@@ -269,6 +272,43 @@ export default function Cart() {
     )
   }
 
+  const settings = {
+    infinite: false,
+    centerPadding: '20px',
+    arrows: true,
+    slidesToShow: 6,
+    swipeToSlide: true,
+    speed: 500,
+    slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 3,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 1,
+          arrows: false,
+          dots: true,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+          arrows: false,
+          dots: true,
+        },
+      },
+    ],
+  }
+
   return (
     <>
       {isCartLoading && (
@@ -325,8 +365,8 @@ export default function Cart() {
                   >
                     <div className="flex  md:items-center text-center">
                       {lineItem.child &&
-                        lineItem.child.length &&
-                        lineItem.child[0].variant?.product?.id !=
+                      lineItem.child.length &&
+                      lineItem.child[0].variant?.product?.id !=
                         lineItem?.variant?.product?.box_id ? (
                         <div className="h-28 w-28 flex relative">
                           <div className="w-12 relative overflow-hidden">
@@ -378,24 +418,25 @@ export default function Cart() {
                       <div className="md:ml-7 ml-1 space-y-2 md:w-72 md:text-left md:block hidden">
                         <div className="md:text-xl font-medium text-base">
                           {lineItem.child && lineItem.child.length > 1
-                            ? `${lineItem?.variant?.product?.attribute_data
-                              ?.name[channelName][locale || 'ru']
-                            } + ${lineItem?.child
-                              .filter(
-                                (v: any) =>
-                                  lineItem?.variant?.product?.box_id !=
-                                  v?.variant?.product?.id
-                              )
-                              .map(
-                                (v: any) =>
-                                  v?.variant?.product?.attribute_data?.name[
-                                  channelName
-                                  ][locale || 'ru']
-                              )
-                              .join(' + ')}`
+                            ? `${
+                                lineItem?.variant?.product?.attribute_data
+                                  ?.name[channelName][locale || 'ru']
+                              } + ${lineItem?.child
+                                .filter(
+                                  (v: any) =>
+                                    lineItem?.variant?.product?.box_id !=
+                                    v?.variant?.product?.id
+                                )
+                                .map(
+                                  (v: any) =>
+                                    v?.variant?.product?.attribute_data?.name[
+                                      channelName
+                                    ][locale || 'ru']
+                                )
+                                .join(' + ')}`
                             : lineItem?.variant?.product?.attribute_data?.name[
-                            channelName
-                            ][locale || 'ru']}
+                                channelName
+                              ][locale || 'ru']}
                         </div>
                       </div>
                     </div>
@@ -430,23 +471,23 @@ export default function Cart() {
                       <div className="m-auto md:font-medium md:text-xl text-base w-max">
                         {lineItem.child && lineItem.child.length
                           ? currency(
-                            (+lineItem.total + +lineItem.child[0].total) *
-                            lineItem.quantity,
-                            {
+                              (+lineItem.total + +lineItem.child[0].total) *
+                                lineItem.quantity,
+                              {
+                                pattern: '# !',
+                                separator: ' ',
+                                decimal: '.',
+                                symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                                precision: 0,
+                              }
+                            ).format()
+                          : currency(lineItem.total * lineItem.quantity, {
                               pattern: '# !',
                               separator: ' ',
                               decimal: '.',
                               symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
                               precision: 0,
-                            }
-                          ).format()
-                          : currency(lineItem.total * lineItem.quantity, {
-                            pattern: '# !',
-                            separator: ' ',
-                            decimal: '.',
-                            symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                            precision: 0,
-                          }).format()}
+                            }).format()}
                       </div>
                       <div className="bg-gray-200 p-2 rounded-md w-max md:block hidden">
                         <XIcon
@@ -459,24 +500,25 @@ export default function Cart() {
                       <div className="flex justify-between">
                         <div className="md:text-xl font-medium text-base">
                           {lineItem.child && lineItem.child.length > 1
-                            ? `${lineItem?.variant?.product?.attribute_data
-                              ?.name[channelName][locale || 'ru']
-                            } + ${lineItem?.child
-                              .filter(
-                                (v: any) =>
-                                  lineItem?.variant?.product?.box_id !=
-                                  v?.variant?.product?.id
-                              )
-                              .map(
-                                (v: any) =>
-                                  v?.variant?.product?.attribute_data?.name[
-                                  channelName
-                                  ][locale || 'ru']
-                              )
-                              .join(' + ')}`
+                            ? `${
+                                lineItem?.variant?.product?.attribute_data
+                                  ?.name[channelName][locale || 'ru']
+                              } + ${lineItem?.child
+                                .filter(
+                                  (v: any) =>
+                                    lineItem?.variant?.product?.box_id !=
+                                    v?.variant?.product?.id
+                                )
+                                .map(
+                                  (v: any) =>
+                                    v?.variant?.product?.attribute_data?.name[
+                                      channelName
+                                    ][locale || 'ru']
+                                )
+                                .join(' + ')}`
                             : lineItem?.variant?.product?.attribute_data?.name[
-                            channelName
-                            ][locale || 'ru']}
+                                channelName
+                              ][locale || 'ru']}
                         </div>
                         <div className="bg-gray-200 p-1 rounded-md w-max md:hidden">
                           <XIcon
@@ -515,28 +557,27 @@ export default function Cart() {
                         </div>
                       </div>
                       <div></div>
-                      
-                      
+
                       <div className="ml-auto md:font-medium md:text-xl text-base w-max">
                         {lineItem.child && lineItem.child.length
                           ? currency(
-                            (+lineItem.total + +lineItem.child[0].total) *
-                            lineItem.quantity,
-                            {
+                              (+lineItem.total + +lineItem.child[0].total) *
+                                lineItem.quantity,
+                              {
+                                pattern: '# !',
+                                separator: ' ',
+                                decimal: '.',
+                                symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                                precision: 0,
+                              }
+                            ).format()
+                          : currency(lineItem.total * lineItem.quantity, {
                               pattern: '# !',
                               separator: ' ',
                               decimal: '.',
                               symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
                               precision: 0,
-                            }
-                          ).format()
-                          : currency(lineItem.total * lineItem.quantity, {
-                            pattern: '# !',
-                            separator: ' ',
-                            decimal: '.',
-                            symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                            precision: 0,
-                          }).format()}
+                            }).format()}
                       </div>
                       <div className="bg-gray-200 p-2 rounded-md w-max md:block hidden">
                         <XIcon
@@ -547,6 +588,30 @@ export default function Cart() {
                     </div>
                   </div>
                 ))}
+            </div>
+          </div>
+          <div className="md:p-10 p-5 md:rounded-2xl bg-white md:my-3">
+            <div className="text-lg font-bold">
+              {tr('recomended_to_your_order')}
+            </div>
+            <div className="mt-5">
+              <Slider {...settings}>
+                <div className="border border-gray-300 rounded-2xl px-5 py-2 text-center m-2">
+                  <img
+                    src={'/no_photo.svg'}
+                    className="rounded-full w-max mb-5"
+                  />
+                  <div className="text-lg md:px-7 leading-5 font-bold mb-3">
+                    Крылышки в соусе
+                  </div>
+                  <div className="text-sm text-gray-300 mb-4">
+                    Просто объедение!
+                  </div>
+                  <div className="rounded-full bg-yellow text-white font-normal py-1">
+                    25 000 сум
+                  </div>
+                </div>
+              </Slider>
             </div>
           </div>
           <div className="rounded-2xl md:bg-gray-200 md:flex items-center justify-between md:px-10 px-5 md:py-16">
