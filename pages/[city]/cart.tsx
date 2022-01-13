@@ -73,7 +73,7 @@ axios.defaults.withCredentials = true
 
 export default function Cart() {
   const [channelName, setChannelName] = useState('chopar')
-
+  const [recomendedItems, setRecomendedItems] = useState([])
   const getChannel = async () => {
     const channelData = await defaultChannel()
     setChannelName(channelData.name)
@@ -107,6 +107,18 @@ export default function Cart() {
     15,
     'abcdefghijklmnopqrstuvwxyz1234567890'
   )
+
+  const fetchRecomendedItems = async () => {
+    if (cartId) {
+      const { data } = await axios.get(
+        `${webAddress}/api/baskets/related/${cartId}`
+      )
+      if (data.data && data.data.length) {
+        setRecomendedItems(data.data)
+      }
+    }
+  }
+
   const [configData, setConfigData] = useState({} as any)
   const fetchConfig = async () => {
     let configData
@@ -241,6 +253,86 @@ export default function Cart() {
     }
   }
 
+  const addToBasket = async (selectedProdId: number) => {
+    let modifierProduct: any = null
+    let selectedModifiers: any = null
+    await setCredentials()
+
+    let basketId = localStorage.getItem('basketId')
+    const otpToken = Cookies.get('opt_token')
+
+    let basketResult = {}
+
+    if (basketId) {
+      const { data: basketData } = await axios.post(
+        `${webAddress}/api/baskets-lines`,
+        {
+          basket_id: basketId,
+          variants: [
+            {
+              id: selectedProdId,
+              quantity: 1,
+              modifiers: null,
+              additionalSale: true,
+            },
+          ],
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${otpToken}`,
+          },
+          withCredentials: true,
+        }
+      )
+      basketResult = {
+        id: basketData.data.id,
+        createdAt: '',
+        currency: { code: basketData.data.currency },
+        taxesIncluded: basketData.data.tax_total,
+        lineItems: basketData.data.lines,
+        lineItemsSubtotalPrice: basketData.data.sub_total,
+        subtotalPrice: basketData.data.sub_total,
+        totalPrice: basketData.data.total,
+      }
+    } else {
+      const { data: basketData } = await axios.post(
+        `${webAddress}/api/baskets`,
+        {
+          variants: [
+            {
+              id: selectedProdId,
+              quantity: 1,
+              modifiers: null,
+              additionalSale: true,
+            },
+          ],
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${otpToken}`,
+          },
+          withCredentials: true,
+        }
+      )
+      localStorage.setItem('basketId', basketData.data.encoded_id)
+      basketResult = {
+        id: basketData.data.id,
+        createdAt: '',
+        currency: { code: basketData.data.currency },
+        taxesIncluded: basketData.data.tax_total,
+        lineItems: basketData.data.lines,
+        lineItemsSubtotalPrice: basketData.data.sub_total,
+        subtotalPrice: basketData.data.sub_total,
+        totalPrice: basketData.data.total,
+      }
+    }
+
+    await mutate(basketResult, false)
+    fetchRecomendedItems()
+  }
+
   const goToCheckout = (e: any) => {
     e.preventDefault()
     router.push(`/${activeCity.slug}/order/`)
@@ -248,6 +340,7 @@ export default function Cart() {
 
   useEffect(() => {
     fetchConfig()
+    fetchRecomendedItems()
     return
   }, [])
 
@@ -588,27 +681,70 @@ export default function Cart() {
                 ))}
             </div>
           </div>
-          <div className="md:rounded-2x my-14 p-5 md:p-0">
-            <div className="text-3xl mb-5">
-              {tr('recomended_to_your_order')}
+          {recomendedItems.length > 0 && (
+            <div className="md:rounded-2x my-14 p-5 md:p-0">
+              <div className="text-3xl mb-5">
+                {tr('recomended_to_your_order')}
+              </div>
+              <div className="mt-5 shadow-md rounded-2xl">
+                <Slider {...settings}>
+                  {recomendedItems.map((item: any) => (
+                    <div className="rounded-2xl px-5 py-2 text-center m-2">
+                      <div className="flex-grow flex items-center flex-col justify-center">
+                        {item.image ? (
+                          <img
+                            src={item.image}
+                            width={250}
+                            height={250}
+                            alt={
+                              item?.attribute_data?.name[channelName][
+                              locale || 'ru'
+                              ]
+                            }
+                            className="transform motion-safe:group-hover:scale-105 transition duration-500"
+                          />
+                        ) : (
+                          <img
+                            src="/no_photo.svg"
+                            width={250}
+                            height={250}
+                            alt={
+                              item?.attribute_data?.name[channelName][
+                              locale || 'ru'
+                              ]
+                            }
+                            className="rounded-full transform motion-safe:group-hover:scale-105 transition duration-500"
+                          />
+                        )}
+                        <div className="text-lg md:px-7 leading-5 font-bold mb-3">
+                          {
+                            item?.attribute_data?.name[channelName][
+                            locale || 'ru'
+                            ]
+                          }
+                        </div>
+                      </div>
+                      <div className="md:text-lg md:px-7 leading-5 font-bold mb-3">
+                        Крылышки в соусе
+                      </div>
+                      <div
+                        className="rounded-xl bg-primary text-white font-normal py-1"
+                        onClick={() => addToBasket(item.id)}
+                      >
+                        {currency(parseInt(item.price, 0) || 0, {
+                          pattern: '# !',
+                          separator: ' ',
+                          decimal: '.',
+                          symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                          precision: 0,
+                        }).format()}
+                      </div>
+                    </div>
+                  ))}
+                </Slider>
+              </div>
             </div>
-            <div className="mt-5 shadow-md rounded-2xl">
-              <Slider {...settings}>
-                <div className="rounded-2xl px-5 py-2 text-center m-2">
-                  <img
-                    src={'/no_photo.svg'}
-                    className="rounded-full w-max mb-5"
-                  />
-                  <div className="md:text-lg md:px-7 leading-5 font-bold mb-3">
-                    Крылышки в соусе
-                  </div>
-                  <div className="rounded-xl bg-primary text-white font-normal py-1">
-                    25 000 сум
-                  </div>
-                </div>
-              </Slider>
-            </div>
-          </div>
+          )}
           <div className="rounded-2xl md:bg-gray-200 md:flex items-center justify-between md:px-10 px-5 md:py-16">
             {/* <div className="md:w-72">
                 <form onSubmit={handleSubmit(onSubmit)} className="relative">
@@ -651,10 +787,21 @@ export default function Cart() {
           font-size: 33px;
           margin-left: -48px;
         }
-
         .slick-next:before {
           font-size: 33px;
           margin-left: 24px;
+        }
+        .slick-track {
+          display: flex;
+        }
+        .slick-track .slick-slide {
+          display: flex;
+          height: auto;
+          align-items: center;
+          justify-content: center;
+        }
+        .slick-track .slick-slide > div {
+          height: 100%;
         }
       `}</style>
         </>
