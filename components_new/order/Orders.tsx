@@ -291,6 +291,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       : ([] as any)
   )
 
+  const [isLoadingBasket, setIsLoadingBasket] = useState(false)
+
   let authButtonRef = useRef(null)
   const otpTime = useRef(0)
 
@@ -734,6 +736,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     }
 
     try {
+      setIsLoadingBasket(true)
       const { data } = await axios.post(
         `${webAddress}/api/orders`,
         {
@@ -756,7 +759,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
           withCredentials: true,
         }
       )
-
+      setIsLoadingBasket(false)
       setIsSavingOrder(false)
       clearInterval(otpTimerRef)
       // setUserData(data.user)
@@ -767,6 +770,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
         position: toast.POSITION.BOTTOM_RIGHT,
         hideProgressBar: true,
       })
+      setIsLoadingBasket(false)
       setIsSavingOrder(false)
     }
   }
@@ -1750,7 +1754,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             </div>
           ))}
       </div>
-      <div className="md:rounded-2xl md:bg-gray-100 md:flex items-center justify-between md:px-10  px-5 py-16 ">
+      <div className="md:rounded-2xl md:bg-gray-100 md:flex items-center justify-between md:px-10  px-5 py-16">
         {/* <div className="md:w-72">
                 <form onSubmit={handleSubmit(onSubmit)} className="relative">
                   <input
@@ -1811,12 +1815,36 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             </>
           )}
         </div>
-        <button
-          className={`bg-green-600 md:text-xl rounded-2xl text-white md:w-64 w-full py-5 px-12 font-medium mt-5 md:mt-0`}
-          onClick={handleSubmit(saveOrder)}
-        >
-          {tr('checkout')}
-        </button>
+        {isLoadingBasket ? (
+          <svg
+            className="animate-spin text-green-500 w-10 m-auto md:m-0 mt-5 md:mt-0"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+        ) : (
+          <button
+            className={`bg-green-600 md:text-xl rounded-2xl text-white md:w-64 w-full py-5 px-12 font-medium mt-5 md:mt-0`}
+            onClick={handleSubmit(saveOrder)}
+            disabled={true}
+          >
+            {tr('checkout')}
+          </button>
+        )}
       </div>
       <Transition appear show={isPhoneConfirmOpen} as={Fragment}>
         <Dialog

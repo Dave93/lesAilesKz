@@ -74,6 +74,7 @@ axios.defaults.withCredentials = true
 export default function Cart() {
   const [channelName, setChannelName] = useState('chopar')
   const [recomendedItems, setRecomendedItems] = useState([])
+
   const getChannel = async () => {
     const channelData = await defaultChannel()
     setChannelName(channelData.name)
@@ -376,7 +377,7 @@ export default function Cart() {
 
   if (!isWorkTime) {
     return (
-      <div className="bg-white flex py-20 text-xl text-yellow font-bold px-10">
+      <div className="bg-white flex py-20 text-xl text-primary font-bold px-10">
         <div>
           {tr('isNotWorkTime')}{' '}
           {locale == 'uz' ? configData.workTimeUz : configData.workTimeRu}
@@ -427,7 +428,7 @@ export default function Cart() {
       {isCartLoading && (
         <div className="h-full w-full absolute flex items-center justify-around bg-gray-300 top-0 bg-opacity-60 left-0 rounded-[15px]">
           <svg
-            className="animate-spin text-yellow h-14"
+            className="animate-spin text-primary h-14"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
