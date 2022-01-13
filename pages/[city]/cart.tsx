@@ -340,7 +340,7 @@ export default function Cart() {
 
   useEffect(() => {
     fetchConfig()
-    fetchRecomendedItems()
+    // fetchRecomendedItems()
     return
   }, [])
 
