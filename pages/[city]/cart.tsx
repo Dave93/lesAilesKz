@@ -338,6 +338,26 @@ export default function Cart() {
     router.push(`/${activeCity.slug}/order/`)
   }
 
+  const clearBasket = async () => {
+    if (cartId) {
+      const { data: basket } = await axios.get(
+        `${webAddress}/api/baskets/${cartId}/clear`
+      )
+      const basketResult = {
+        id: basket.data.id,
+        createdAt: '',
+        currency: { code: basket.data.currency },
+        taxesIncluded: basket.data.tax_total,
+        lineItems: basket.data.lines,
+        lineItemsSubtotalPrice: basket.data.sub_total,
+        subtotalPrice: basket.data.sub_total,
+        totalPrice: basket.data.total,
+      }
+
+      await mutate(basketResult, false)
+    }
+  }
+
   useEffect(() => {
     fetchConfig()
     // fetchRecomendedItems()
@@ -377,14 +397,14 @@ export default function Cart() {
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 4,
+          slidesToShow: 3,
           slidesToScroll: 3,
         },
       },
       {
         breakpoint: 600,
         settings: {
-          slidesToShow: 4,
+          slidesToShow: 3,
           slidesToScroll: 1,
           arrows: false,
           dots: true,
@@ -430,10 +450,10 @@ export default function Cart() {
       )}
       {isEmpty && (
         <div className="flex flex-col items-center mt-2 text-center text-gray-400 text-sm pb-4">
-          <Image src="/cart_empty.png" width={130} height={119} />
-          <div className="w-6/12">{tr('basket_empty')}</div>
+          {/* <img src="/cart_empty.png" width={130} height={119} /> */}
+          <div className="text-2xl">{tr('basket_empty')}</div>
           <button
-            className="bg-yellow text-white p-3 mt-4 rounded-full"
+            className="bg-primary text-white p-3 mt-4 rounded-xl"
             onClick={() => router.push(`/${activeCity.slug}`)}
           >
             {tr('back_to_menu')}
@@ -802,6 +822,15 @@ export default function Cart() {
         }
         .slick-track .slick-slide > div {
           height: 100%;
+        }
+
+        /* the slides */
+        .slick-slide {
+            margin: 0 5px;
+        }
+        /* the parent */
+        .slick-list {
+            margin: 0 -10px;
         }
       `}</style>
         </>
