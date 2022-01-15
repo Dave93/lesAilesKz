@@ -1320,7 +1320,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                     key={point.id}
                     className={`border flex items-start p-3 rounded-[15px] cursor-pointer ${
                       activePoint && activePoint == point.id
-                        ? 'border-yellow'
+                        ? 'border-primary'
                         : 'border-gray-400'
                     }`}
                     onClick={() => choosePickupPoint(point.id)}
@@ -1328,7 +1328,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                     <div
                       className={`border mr-4 mt-1 rounded-xl ${
                         activePoint && activePoint == point.id
-                          ? 'border-yellow'
+                          ? 'border-primary'
                           : 'border-gray-400'
                       }`}
                     >
@@ -1562,7 +1562,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               <div className="grid grid-cols-2 gap-2 pt-8 items-center">
                 <label
                   className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
-                    payType == 'uzcard' ? 'border-yellow' : 'border-gray-200'
+                    payType == 'uzcard' ? 'border-primary' : 'border-gray-200'
                   } border cursor-pointer`}
                 >
                   <img src="/assets/uzcard.png" />
@@ -1576,7 +1576,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 </label>
                 <label
                   className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
-                    payType == 'humo' ? 'border-yellow' : 'border-gray-200'
+                    payType == 'humo' ? 'border-primary' : 'border-gray-200'
                   } border cursor-pointer`}
                 >
                   <img src="/assets/humo.png" />
@@ -1602,7 +1602,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                       <label
                         className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
                           payType == payment
-                            ? 'border-yellow'
+                            ? 'border-primary'
                             : 'border-gray-200'
                         } border cursor-pointer`}
                         key={payment}
@@ -1764,27 +1764,34 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               </div>
             </div>
           ))}
-        <div className="flex items-center border-b py-2">
+        <div className="flex items-center border-b py-2 text-2xl">
           <div className="font-bold">{tr('cutlery_and_napkins')}</div>
-          <div className="font-bold mx-2">{tr('no')}</div>
+          <label htmlFor="N" className="ml-12">
+            <div className="font-bold mx-2">{tr('no')}</div>
+          </label>
           <input
             type="radio"
             value={'N'}
             checked={cutlery === 'N'}
             className={` ${
               cutlery ? 'text-primary' : 'bg-gray-200'
-            } form-checkbox h-5 w-5  rounded-md  border border-gray-300`}
+            } border-2 border-primary form-checkbox rounded-md text-primary outline-none focus:outline-none active:outline-none focus:border-primary`}
             onChange={cutleryHandler}
+            id="N"
           />
-          <div className="font-bold mx-2">{tr('yes')}</div>
+
+          <label htmlFor="Y">
+            <div className="font-bold mx-2">{tr('yes')}</div>
+          </label>
           <input
             type="radio"
             value={'Y'}
             checked={cutlery === 'Y'}
             className={` ${
               cutlery ? 'text-primary' : 'bg-gray-200'
-            } form-checkbox h-5 w-5  rounded-md  border border-gray-300`}
+            } border-2 border-primary form-checkbox rounded-md text-primary outline-none focus:outline-none active:outline-none focus:border-primary`}
             onChange={cutleryHandler}
+            id="Y"
           />
         </div>
       </div>
@@ -1942,7 +1949,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                           <OtpInput
                             value={otpCode}
                             onChange={handleOtpChange}
-                            inputStyle={`${styles.digitField} border border-yellow w-16 rounded-3xl h-12 outline-none focus:outline-none text-center`}
+                            inputStyle={`${styles.digitField} border border-primary w-16 rounded-3xl h-12 outline-none focus:outline-none text-center`}
                             isInputNum={true}
                             containerStyle="grid grid-cols-4 gap-1.5 justify-center"
                             numInputs={4}
@@ -1953,7 +1960,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                             </div>
                           ) : (
                             <button
-                              className="text-xs text-primary mt-3 outline-none focus:outline-none border-b border-yellow pb-0.5"
+                              className="text-xs text-primary mt-3 outline-none focus:outline-none border-b border-primary pb-0.5"
                               onClick={(e) => getNewCode(e)}
                             >
                               $
