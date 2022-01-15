@@ -272,6 +272,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
   const [activePoint, setActivePoint] = useState(
     (locationData ? locationData.terminal_id : null) as number | null
   )
+  const [cutlery, setCutlery] = useState('Y')
   const [isPhoneConfirmOpen, setIsPhoneConfirmOpen] = useState(false)
   const [otpCode, setOtpCode] = useState('')
   const [otpShowCode, setOtpShowCode] = useState(0)
@@ -685,6 +686,10 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
   const prepareOrder = async () => {
     setIsSavingOrder(true)
     await setCredentials()
+    let sourceType = 'web'
+    if (window.innerWidth < 768) {
+      sourceType = 'mobile_web'
+    }
     try {
       const { data } = await axios.post(`${webAddress}/api/orders/prepare`, {
         formData: {
@@ -693,6 +698,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
           pay_type: payType,
           sms_sub: sms,
           email_sub: newsletter,
+          sourceType,
+          need_napkins: cutlery == 'Y',
         },
         basket_id: cartId,
       })
@@ -773,6 +780,10 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       setIsLoadingBasket(false)
       setIsSavingOrder(false)
     }
+  }
+
+  const cutleryHandler = (e: any) => {
+    setCutlery(e.target.value)
   }
 
   const otpTimerText = useMemo(() => {
@@ -856,7 +867,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
 
   if (!isWorkTime) {
     return (
-      <div className="bg-white flex py-20 text-xl text-yellow font-bold md:px-10 px-5">
+      <div className="bg-white flex py-20 text-xl text-primary font-bold md:px-10 px-5">
         <div>
           {tr('isNotWorkTime')}{' '}
           {locale == 'uz' ? configData.workTimeUz : configData.workTimeRu}
@@ -1109,7 +1120,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                                         })}
                                       >
                                         <CheckIcon
-                                          className={`w-5 text-yellow font-bold mr-2 ${
+                                          className={`w-5 text-primary font-bold mr-2 ${
                                             highlightedIndex == index
                                               ? ''
                                               : 'invisible'
@@ -1223,7 +1234,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               {/* <div className="flex mt-3">
                 <div
                   className={`${
-                    pickupIndex == 1 ? ' text-yellow' : 'text-gray-400'
+                    pickupIndex == 1 ? ' text-primary' : 'text-gray-400'
                   } cursor-pointer font-bold text-[18px] mr-5`}
                   onClick={() => {
                     setPickupIndex(1)
@@ -1233,7 +1244,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 </div>
                 <div
                   className={`${
-                    pickupIndex == 2 ? ' text-yellow' : 'text-gray-400'
+                    pickupIndex == 2 ? ' text-primary' : 'text-gray-400'
                   } cursor-pointer font-bold text-[18px]`}
                   onClick={() => {
                     setPickupIndex(2)
@@ -1324,7 +1335,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                       <div
                         className={`h-3 m-1 rounded-xl w-3 ${
                           activePoint && activePoint == point.id
-                            ? 'bg-yellow'
+                            ? 'bg-primary'
                             : 'bg-gray-400'
                         }`}
                       ></div>
@@ -1454,7 +1465,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       <div className="w-full bg-white md:mb-10 mb-5 md:rounded-2xl py-7 md:px-10 px-5 relative shadow-xl">
         {!locationData?.terminal_id && (
           <div className="absolute md:w-full h-full md:-ml-10 md:-mt-10 bg-opacity-60 bg-gray-100 z-20 items-center flex justify-around bottom-0 left-0 md:left-auto text-center">
-            <div className="text-yellow font-bold text-2xl">
+            <div className="text-primary font-bold text-2xl">
               {tr('no_address_no_restaurant')}
             </div>
           </div>
@@ -1721,7 +1732,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                     .filter((mod: any) => mod.price > 0)
                     .map((mod: any) => (
                       <div
-                        className="bg-yellow rounded-xl px-2 py-1 ml-2 text-xs text-white"
+                        className="bg-primary rounded-xl px-2 py-1 ml-2 text-xs text-white"
                         key={mod.id}
                       >
                         {locale == 'uz' ? mod.name_uz : mod.name}
@@ -1753,6 +1764,29 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               </div>
             </div>
           ))}
+        <div className="flex items-center border-b py-2">
+          <div className="font-bold">{tr('cutlery_and_napkins')}</div>
+          <div className="font-bold mx-2">{tr('no')}</div>
+          <input
+            type="radio"
+            value={'N'}
+            checked={cutlery === 'N'}
+            className={` ${
+              cutlery ? 'text-primary' : 'bg-gray-200'
+            } form-checkbox h-5 w-5  rounded-md  border border-gray-300`}
+            onChange={cutleryHandler}
+          />
+          <div className="font-bold mx-2">{tr('yes')}</div>
+          <input
+            type="radio"
+            value={'Y'}
+            checked={cutlery === 'Y'}
+            className={` ${
+              cutlery ? 'text-primary' : 'bg-gray-200'
+            } form-checkbox h-5 w-5  rounded-md  border border-gray-300`}
+            onChange={cutleryHandler}
+          />
+        </div>
       </div>
       <div className="md:rounded-2xl md:bg-gray-100 md:flex items-center justify-between md:px-10  px-5 py-16">
         {/* <div className="md:w-72">
@@ -1914,12 +1948,12 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                             numInputs={4}
                           />
                           {otpShowCode > 0 ? (
-                            <div className="text-xs text-yellow mt-3">
+                            <div className="text-xs text-primary mt-3">
                               {otpTimerText}
                             </div>
                           ) : (
                             <button
-                              className="text-xs text-yellow mt-3 outline-none focus:outline-none border-b border-yellow pb-0.5"
+                              className="text-xs text-primary mt-3 outline-none focus:outline-none border-b border-yellow pb-0.5"
                               onClick={(e) => getNewCode(e)}
                             >
                               $
@@ -1932,7 +1966,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                         <div className="mt-10">
                           <button
                             className={`py-3 px-20 text-white font-bold text-xl text-center rounded-xl w-full outline-none focus:outline-none ${
-                              otpCode.length >= 4 ? 'bg-yellow' : 'bg-gray-400'
+                              otpCode.length >= 4 ? 'bg-primary' : 'bg-gray-400'
                             }`}
                             disabled={otpCode.length < 4}
                             ref={authButtonRef}
