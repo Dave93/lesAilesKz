@@ -712,11 +712,12 @@ export default function Cart() {
                   {recomendedItems.map((item: any) => (
                     <div className="rounded-2xl px-5 py-2 text-center m-2">
                       <div className="flex-grow flex items-center flex-col justify-center">
-                        {item.image ? (
+                        <div className='h-44'>
+                          {item.image ? (
                           <img
                             src={item.image}
-                            width={250}
-                            height={250}
+                            width={150}
+                            height={150}
                             alt={
                               item?.attribute_data?.name[channelName][
                               locale || 'ru'
@@ -727,8 +728,8 @@ export default function Cart() {
                         ) : (
                           <img
                             src="/no_photo.svg"
-                            width={250}
-                            height={250}
+                            width={150}
+                            height={150}
                             alt={
                               item?.attribute_data?.name[channelName][
                               locale || 'ru'
@@ -737,16 +738,15 @@ export default function Cart() {
                             className="rounded-full transform motion-safe:group-hover:scale-105 transition duration-500"
                           />
                         )}
-                        <div className="text-lg md:px-7 leading-5 font-bold mb-3">
+                        </div>
+                        
+                        <div className="text-lg md:px-7 leading-5 font-bold mb-3 md:h-12 h-16">
                           {
                             item?.attribute_data?.name[channelName][
                             locale || 'ru'
                             ]
                           }
                         </div>
-                      </div>
-                      <div className="md:text-lg md:px-7 leading-5 font-bold mb-3">
-                        Крылышки в соусе
                       </div>
                       <div
                         className="rounded-xl bg-primary text-white font-normal py-1"
