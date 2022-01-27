@@ -158,6 +158,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
 
   const [deliveryPrice, setDeliveryPrice] = useState(0)
   const [deliveryDistance, setDeliveryDistance] = useState(0)
+  const [userBalance, setUserBalance] = useState(0)
 
   let currentAddress = ''
   if (activeCity.active) {
@@ -354,6 +355,29 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     }
   }
 
+  const getUserBalance = async () => {
+    try {
+      await setCredentials()
+      const otpToken = Cookies.get('opt_token')
+
+      const { data } = await axios.get(`${webAddress}/api/cashback/balance`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${otpToken}`,
+        },
+        withCredentials: true,
+      })
+      if (data.data && data.data.balance) {
+        setUserBalance(data.data.balance)
+      } else {
+        setUserBalance(0)
+      }
+    } catch (e) {
+      setUserBalance(0)
+    }
+    // setUserBalance();
+  }
+
   useEffect(() => {
     stopList()
     fetchConfig()
@@ -392,6 +416,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
         addressId: addressId,
       })
     }
+
+    getUserBalance()
 
     return
   }, [locationData])
@@ -881,7 +907,10 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     resetField('change')
   }
 
-  console.log(query)
+  const setPayTypeCashBack = () => {
+    setOpenTab(4)
+    setPayType('cashback')
+  }
 
   return (
     <div className="md:mx-0 pt-1 md:pt-0 pb-1">
@@ -1514,6 +1543,40 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 checked={openTab == 2}
               />
               <div>{tr('by_card')}</div>
+            </div>
+            <div
+              className="bg-gray-100 flex items-center w-64 rounded-2xl p-4  cursor-pointer"
+              onClick={() => userBalance >= totalPrice && setPayTypeCashBack()}
+            >
+              <input
+                type="checkbox"
+                className={`${
+                  openTab !== 4 ? '' : 'border'
+                } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                defaultChecked={false}
+                checked={openTab == 4}
+                disabled={userBalance < totalPrice}
+              />
+              <div>
+                <div>{tr('cashBack')}</div>
+                <div>
+                  <div className="text-xs text-gray-500">
+                    {tr('your_balance')}:{' '}
+                    {currency(userBalance, {
+                      pattern: '# !',
+                      separator: ' ',
+                      decimal: '.',
+                      symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                      precision: 0,
+                    }).format()}
+                  </div>
+                </div>
+                {userBalance < totalPrice && (
+                  <div className="text-red-500 text-xs">
+                    {tr('not_enough_money')}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           <div>
