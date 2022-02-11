@@ -86,10 +86,10 @@ const Address: FC = () => {
         {tr('profile_address')}
       </div>
       {errorMessage && (
-        <div className="text-red-500 text-center">{tr(errorMessage)}</div>
+        <div className="text-red-500 text-center">{errorMessage}</div>
       )}
       <div className="w-11/12 md:w-5/12 m-auto">
-        {!errorMessage && addressList.length > 0 && (
+        {!errorMessage && addressList && addressList.length > 0 && (
           <>
             {addressList.map((item: Address) => {
               return (
@@ -141,7 +141,7 @@ const Address: FC = () => {
             })}
           </>
         )}
-        {!errorMessage && addressList.length === 0 && (
+        {!errorMessage && addressList && addressList.length === 0 && (
           <div className="text-center">{tr('no_address')}</div>
         )}
         {!errorMessage && (

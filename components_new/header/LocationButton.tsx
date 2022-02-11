@@ -168,7 +168,7 @@ const LocationButton: FC = () => {
 
   const locationLabel = useMemo(() => {
     let res = ''
-    if (locationData) {
+    if (locationData && (locationData.label || locationData.address)) {
       res = locationData.label ? locationData.label : locationData.address
     } else {
       res = tr('chooseLocation')

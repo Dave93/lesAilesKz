@@ -223,7 +223,7 @@ const LocationTabs: FC = () => {
       loadPickupItems()
     }
     return
-  }, [locationData])
+  }, [locationData, cities])
 
   const addressInputChangeHandler = async (event: any) => {
     if (!configData) {
@@ -335,7 +335,7 @@ const LocationTabs: FC = () => {
     }
     const mapStateCenter: MapStateCenter = {
       center: mapCenter || [],
-      zoom: mapZoom || 10,
+      zoom: mapZoom || 17,
     }
 
     const res: MapState = Object.assign({}, baseState, mapStateCenter)
@@ -452,8 +452,6 @@ const LocationTabs: FC = () => {
         setStopProducts(terminalStock.data)
       }
 
-
-
       hideAddress()
     }
 
@@ -507,19 +505,19 @@ const LocationTabs: FC = () => {
       return
     }
 
-     const { data: terminalStock } = await axios.get(
-       `${webAddress}/api/terminals/get_stock?terminal_id=${activePoint}`
-     )
+    const { data: terminalStock } = await axios.get(
+      `${webAddress}/api/terminals/get_stock?terminal_id=${activePoint}`
+    )
 
-     if (!terminalStock.success) {
-       toast.warn(terminalStock.message, {
-         position: toast.POSITION.BOTTOM_RIGHT,
-         hideProgressBar: true,
-       })
-       return
-     } else {
-       setStopProducts(terminalStock.data)
-     }
+    if (!terminalStock.success) {
+      toast.warn(terminalStock.message, {
+        position: toast.POSITION.BOTTOM_RIGHT,
+        hideProgressBar: true,
+      })
+      return
+    } else {
+      setStopProducts(terminalStock.data)
+    }
 
     hideAddress(false)
   }
@@ -667,18 +665,18 @@ const LocationTabs: FC = () => {
                         iconImageSize: [100, 100],
                       }}
                     />
-                  ))} 
-                  <GeolocationControl options={{ float: 'left' }} />
-                  <ZoomControl options={{ size: 'small' }} />
+                  ))}
+              <GeolocationControl options={{ float: 'left' }} />
+              <ZoomControl options={{ size: 'small' }} />
             </Map>
           </div>
         </YMaps>
       </div>
       <div
-        className="absolute bg-white right-20 rounded-2xl top-8 p-3 cursor-pointer"
+        className="absolute bg-primary right-20 rounded-2xl top-8 p-1 text-white cursor-pointer"
         onClick={hideAddress}
       >
-        <XIcon className=" w-5" />
+        <XIcon className="w-10" />
       </div>
       <div className="w-96 absolute top-8 bg-white rounded-3xl p-5 left-40 shadow-2xl">
         <div className="bg-gray-100 flex rounded-full w-full p-1">
@@ -698,6 +696,45 @@ const LocationTabs: FC = () => {
           >
             {tr('pickup')}
           </button>
+        </div>
+        <div>
+          <Menu as="div" className="">
+            <div>
+              <Menu.Button className="focus:outline-none font-medium inline-flex justify-end px-4 py-2 text-secondary text-sm w-full">
+                {locale == 'uz' ? chosenCity?.name_uz : chosenCity?.name}
+                <ChevronDownIcon
+                  className="w-5 h-5 ml-2 -mr-1 text-violet-200 hover:text-violet-100"
+                  aria-hidden="true"
+                />
+              </Menu.Button>
+            </div>
+            <Transition
+              as={Fragment}
+              enter="transition ease-out duration-100"
+              enterFrom="transform opacity-0 scale-95"
+              enterTo="transform opacity-100 scale-100"
+              leave="transition ease-in duration-75"
+              leaveFrom="transform opacity-100 scale-100"
+              leaveTo="transform opacity-0 scale-95"
+            >
+              <Menu.Items className="z-20 absolute right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                {cities.map((city: City) => (
+                  <Menu.Item key={city.id}>
+                    <span
+                      onClick={() => setActive(city)}
+                      className={`block px-4 py-2 text-sm cursor-pointer ${
+                        city.id == chosenCity.id
+                          ? 'bg-secondary text-white'
+                          : 'text-secondary'
+                      }`}
+                    >
+                      {locale == 'uz' ? city.name_uz : city.name}
+                    </span>
+                  </Menu.Item>
+                ))}
+              </Menu.Items>
+            </Transition>
+          </Menu>
         </div>
         {tabIndex == 'deliver' && (
           <div className="mt-2">

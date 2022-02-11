@@ -143,61 +143,60 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
     setTabIndex(index)
   }
 
- const loadPickupItems = async () => {
-   setPickupPoint([])
-   const { data } = await axios.get(
-     `${webAddress}/api/terminals/pickup?city_id=${activeCity.id}`
-   )
-   let res: any[] = []
-   let currentTime = DateTime.local()
-   let weekDay = currentTime.weekday
-   data.data.map((item: any) => {
-     if (item.latitude) {
-       item.isWorking = false
-       if (weekDay >= 1 && weekDay < 6) {
-         let openWork = DateTime.fromISO(item.open_work)
-         openWork = openWork.set({ day: currentTime.day })
-         openWork = openWork.set({ year: currentTime.year })
-         openWork = openWork.set({ month: currentTime.month })
-         let closeWork = DateTime.fromISO(item.close_work)
-         closeWork = closeWork.set({ day: currentTime.day })
-         closeWork = closeWork.set({ year: currentTime.year })
-         closeWork = closeWork.set({ month: currentTime.month })
-         if (closeWork.hour < openWork.hour) {
-           closeWork = closeWork.set({ day: currentTime.day + 1 })
-         }
+  const loadPickupItems = async () => {
+    setPickupPoint([])
+    const { data } = await axios.get(
+      `${webAddress}/api/terminals/pickup?city_id=${activeCity.id}`
+    )
+    let res: any[] = []
+    let currentTime = DateTime.local()
+    let weekDay = currentTime.weekday
+    data.data.map((item: any) => {
+      if (item.latitude) {
+        item.isWorking = false
+        if (weekDay >= 1 && weekDay < 6) {
+          let openWork = DateTime.fromISO(item.open_work)
+          openWork = openWork.set({ day: currentTime.day })
+          openWork = openWork.set({ year: currentTime.year })
+          openWork = openWork.set({ month: currentTime.month })
+          let closeWork = DateTime.fromISO(item.close_work)
+          closeWork = closeWork.set({ day: currentTime.day })
+          closeWork = closeWork.set({ year: currentTime.year })
+          closeWork = closeWork.set({ month: currentTime.month })
+          if (closeWork.hour < openWork.hour) {
+            closeWork = closeWork.set({ day: currentTime.day + 1 })
+          }
 
-         if (currentTime >= openWork && currentTime < closeWork) {
-           item.isWorking = true
-         }
-         item.workTimeStart = openWork.toFormat('HH:mm')
-         item.workTimeEnd = closeWork.toFormat('HH:mm')
-       } else {
-         let openWork = DateTime.fromISO(item.open_weekend)
-         openWork = openWork.set({ day: currentTime.day })
-         openWork = openWork.set({ year: currentTime.year })
-         openWork = openWork.set({ month: currentTime.month })
-         let closeWork = DateTime.fromISO(item.close_weekend)
-         closeWork = closeWork.set({ day: currentTime.day })
-         closeWork = closeWork.set({ year: currentTime.year })
-         closeWork = closeWork.set({ month: currentTime.month })
-         if (closeWork.hour < openWork.hour) {
-           closeWork = closeWork.set({ day: currentTime.day + 1 })
-         }
+          if (currentTime >= openWork && currentTime < closeWork) {
+            item.isWorking = true
+          }
+          item.workTimeStart = openWork.toFormat('HH:mm')
+          item.workTimeEnd = closeWork.toFormat('HH:mm')
+        } else {
+          let openWork = DateTime.fromISO(item.open_weekend)
+          openWork = openWork.set({ day: currentTime.day })
+          openWork = openWork.set({ year: currentTime.year })
+          openWork = openWork.set({ month: currentTime.month })
+          let closeWork = DateTime.fromISO(item.close_weekend)
+          closeWork = closeWork.set({ day: currentTime.day })
+          closeWork = closeWork.set({ year: currentTime.year })
+          closeWork = closeWork.set({ month: currentTime.month })
+          if (closeWork.hour < openWork.hour) {
+            closeWork = closeWork.set({ day: currentTime.day + 1 })
+          }
 
-         if (currentTime >= openWork && currentTime < closeWork) {
-           item.isWorking = true
-         }
-         item.workTimeStart = openWork.toFormat('HH:mm')
-         item.workTimeEnd = closeWork.toFormat('HH:mm')
-       }
+          if (currentTime >= openWork && currentTime < closeWork) {
+            item.isWorking = true
+          }
+          item.workTimeStart = openWork.toFormat('HH:mm')
+          item.workTimeEnd = closeWork.toFormat('HH:mm')
+        }
 
-       res.push(item)
-     }
-   })
-   setPickupPoint(res)
- }
-
+        res.push(item)
+      }
+    })
+    setPickupPoint(res)
+  }
 
   const setCredentials = async () => {
     let csrf = Cookies.get('X-XSRF-TOKEN')
@@ -455,8 +454,6 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
         setStopProducts(terminalStock.data)
       }
 
-
-
       hideAddressMobile()
     }
 
@@ -508,19 +505,19 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
       return
     }
 
-     const { data: terminalStock } = await axios.get(
-       `${webAddress}/api/terminals/get_stock?terminal_id=${activePoint}`
-     )
+    const { data: terminalStock } = await axios.get(
+      `${webAddress}/api/terminals/get_stock?terminal_id=${activePoint}`
+    )
 
-     if (!terminalStock.success) {
-       toast.warn(terminalStock.message, {
-         position: toast.POSITION.BOTTOM_RIGHT,
-         hideProgressBar: true,
-       })
-       return
-     } else {
-       setStopProducts(terminalStock.data)
-     }
+    if (!terminalStock.success) {
+      toast.warn(terminalStock.message, {
+        position: toast.POSITION.BOTTOM_RIGHT,
+        hideProgressBar: true,
+      })
+      return
+    } else {
+      setStopProducts(terminalStock.data)
+    }
 
     hideAddressMobile()
   }
@@ -643,6 +640,45 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
           >
             {tr('pickup')}
           </button>
+        </div>
+        <div>
+          <Menu as="div" className="">
+            <div>
+              <Menu.Button className="focus:outline-none font-medium inline-flex justify-end px-4 py-2 text-secondary text-sm w-full">
+                {locale == 'uz' ? chosenCity?.name_uz : chosenCity?.name}
+                <ChevronDownIcon
+                  className="w-5 h-5 ml-2 -mr-1 text-violet-200 hover:text-violet-100"
+                  aria-hidden="true"
+                />
+              </Menu.Button>
+            </div>
+            <Transition
+              as={Fragment}
+              enter="transition ease-out duration-100"
+              enterFrom="transform opacity-0 scale-95"
+              enterTo="transform opacity-100 scale-100"
+              leave="transition ease-in duration-75"
+              leaveFrom="transform opacity-100 scale-100"
+              leaveTo="transform opacity-0 scale-95"
+            >
+              <Menu.Items className="z-20 absolute right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                {cities.map((city: City) => (
+                  <Menu.Item key={city.id}>
+                    <span
+                      onClick={() => setActive(city)}
+                      className={`block px-4 py-2 text-sm cursor-pointer ${
+                        city.id == chosenCity.id
+                          ? 'bg-secondary text-white'
+                          : 'text-secondary'
+                      }`}
+                    >
+                      {locale == 'uz' ? city.name_uz : city.name}
+                    </span>
+                  </Menu.Item>
+                ))}
+              </Menu.Items>
+            </Transition>
+          </Menu>
         </div>
         {tabIndex == 'deliver' && (
           <div className="mt-2">

@@ -20,12 +20,16 @@ const getAddressList = async () => {
       },
     })
 
+    console.log('getAddressList', data)
+
     if (!data.success) {
       return null
     } else {
       return data.data
     }
     // orderData = data.data
-  } catch (e) {}
+  } catch (e) {
+    console.log('getAddressList', e)
+  }
 }
 export default getAddressList
