@@ -61,7 +61,6 @@ const SignInButton: FC = () => {
     hideOverlay,
   } = useUI()
 
-
   const otpTime = useRef(0)
 
   const openModal = () => {
@@ -251,7 +250,7 @@ const SignInButton: FC = () => {
   const openPopover = () => {
     showOverlay()
     createPopper(btnRef.current, popoverRef.current, {
-      placement: 'bottom'
+      placement: 'bottom',
     })
     setPopoverShow(true)
   }
@@ -454,7 +453,7 @@ const SignInButton: FC = () => {
                                         international
                                         withCountryCallingCode
                                         value={value}
-                                        className="border border-primary focus:outline-none outline-none px-6 py-3 rounded-full text-sm w-full"
+                                        className="border border-primary focus:outline-none outline-none px-6 py-3 rounded-xl text-sm w-full"
                                         onChange={(e: any) => onChange(e)}
                                         onKeyDown={(e: any) => {
                                           if (e.key == 'Enter') {
@@ -493,7 +492,7 @@ const SignInButton: FC = () => {
                                     <input
                                       type="text"
                                       {...register('name')}
-                                      className="border border-primary focus:outline-none outline-none px-6 py-3 rounded-full text-sm w-full"
+                                      className="border border-primary focus:outline-none outline-none px-6 py-3 rounded-xl text-sm w-full"
                                     />
                                     {authName && (
                                       <button

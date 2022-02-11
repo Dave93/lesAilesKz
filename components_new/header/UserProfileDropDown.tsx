@@ -18,8 +18,15 @@ const UserProfileDropDown: FC = () => {
   const btnRef = useRef<any>(null)
   const popoverRef = useRef<any>(null)
 
-  const { user, setUserData, activeCity, showOverlay, hideOverlay, overlay } =
-    useUI()
+  const {
+    user,
+    setUserData,
+    activeCity,
+    showOverlay,
+    hideOverlay,
+    overlay,
+    closeSignInModal,
+  } = useUI()
   let items = menuItems.map((item) => {
     return {
       ...item,
@@ -45,19 +52,21 @@ const UserProfileDropDown: FC = () => {
     localStorage.removeItem('mijoz')
     setUserData(null)
     closePopover()
+    closeSignInModal()
+    router.push('/')
   }
 
   const goTo = (link: string) => {
     closePopover()
     router.push(link, undefined, {
-      locale
+      locale,
     })
   }
 
   return (
     <>
       <div>
-        <button          
+        <button
           onMouseEnter={() => openPopover()}
           onMouseLeave={() => closePopover()}
           className="bg-gray-200 px-8 outline-none focus:outline-none mb-5 md:mb-0 py-2 rounded-xl hidden md:block"
@@ -68,11 +77,7 @@ const UserProfileDropDown: FC = () => {
       <div
         onMouseEnter={() => openPopover()}
         onMouseLeave={() => closePopover()}
-        className={
-          popoverShow
-            ? 'z-20 absolute'
-            : 'hidden '
-        }
+        className={popoverShow ? 'z-20 absolute' : 'hidden '}
       >
         <div className={'mt-8 rounded-2xl p-3 bg-white'}>
           <div className="flex items-center ml-5">
@@ -87,15 +92,18 @@ const UserProfileDropDown: FC = () => {
             }
 
             return (
-                <div className="cursor-pointer flex items-center py-4 px-5 justify-between" onClick={() => goTo(href)}>
-                  <div className="flex items-center">
-                    <img src={item.icon} />
-                    <div className="ml-3">{item.name}</div>
-                  </div>
-                  <div>
-                    <ChevronRightIcon className=" w-5 text-blue-500" />
-                  </div>
+              <div
+                className="cursor-pointer flex items-center py-4 px-5 justify-between"
+                onClick={() => goTo(href)}
+              >
+                <div className="flex items-center">
+                  <img src={item.icon} />
+                  <div className="ml-3">{item.name}</div>
                 </div>
+                <div>
+                  <ChevronRightIcon className=" w-5 text-blue-500" />
+                </div>
+              </div>
             )
           })}
 
@@ -108,7 +116,7 @@ const UserProfileDropDown: FC = () => {
               Выйти
             </button>
           </div>
-          </div>
+        </div>
       </div>
     </>
   )

@@ -89,11 +89,11 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
   const otpTime = useRef(0)
 
   const openModal = () => {
-    setShowSignInModal(true)
+    openSignInModal()
   }
 
   const closeModal = () => {
-    setShowSignInModal(false)
+    closeSignInModal()
   }
 
   const {
@@ -438,6 +438,25 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
       setIsCartLoading(false)
     }
   }
+  const clearBasket = async () => {
+    if (cartId) {
+      const { data: basket } = await axios.get(
+        `${webAddress}/api/baskets/${cartId}/clear`
+      )
+      const basketResult = {
+        id: basket.data.id,
+        createdAt: '',
+        currency: { code: basket.data.currency },
+        taxesIncluded: basket.data.tax_total,
+        lineItems: basket.data.lines,
+        lineItemsSubtotalPrice: basket.data.sub_total,
+        subtotalPrice: basket.data.sub_total,
+        totalPrice: basket.data.total,
+      }
+
+      await mutate(basketResult, false)
+    }
+  }
   return (
     <>
       <button
@@ -499,7 +518,7 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
                   x{data && data.lineItems ? data?.lineItems.length : 0}
                 </div>
               </div>
-              <button onClick={() => {}}>
+              <button onClick={clearBasket}>
                 <div className="text-sm text-gray-400">Очистить</div>
               </button>
             </div>
