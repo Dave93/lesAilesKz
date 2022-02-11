@@ -45,6 +45,7 @@ import styles from './Orders.module.css'
 import { DateTime } from 'luxon'
 import Input from 'react-phone-number-input/input'
 import { City } from '@commerce/types/cities'
+import { chunk, sortBy } from 'lodash'
 
 const { publicRuntimeConfig } = getConfig()
 let webAddress = publicRuntimeConfig.apiUrl
@@ -158,6 +159,10 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
 
   const [deliveryPrice, setDeliveryPrice] = useState(0)
   const [deliveryDistance, setDeliveryDistance] = useState(0)
+  const [yandexGeoKey, setYandexGeoKey] = useState('')
+  const [ymaps, setYmaps] = useState<any>(null)
+  const map = useRef<any>(null)
+  const objects = useRef<any>(null)
 
   let currentAddress = ''
   if (activeCity.active) {
@@ -326,6 +331,12 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       configData = JSON.parse(configData)
       setConfigData(configData)
     } catch (e) {}
+    let yandexGeoKey = configData.yandexGeoKey
+    yandexGeoKey = yandexGeoKey.split(',')
+    // get random item from yandexGeoKey
+    yandexGeoKey = yandexGeoKey[Math.floor(Math.random() * yandexGeoKey.length)]
+
+    setYandexGeoKey(yandexGeoKey)
   }
 
   const getDeliveryPrice = async () => {
@@ -728,6 +739,68 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     }
   }
 
+  const loadPolygonsToMap = (ymaps: any) => {
+    setYmaps(ymaps)
+    map.current.controls.remove('geolocationControl')
+    var geolocationControl = new ymaps.control.GeolocationControl({
+      options: { noPlacemark: true },
+    })
+    geolocationControl.events.add('locationchange', function (event: any) {
+      var position = event.get('position'),
+        // При создании метки можно задать ей любой внешний вид.
+        locationPlacemark = new ymaps.Placemark(position)
+
+      clickOnMap(event)
+      // Установим новый центр карты в текущее местоположение пользователя.
+      map.current.panTo(position)
+    })
+    map.current.controls.add(geolocationControl)
+    let geoObjects: any = {
+      type: 'FeatureCollection',
+      metadata: {
+        name: 'delivery',
+        creator: 'Yandex Map Constructor',
+      },
+      features: [],
+    }
+    cities.map((city: any) => {
+      if (city.polygons) {
+        let arrPolygons = city.polygons.split(',').map((poly: any) => +poly)
+        arrPolygons = chunk(arrPolygons, 2)
+        arrPolygons = arrPolygons.map((poly: any) => sortBy(poly))
+        let polygon: any = {
+          type: 'Feature',
+          id: 0,
+          geometry: {
+            type: 'Polygon',
+            coordinates: [arrPolygons],
+          },
+          properties: {
+            fill: '#FAAF04',
+            fillOpacity: 0.1,
+            stroke: '#FAAF04',
+            strokeWidth: '7',
+            strokeOpacity: 0.4,
+            slug: city.slug,
+          },
+        }
+        geoObjects.features.push(polygon)
+      }
+    })
+    let deliveryZones = ymaps.geoQuery(geoObjects).addToMap(map.current)
+    deliveryZones.each((obj: any) => {
+      obj.options.set({
+        fillColor: obj.properties.get('fill'),
+        fillOpacity: obj.properties.get('fillOpacity'),
+        strokeColor: obj.properties.get('stroke'),
+        strokeWidth: obj.properties.get('strokeWidth'),
+        strokeOpacity: obj.properties.get('strokeOpacity'),
+      })
+      obj.events.add('click', clickOnMap)
+    })
+    objects.current = deliveryZones
+  }
+
   const saveOrder = async () => {
     if (!user) {
       return openSignInModal()
@@ -959,7 +1032,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               </div>
             </div>
             <div className=" bg-gray-100 rounded-xl py-2 px-4 relative md:ml-2 md:w-72 h-16">
-              <div className="text-gray-400 text-xs">
+              <div className="text-gray-400 text-sm">
                 {tr('additional_phone')}
               </div>
               <Input
@@ -1054,6 +1127,53 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                   </Transition>
                 </Menu>
               </div>
+            </div>
+
+            <div>
+              {yandexGeoKey && (
+                <YMaps
+                  // enterprise
+                  query={{
+                    apikey: yandexGeoKey,
+                  }}
+                >
+                  <div>
+                    <Map
+                      state={mapState}
+                      onLoad={(ymaps: any) => loadPolygonsToMap(ymaps)}
+                      instanceRef={(ref) => (map.current = ref)}
+                      width="100%"
+                      height={`${window.innerWidth < 768 ? '200px' : '530px'}`}
+                      onClick={clickOnMap}
+                      modules={[
+                        'control.ZoomControl',
+                        'control.FullscreenControl',
+                        'control.GeolocationControl',
+                        'geoQuery',
+                      ]}
+                    >
+                      {selectedCoordinates.map((item: any, index: number) => (
+                        <Placemark
+                          modules={['geoObject.addon.balloon']}
+                          defaultGeometry={[
+                            item?.coordinates?.lat,
+                            item?.coordinates?.long,
+                          ]}
+                          geomerty={[
+                            item?.coordinates?.lat,
+                            item?.coordinates?.long,
+                          ]}
+                          key={item.key}
+                          defaultOptions={{
+                            iconLayout: 'default#image',
+                            iconImageHref: '/map_placemark.png',
+                          }}
+                        />
+                      ))}
+                    </Map>
+                  </div>
+                </YMaps>
+              )}
             </div>
             <div className="mt-3">
               <form onSubmit={handleSubmit(onSubmit)}>

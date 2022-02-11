@@ -25,12 +25,12 @@ const menuItems: profileMenuItem[] = [
     activeIcon: '/assets/location.svg',
     langCode: 'profile_address',
   },
-  {
-    href: '/profile/creditcard',
-    icon: '/creditcard.svg',
-    activeIcon: '/activeCreditcard.svg',
-    langCode: 'profile_mycreditcard',
-  },
+  // {
+  //   href: '/profile/creditcard',
+  //   icon: '/creditcard.svg',
+  //   activeIcon: '/activeCreditcard.svg',
+  //   langCode: 'profile_mycreditcard',
+  // },
   {
     href: '/profile/orders',
     icon: '/inActivebag.svg',
