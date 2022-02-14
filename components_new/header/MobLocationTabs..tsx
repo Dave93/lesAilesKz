@@ -246,7 +246,7 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
       loadPickupItems()
     }
     return
-  }, [locationData])
+  }, [locationData, cities])
 
   const addressInputChangeHandler = async (event: any) => {
     if (!configData) {
