@@ -416,7 +416,9 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       return []
     }
     const { data: getCodeData } = await axios.get(
-      `/api/geocode?text=${encodeURI(event.target.value)}`
+      `/api/geocode?text=${encodeURI(event.target.value)}&bounds=${
+        activeCity.bounds
+      }`
     )
 
     setGeoSuggestions(getCodeData)
@@ -487,7 +489,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     ])
     setMapZoom(17)
     const { data } = await axios.get(
-      `${webAddress}/api/geocode?lat=${coords[0]}&lon=${coords[1]}`
+      `${webAddress}/api/geocode?lat=${coords[0]}&lon=${coords[1]}&bounds=${activeCity.bounds}`
     )
     let house = ''
     data.data.addressItems.map((item: any) => {
