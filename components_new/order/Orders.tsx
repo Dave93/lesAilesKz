@@ -956,8 +956,6 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     resetField('change')
   }
 
-  console.log(query)
-
   return (
     <div className="md:mx-0 pt-1 md:pt-0 pb-1">
       {/* Contacts */}

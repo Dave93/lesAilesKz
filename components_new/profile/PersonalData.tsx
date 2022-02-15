@@ -93,7 +93,6 @@ const PersonalData: FC = () => {
 
   let birth = user?.user?.birth
 
-  console.log(user)
   // birthDay, birthMonth, birthYear from date string of format YYYY-MM-DD
 
   let birthDay = birth?.split('-')[2]
