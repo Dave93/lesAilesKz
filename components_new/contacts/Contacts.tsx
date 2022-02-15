@@ -135,23 +135,27 @@ const Contacts: FC = () => {
           <div className="w-60">
             <div className="flex justify-between">
               <div>{tr('toshkent')}:</div>{' '}
-              <a href="tel:+998712051111">+998 (71) 205-11-11</a>
+              <a href="tel:+998712004242">+998 (71) 200-42-42</a>
             </div>
             <div className="flex justify-between">
               <div>{tr('andijon')}:</div>
-              <a href="tel:+998979996060">+998 (97) 999-60-60</a>
+              <a href="tel:+998952004242">+998 (95) 200-42-42</a>
             </div>
             <div className="flex justify-between">
               <div>{tr('fargona')}:</div>
-              <a href="tel:+998999884242">+998 (99) 988-42-42</a>
+              <a href="tel:+998999114242">+998 (99) 911-42-42</a>
             </div>
             <div className="flex justify-between">
               <div>{tr('samarqand')}:</div>{' '}
-              <a href="tel:+998975773030">+998 (97) 577-30-30</a>
+              <a href="tel:+998973994242">+998 (97) 399-42-42</a>
             </div>
             <div className="flex justify-between">
               <div>{tr('qoqon')}:</div>{' '}
               <a href="tel:+998907034040">+998 (90) 703-40-40</a>
+            </div>
+            <div className="flex justify-between">
+              <div>{tr('bukhara')}:</div>{' '}
+              <a href="tel:+998917984242">+998 (91) 798-42-42</a>
             </div>
           </div>
           <div className="mt-3">
