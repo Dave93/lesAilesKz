@@ -394,9 +394,9 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
             )}
           </div>
         </div>
-        <div className="flex flex-col flex-grow w-full md:px-5 px-3">
+        <div className="flex flex-col flex-grow w-full md:px-3 px-3">
           <div
-            className="mt-4 font-bold md:text-2xl flex-grow cursor-pointer"
+            className="mt-4 font-bold md:text-xl flex-grow cursor-pointer break-normal"
             onClick={() => {
               if (isProductInStop) {
                 return
