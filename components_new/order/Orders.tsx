@@ -1010,14 +1010,11 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     resetField('change')
   }
 
-<<<<<<< HEAD
   const setPayTypeCashBack = () => {
     setOpenTab(4)
     setPayType('cashback')
   }
 
-=======
->>>>>>> e5e6b794628f5b958eb440d5e266f839d81cb6f1
   return (
     <div className="md:mx-0 pt-1 md:pt-0 pb-1">
       {/* Contacts */}
