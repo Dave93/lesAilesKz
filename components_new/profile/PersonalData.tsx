@@ -240,7 +240,7 @@ const PersonalData: FC = () => {
       )}
       {user && (
         <>
-          <div className="m-auto mb-5  text-2xl w-max">Мои данные</div>
+          <div className="m-auto mb-5  text-2xl w-max">{tr('my_details')}</div>
           <form onSubmit={handleSubmit(onSubmit)} className="px-4">
             <div className="mt-10 rounded-lg text-sm w-full bg-gray-200 py-2 px-4">
               <label className="text-sm text-gray-400 block">

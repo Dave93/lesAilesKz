@@ -298,7 +298,7 @@ const SignInButton: FC = () => {
                           openModal()
                         }}
                       >
-                        Войти
+                        {tr('signIn')}
                       </button>
                     </div>
                   </div>

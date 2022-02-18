@@ -47,7 +47,7 @@ const Orders: FC<OrdersListProps> = ({ orders }) => {
       {orders.length === 0 && (
         <div className="flex justify-around">
           <div className="space-y-4 text-center">
-            <ShoppingCartIcon className="h-48 w-48 text-yellow mx-auto" />
+            <ShoppingCartIcon className="h-48 w-48 text-primary mx-auto" />
             <span className="font-bold uppercase text-5xl">
               {tr('no_orders')}
             </span>
