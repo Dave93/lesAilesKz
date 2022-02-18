@@ -266,7 +266,7 @@ const LocationButton: FC = () => {
                     addNewAddress()
                   }}
                 >
-                  Добавить новый адрес
+                  {tr('add_new_address')}
                 </div>
               </Listbox.Options>
             </Transition>

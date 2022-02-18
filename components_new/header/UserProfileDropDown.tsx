@@ -113,7 +113,7 @@ const UserProfileDropDown: FC = () => {
               className="bg-gray-200 rounded-xl w-full text-gray-400 py-4 mt-5"
               onClick={logout}
             >
-              Выйти
+              {tr('exit')}
             </button>
           </div>
         </div>

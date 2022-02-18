@@ -466,7 +466,7 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
         onMouseLeave={() => closePopover()}
         ref={btnRef}
       >
-        <div className="pr-2">Корзина</div>
+        <div className="pr-2">{tr('basket')}</div>
         <div className="text-xl pl-2 text-white flex items-center w-max">
           {data && data.lineItems && data.lineItems.length > 0 ? (
             data.lineItems.length
@@ -512,14 +512,14 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
           <div className="divide-y border-b bg-white p-5 rounded-2xl">
             <div className="flex  text-xl items-center justify-between mb-9">
               <div className="flex">
-                Корзина
+                {tr('basket')}
                 <div className="text-primary font-bold ml-1">
                   {' '}
                   x{data && data.lineItems ? data?.lineItems.length : 0}
                 </div>
               </div>
               <button onClick={clearBasket}>
-                <div className="text-sm text-gray-400">Очистить</div>
+                <div className="text-sm text-gray-400">{tr('clear')}</div>
               </button>
             </div>
 
@@ -671,7 +671,7 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
               className="bg-green-500 rounded-xl w-full text-white py-4 mt-5"
               onClick={goToCheckout}
             >
-              Оформить заказ
+              {tr('checkout')}
             </button>
           </div>
         )}

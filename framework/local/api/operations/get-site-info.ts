@@ -34,7 +34,6 @@ export default function getSiteInfoOperation({
     config?: Partial<LocalConfig>
     preview?: boolean
   } = {}): Promise<GetSiteInfoResult> {
-    console.log(config)
     const cfg = commerce.getConfig(config)
     const { footer_info: footerInfoMenu, header: topMenu } = await getMenus(cfg)
 

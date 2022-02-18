@@ -146,7 +146,7 @@ const Layout: FC<Props> = ({
                   <div className="md:flex justify-between mb-1 md:py-10">
                     <div className="">
                       <div className="pb-10">
-                        <div>Колл-центр</div>
+                        <div>{tr('call_center')}</div>
                         <div className="text-[30px] font-bold">
                           {currentCity?.phone && (
                             <a
@@ -163,7 +163,7 @@ const Layout: FC<Props> = ({
                       </div>
                       <div className="">
                         <div className="">
-                          <div>Телеграм бот</div>
+                          <div>{tr('telegram_bot')}</div>
                           <a
                             href="https://t.me/lesailesbestbot"
                             className="font-medium"

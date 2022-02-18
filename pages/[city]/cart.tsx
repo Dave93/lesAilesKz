@@ -136,7 +136,7 @@ export default function Cart() {
       configData = configData.toString('ascii')
       configData = JSON.parse(configData)
       setConfigData(configData)
-    } catch (e) { }
+    } catch (e) {}
   }
 
   const setCredentials = async () => {
@@ -249,8 +249,6 @@ export default function Cart() {
 
       await mutate(basketResult, false)
       setIsCartLoading(false)
-
-      console.log(basket)
     }
   }
 
@@ -479,8 +477,8 @@ export default function Cart() {
                   >
                     <div className="flex  md:items-center text-center">
                       {lineItem.child &&
-                        lineItem.child.length &&
-                        lineItem.child[0].variant?.product?.id !=
+                      lineItem.child.length &&
+                      lineItem.child[0].variant?.product?.id !=
                         lineItem?.variant?.product?.box_id ? (
                         <div className="h-28 w-28 flex relative">
                           <div className="w-12 relative overflow-hidden">
@@ -532,24 +530,25 @@ export default function Cart() {
                       <div className="md:ml-7 ml-1 space-y-2 md:w-72 md:text-left md:block hidden">
                         <div className="md:text-xl font-medium text-base">
                           {lineItem.child && lineItem.child.length > 1
-                            ? `${lineItem?.variant?.product?.attribute_data
-                              ?.name[channelName][locale || 'ru']
-                            } + ${lineItem?.child
-                              .filter(
-                                (v: any) =>
-                                  lineItem?.variant?.product?.box_id !=
-                                  v?.variant?.product?.id
-                              )
-                              .map(
-                                (v: any) =>
-                                  v?.variant?.product?.attribute_data?.name[
-                                  channelName
-                                  ][locale || 'ru']
-                              )
-                              .join(' + ')}`
+                            ? `${
+                                lineItem?.variant?.product?.attribute_data
+                                  ?.name[channelName][locale || 'ru']
+                              } + ${lineItem?.child
+                                .filter(
+                                  (v: any) =>
+                                    lineItem?.variant?.product?.box_id !=
+                                    v?.variant?.product?.id
+                                )
+                                .map(
+                                  (v: any) =>
+                                    v?.variant?.product?.attribute_data?.name[
+                                      channelName
+                                    ][locale || 'ru']
+                                )
+                                .join(' + ')}`
                             : lineItem?.variant?.product?.attribute_data?.name[
-                            channelName
-                            ][locale || 'ru']}
+                                channelName
+                              ][locale || 'ru']}
                         </div>
                       </div>
                     </div>
@@ -584,23 +583,23 @@ export default function Cart() {
                       <div className="m-auto md:font-medium md:text-xl text-base w-max">
                         {lineItem.child && lineItem.child.length
                           ? currency(
-                            (+lineItem.total + +lineItem.child[0].total) *
-                            lineItem.quantity,
-                            {
+                              (+lineItem.total + +lineItem.child[0].total) *
+                                lineItem.quantity,
+                              {
+                                pattern: '# !',
+                                separator: ' ',
+                                decimal: '.',
+                                symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                                precision: 0,
+                              }
+                            ).format()
+                          : currency(lineItem.total * lineItem.quantity, {
                               pattern: '# !',
                               separator: ' ',
                               decimal: '.',
                               symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
                               precision: 0,
-                            }
-                          ).format()
-                          : currency(lineItem.total * lineItem.quantity, {
-                            pattern: '# !',
-                            separator: ' ',
-                            decimal: '.',
-                            symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                            precision: 0,
-                          }).format()}
+                            }).format()}
                       </div>
                       <div className="bg-gray-200 p-2 rounded-md w-max md:block hidden">
                         <XIcon
@@ -613,24 +612,25 @@ export default function Cart() {
                       <div className="flex justify-between">
                         <div className="md:text-xl font-medium text-base">
                           {lineItem.child && lineItem.child.length > 1
-                            ? `${lineItem?.variant?.product?.attribute_data
-                              ?.name[channelName][locale || 'ru']
-                            } + ${lineItem?.child
-                              .filter(
-                                (v: any) =>
-                                  lineItem?.variant?.product?.box_id !=
-                                  v?.variant?.product?.id
-                              )
-                              .map(
-                                (v: any) =>
-                                  v?.variant?.product?.attribute_data?.name[
-                                  channelName
-                                  ][locale || 'ru']
-                              )
-                              .join(' + ')}`
+                            ? `${
+                                lineItem?.variant?.product?.attribute_data
+                                  ?.name[channelName][locale || 'ru']
+                              } + ${lineItem?.child
+                                .filter(
+                                  (v: any) =>
+                                    lineItem?.variant?.product?.box_id !=
+                                    v?.variant?.product?.id
+                                )
+                                .map(
+                                  (v: any) =>
+                                    v?.variant?.product?.attribute_data?.name[
+                                      channelName
+                                    ][locale || 'ru']
+                                )
+                                .join(' + ')}`
                             : lineItem?.variant?.product?.attribute_data?.name[
-                            channelName
-                            ][locale || 'ru']}
+                                channelName
+                              ][locale || 'ru']}
                         </div>
                         <div className="bg-gray-200 p-1 rounded-md w-max md:hidden">
                           <XIcon
@@ -673,23 +673,23 @@ export default function Cart() {
                       <div className="ml-auto md:font-medium md:text-xl text-base w-max">
                         {lineItem.child && lineItem.child.length
                           ? currency(
-                            (+lineItem.total + +lineItem.child[0].total) *
-                            lineItem.quantity,
-                            {
+                              (+lineItem.total + +lineItem.child[0].total) *
+                                lineItem.quantity,
+                              {
+                                pattern: '# !',
+                                separator: ' ',
+                                decimal: '.',
+                                symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                                precision: 0,
+                              }
+                            ).format()
+                          : currency(lineItem.total * lineItem.quantity, {
                               pattern: '# !',
                               separator: ' ',
                               decimal: '.',
                               symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
                               precision: 0,
-                            }
-                          ).format()
-                          : currency(lineItem.total * lineItem.quantity, {
-                            pattern: '# !',
-                            separator: ' ',
-                            decimal: '.',
-                            symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                            precision: 0,
-                          }).format()}
+                            }).format()}
                       </div>
                       <div className="bg-gray-200 p-2 rounded-md w-max md:block hidden">
                         <XIcon
@@ -712,38 +712,38 @@ export default function Cart() {
                   {recomendedItems.map((item: any) => (
                     <div className="rounded-2xl px-5 py-2 text-center m-2">
                       <div className="flex-grow flex items-center flex-col justify-center">
-                        <div className='h-44'>
+                        <div className="h-44">
                           {item.image ? (
-                          <img
-                            src={item.image}
-                            width={150}
-                            height={150}
-                            alt={
-                              item?.attribute_data?.name[channelName][
-                              locale || 'ru'
-                              ]
-                            }
-                            className="transform motion-safe:group-hover:scale-105 transition duration-500"
-                          />
-                        ) : (
-                          <img
-                            src="/no_photo.svg"
-                            width={150}
-                            height={150}
-                            alt={
-                              item?.attribute_data?.name[channelName][
-                              locale || 'ru'
-                              ]
-                            }
-                            className="rounded-full transform motion-safe:group-hover:scale-105 transition duration-500"
-                          />
-                        )}
+                            <img
+                              src={item.image}
+                              width={150}
+                              height={150}
+                              alt={
+                                item?.attribute_data?.name[channelName][
+                                  locale || 'ru'
+                                ]
+                              }
+                              className="transform motion-safe:group-hover:scale-105 transition duration-500"
+                            />
+                          ) : (
+                            <img
+                              src="/no_photo.svg"
+                              width={150}
+                              height={150}
+                              alt={
+                                item?.attribute_data?.name[channelName][
+                                  locale || 'ru'
+                                ]
+                              }
+                              className="rounded-full transform motion-safe:group-hover:scale-105 transition duration-500"
+                            />
+                          )}
                         </div>
-                        
+
                         <div className="text-lg md:px-7 leading-5 font-bold mb-3 md:h-12 h-16">
                           {
                             item?.attribute_data?.name[channelName][
-                            locale || 'ru'
+                              locale || 'ru'
                             ]
                           }
                         </div>
@@ -800,43 +800,42 @@ export default function Cart() {
             </button>
           </div>
           <style global jsx>{`
-        .slick-prev:before,
-        .slick-next:before {
-          color: #fc004a;
-        }
-        .slick-prev:before {
-          font-size: 33px;
-          margin-left: -48px;
-        }
-        .slick-next:before {
-          font-size: 33px;
-          margin-left: 24px;
-        }
-        .slick-track {
-          display: flex;
-        }
-        .slick-track .slick-slide {
-          display: flex;
-          height: auto;
-          align-items: center;
-          justify-content: center;
-        }
-        .slick-track .slick-slide > div {
-          height: 100%;
-        }
+            .slick-prev:before,
+            .slick-next:before {
+              color: #fc004a;
+            }
+            .slick-prev:before {
+              font-size: 33px;
+              margin-left: -48px;
+            }
+            .slick-next:before {
+              font-size: 33px;
+              margin-left: 24px;
+            }
+            .slick-track {
+              display: flex;
+            }
+            .slick-track .slick-slide {
+              display: flex;
+              height: auto;
+              align-items: center;
+              justify-content: center;
+            }
+            .slick-track .slick-slide > div {
+              height: 100%;
+            }
 
-        /* the slides */
-        .slick-slide {
-            margin: 0 5px;
-        }
-        /* the parent */
-        .slick-list {
-            margin: 0 -10px;
-        }
-      `}</style>
+            /* the slides */
+            .slick-slide {
+              margin: 0 5px;
+            }
+            /* the parent */
+            .slick-list {
+              margin: 0 -10px;
+            }
+          `}</style>
         </>
-      )
-      }
+      )}
     </>
   )
 }

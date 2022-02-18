@@ -50,8 +50,6 @@ const CreditCardComponent: FC = () => {
   }
 
   const saveNewCard = async () => {
-    console.log(cardNumber)
-    console.log(validity)
     let otpToken: any = Cookies.get('opt_token')
     axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
     try {
@@ -87,7 +85,6 @@ const CreditCardComponent: FC = () => {
           Authorization: `Bearer ${otpToken}`,
         },
       })
-      console.log(data)
       if (!data.success) {
         setErrorMessage(data.message)
       } else {
