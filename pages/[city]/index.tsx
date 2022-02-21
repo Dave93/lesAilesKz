@@ -252,7 +252,7 @@ export default function Home({
             {halfModeProds.map((sec: any) => (
               <div
                 key={sec.id}
-                className="border border-yellow mt-4 p-3 mx-4 relative rounded-[15px] bg-white shadow-sm hover:shadow-xl"
+                className="border border-primary mt-4 p-3 mx-4 relative rounded-[15px] bg-white shadow-sm hover:shadow-xl"
               >
                 <HalfPizzaNoSSR sec={sec} channelName={channelName} />
               </div>

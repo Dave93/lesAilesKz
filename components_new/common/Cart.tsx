@@ -163,11 +163,11 @@ const Cart: FC<CartProps> = ({ channelName }: { channelName: any }) => {
   }
   return (
     <div className="mt-2">
-      <div className="border border-yellow px-5 py-7 rounded-[15px] relative">
+      <div className="border border-primary px-5 py-7 rounded-[15px] relative">
         {isCartLoading && (
           <div className="h-full w-full absolute flex items-center justify-around bg-gray-300 top-0 bg-opacity-60 left-0 rounded-[15px]">
             <svg
-              className="animate-spin text-yellow h-14"
+              className="animate-spin text-primary h-14"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -188,11 +188,11 @@ const Cart: FC<CartProps> = ({ channelName }: { channelName: any }) => {
             </svg>
           </div>
         )}
-        <div className="border-b-2 border-yellow flex items-center justify-between pb-4">
+        <div className="border-b-2 border-primary flex items-center justify-between pb-4">
           <div>
             <span className="font-bold mr-1 text-xl">{tr('basket')}</span>
             {data?.lineItems.length > 0 && (
-              <span className="font-bold text-[18px] text-yellow">
+              <span className="font-bold text-[18px] text-primary">
                 ({data.lineItems.length})
               </span>
             )}
@@ -291,7 +291,7 @@ const Cart: FC<CartProps> = ({ channelName }: { channelName: any }) => {
                   </div>
                   <div className="flex items-center">
                     <div className="ml-10">
-                      <div className="w-20 h-6 ml-1 bg-yellow rounded-full flex items-center text-white">
+                      <div className="w-20 h-6 ml-1 bg-primary rounded-full flex items-center text-white">
                         <div className="w-6 h-6 items-center flex justify-around">
                           <MinusIcon
                             className="cursor-pointer w-5 h-5"
@@ -355,14 +355,14 @@ const Cart: FC<CartProps> = ({ channelName }: { channelName: any }) => {
           <div className="mt-8">
             <button
               onClick={goToCheckout}
-              className="cursor-pointer outline-none focus:outline-none bg-yellow py-3 rounded-full w-full text-white font-bold"
+              className="cursor-pointer outline-none focus:outline-none bg-primary py-3 rounded-full w-full text-white font-bold"
             >
               {tr('checkout')}
             </button>
           </div>
         )}
       </div>
-      <div className="border border-yellow mt-3 p-5 rounded-[15px]">
+      <div className="border border-primary mt-3 p-5 rounded-[15px]">
         <form className="relative">
           <input
             type="text"

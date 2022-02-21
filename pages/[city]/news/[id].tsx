@@ -105,7 +105,7 @@ export default function NewsId({
                 <a
                   className={`${
                     pathname.indexOf(item.href) >= 0
-                      ? 'text-yellow'
+                      ? 'text-primary'
                       : 'text-gray-400'
                   } ml-1 text-sm`}
                 >

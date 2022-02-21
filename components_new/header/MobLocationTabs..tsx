@@ -851,7 +851,7 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
               </div>
               {/* <div
               className={`${
-                pickupIndex == 1 ? ' text-yellow' : 'text-gray-400'
+                pickupIndex == 1 ? ' text-primary' : 'text-gray-400'
               } cursor-pointer font-bold text-[18px] mx-5`}
               onClick={() => {
                 setPickupIndex(1)
@@ -861,7 +861,7 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
             </div> */}
               {/* <div
               className={`${
-                pickupIndex == 2 ? ' text-yellow' : 'text-gray-400'
+                pickupIndex == 2 ? ' text-primary' : 'text-gray-400'
               } cursor-pointer font-bold text-[18px]`}
               onClick={() => {
                 setPickupIndex(2)

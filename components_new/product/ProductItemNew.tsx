@@ -423,7 +423,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                     <div
                       className={`w-full text-center cursor-pointer rounded-2xl outline-none ${
                         v.active
-                          ? 'bg-yellow text-white'
+                          ? 'bg-primary text-white'
                           : 'bg-gray-200 text-gray-400'
                       }`}
                       onClick={() => updateOptionSelection(v.id)}

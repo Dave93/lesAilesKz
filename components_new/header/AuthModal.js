@@ -14,11 +14,11 @@ const AuthModal = ({ authOpen, onClose }) => {
   const { register, handleSubmit, reset, watch, formState } = useForm({
     mode: 'onChange',
   })
-  const onSubmit = data => console.log(JSON.stringify(data))
+  const onSubmit = (data) => console.log(JSON.stringify(data))
   const authName = watch('name')
   const authPhone = watch('phone')
 
-  const showPrivacy = e => {
+  const showPrivacy = (e) => {
     e.preventDefault()
     setIsOpen(false)
     setIsShowPrivacy(true)
@@ -85,7 +85,7 @@ const AuthModal = ({ authOpen, onClose }) => {
                           <input
                             type="text"
                             {...register('name')}
-                            className="border border-yellow focus:outline-none outline-none px-6 py-3 rounded-full text-sm w-full"
+                            className="border border-primary focus:outline-none outline-none px-6 py-3 rounded-full text-sm w-full"
                           />
                           {authName && (
                             <button
@@ -110,7 +110,7 @@ const AuthModal = ({ authOpen, onClose }) => {
                               required: true,
                               pattern: /^\+998\d\d\d\d\d\d\d\d\d$/i,
                             })}
-                            className="border border-yellow focus:outline-none outline-none px-6 py-3 rounded-full text-sm w-full"
+                            className="border border-primary focus:outline-none outline-none px-6 py-3 rounded-full text-sm w-full"
                           />
                           {authPhone && (
                             <button
@@ -127,7 +127,7 @@ const AuthModal = ({ authOpen, onClose }) => {
                       <div className="mt-10">
                         <button
                           className={`py-3 px-20 text-white font-bold text-xl rounded-full ${
-                            formState.isValid ? 'bg-yellow' : 'bg-gray-400'
+                            formState.isValid ? 'bg-primary' : 'bg-gray-400'
                           }`}
                           disabled={!formState.isValid}
                           ref={authButtonRef}
@@ -141,7 +141,7 @@ const AuthModal = ({ authOpen, onClose }) => {
                       <a
                         href="/privacy"
                         onClick={showPrivacy}
-                        className="text-yellow block"
+                        className="text-primary block"
                         target="_blank"
                       >
                         пользовательского соглашения

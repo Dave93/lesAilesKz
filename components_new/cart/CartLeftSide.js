@@ -12,16 +12,18 @@ const CartLeftSide = () => {
   console.log(items)
 
   const { register, handleSubmit } = useForm()
-  const onSubmit = data => console.log(JSON.stringify(data))
+  const onSubmit = (data) => console.log(JSON.stringify(data))
 
   return (
     <div className="mt-2">
-      <div className="border border-yellow px-5 py-7 rounded-[15px]">
-        <div className="border-b-2 border-yellow flex items-center justify-between pb-4">
+      <div className="border border-primary px-5 py-7 rounded-[15px]">
+        <div className="border-b-2 border-primary flex items-center justify-between pb-4">
           <div>
             <span className="font-bold mr-1 text-xl">Корзина</span>
             {items.length > 0 && (
-              <span className="font-bold text-[18px] text-yellow">({items.length})</span>
+              <span className="font-bold text-[18px] text-primary">
+                ({items.length})
+              </span>
             )}
           </div>
           <div>
@@ -37,7 +39,7 @@ const CartLeftSide = () => {
           </div>
         </div>
       </div>
-      <div className="border border-yellow mt-3 p-5 rounded-[15px]">
+      <div className="border border-primary mt-3 p-5 rounded-[15px]">
         <form onSubmit={handleSubmit(onSubmit)} className="flex">
           <input
             type="text"

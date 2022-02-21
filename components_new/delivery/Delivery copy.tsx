@@ -7,9 +7,12 @@ const Delivery: FC = () => {
     <div className="mx-5 md:mx-0">
       <div className="mb-10">
         <div className="text-2xl md:text-3xl mb-1">
-          Доставка в Chopar Pizza ежедневно с 10:00 до 03:00{' '} <a href="tel:9989712051111" className="hover:text-blue">+998971 205 11 11</a>
+          Доставка в Chopar Pizza ежедневно с 10:00 до 03:00{' '}
+          <a href="tel:9989712051111" className="hover:text-blue">
+            +998971 205 11 11
+          </a>
         </div>
-        <div className="border-b-2 w-24 border-yellow mb-10"></div>
+        <div className="border-b-2 w-24 border-primary mb-10"></div>
         <Image
           src="/banner.png"
           layout="responsive"
@@ -64,14 +67,14 @@ const Delivery: FC = () => {
       </div>
       <div className="mb-10">
         <div className="text-2xl md:text-3xl mb-1">Зона доставки </div>
-        <div className="border-b-2 w-24 border-yellow mb-10"></div>
+        <div className="border-b-2 w-24 border-primary mb-10"></div>
         <Image
           src="/orderZone.png"
           layout="responsive"
           width={2132}
           height={1075}
         />
-        <div className="border border-yellow md:flex justify-between md:mt-2 mt-5 py-5 px-8 rounded-xl">
+        <div className="border border-primary md:flex justify-between md:mt-2 mt-5 py-5 px-8 rounded-xl">
           <div className="md:flex mb-4 md:mb-0">
             <div className="w-2/12">
               <img src="zoneA.png" />
@@ -87,7 +90,7 @@ const Delivery: FC = () => {
               <img src="zoneB.png" />
             </div>
             <div className="">
-              <span className="text-yellow">Зона B:</span> При доставке по ТКАД
+              <span className="text-primary">Зона B:</span> При доставке по ТКАД
               минимальная сумма заказа составляет 100 000 сум, среднее время
               доставки – 60 минут
             </div>
@@ -96,7 +99,7 @@ const Delivery: FC = () => {
       </div>
       <div className="mb-10">
         <div className="text-2xl md:text-3xl mb-1">Способы оплаты </div>
-        <div className="border-b-2 w-24 border-yellow mb-10"></div>
+        <div className="border-b-2 w-24 border-primary mb-10"></div>
         <div className="md:grid grid-cols-3 mt-10">
           <div className="md:flex mb-4">
             <div>

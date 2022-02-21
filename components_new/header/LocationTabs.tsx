@@ -805,7 +805,7 @@ const LocationTabs: FC = () => {
                                       })}
                                     >
                                       <CheckIcon
-                                        className={`w-5 text-yellow font-bold mr-2 ${
+                                        className={`w-5 text-primary font-bold mr-2 ${
                                           highlightedIndex == index
                                             ? ''
                                             : 'invisible'
@@ -940,7 +940,7 @@ const LocationTabs: FC = () => {
               </div>
               {/* <div
               className={`${
-                pickupIndex == 1 ? ' text-yellow' : 'text-gray-400'
+                pickupIndex == 1 ? ' text-primary' : 'text-gray-400'
               } cursor-pointer font-bold text-[18px] mx-5`}
               onClick={() => {
                 setPickupIndex(1)
@@ -950,7 +950,7 @@ const LocationTabs: FC = () => {
             </div> */}
               {/* <div
               className={`${
-                pickupIndex == 2 ? ' text-yellow' : 'text-gray-400'
+                pickupIndex == 2 ? ' text-primary' : 'text-gray-400'
               } cursor-pointer font-bold text-[18px]`}
               onClick={() => {
                 setPickupIndex(2)

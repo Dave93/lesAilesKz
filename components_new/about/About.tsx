@@ -10,7 +10,7 @@ const About: FC = () => {
     <>
       <div className="mx-5 md:mx-0">
         <div className="text-3xl mb-1">{tr('about')}</div>
-        <div className="border-b-2 w-24 border-yellow mb-10"></div>
+        <div className="border-b-2 w-24 border-primary mb-10"></div>
         <div
           className="md:grid gap-10 mb-8"
           dangerouslySetInnerHTML={{ __html: tr('aboutText') }}

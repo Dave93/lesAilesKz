@@ -487,7 +487,7 @@ const CreateYourPizza: FC<CreatePizzaProps> = ({
           </div>
           <div className={isSmall ? '' : 'mt-5'}>
             <button
-              className="bg-gray-100 focus:outline-none font-bold outline-none px-6 py-2 rounded-full text-center text-yellow uppercase"
+              className="bg-gray-100 focus:outline-none font-bold outline-none px-6 py-2 rounded-full text-center text-primary uppercase"
               onClick={openModal}
             >
               {tr('create_pizza')}
@@ -548,14 +548,14 @@ const CreateYourPizza: FC<CreatePizzaProps> = ({
                           className={`rounded-3xl bg-white relative p-2 shadow-xl border ${
                             leftSelectedProduct &&
                             leftSelectedProduct.id == item.id
-                              ? 'border-yellow'
+                              ? 'border-primary'
                               : 'border-transparent'
                           }
                             ${
                               rightSelectedProduct &&
                               rightSelectedProduct.id == item.id
                                 ? 'opacity-25'
-                                : 'cursor-pointer hover:border-yellow'
+                                : 'cursor-pointer hover:border-primary'
                             }  `}
                           onClick={() => {
                             if (
@@ -569,7 +569,7 @@ const CreateYourPizza: FC<CreatePizzaProps> = ({
                           {leftSelectedProduct &&
                             leftSelectedProduct.id == item.id && (
                               <div className="absolute right-2 top-2">
-                                <CheckIcon className=" h-4 text-yellow border border-yellow rounded-full w-4" />
+                                <CheckIcon className=" h-4 text-primary border border-primary rounded-full w-4" />
                               </div>
                             )}
                           <Image src={item.image} width="110" height="110" />
@@ -633,7 +633,7 @@ const CreateYourPizza: FC<CreatePizzaProps> = ({
                           key={name}
                           className={`${
                             name == activeCustomName
-                              ? 'bg-yellow text-white'
+                              ? 'bg-primary text-white'
                               : 'bg-gray-200 text-gray-400'
                           } rounded-3xl  px-5 py-2`}
                           onClick={() => changeCustomName(name)}
@@ -733,7 +733,7 @@ const CreateYourPizza: FC<CreatePizzaProps> = ({
                               className={`border ${
                                 activeModifiers.includes(mod.id) ||
                                 (!activeModifiers.length && mod.price == 0)
-                                  ? 'border-yellow'
+                                  ? 'border-primary'
                                   : 'border-gray-300'
                               } flex w-24 flex-col justify-between overflow-hidden rounded-[15px] cursor-pointer`}
                               onClick={() => addModifier(mod.id)}
@@ -767,7 +767,7 @@ const CreateYourPizza: FC<CreatePizzaProps> = ({
                                 className={`${
                                   activeModifiers.includes(mod.id) ||
                                   (!activeModifiers.length && mod.price == 0)
-                                    ? 'bg-yellow'
+                                    ? 'bg-primary'
                                     : 'bg-gray-300'
                                 } font-bold px-4 py-2 text-center text-white text-xs`}
                               >
@@ -793,7 +793,7 @@ const CreateYourPizza: FC<CreatePizzaProps> = ({
                       </button>
                     ) : (
                       <button
-                        className="bg-yellow w-full rounded-3xl px-10 py-2 text-white mt-7 flex items-center justify-around"
+                        className="bg-primary w-full rounded-3xl px-10 py-2 text-white mt-7 flex items-center justify-around"
                         ref={completeButtonRef}
                         onClick={addToBasket}
                       >
@@ -841,14 +841,14 @@ const CreateYourPizza: FC<CreatePizzaProps> = ({
                           className={`rounded-3xl bg-white p-2 shadow-xl border relative  ${
                             rightSelectedProduct &&
                             rightSelectedProduct.id == item.id
-                              ? 'border-yellow'
+                              ? 'border-primary'
                               : 'border-transparent'
                           }
                             ${
                               leftSelectedProduct &&
                               leftSelectedProduct.id == item.id
                                 ? 'opacity-25'
-                                : 'cursor-pointer hover:border-yellow'
+                                : 'cursor-pointer hover:border-primary'
                             }
                             `}
                           onClick={() => {
@@ -863,7 +863,7 @@ const CreateYourPizza: FC<CreatePizzaProps> = ({
                           {rightSelectedProduct &&
                             rightSelectedProduct.id == item.id && (
                               <div className="absolute right-2 top-2">
-                                <CheckIcon className=" h-4 text-yellow border border-yellow rounded-full w-4" />
+                                <CheckIcon className=" h-4 text-primary border border-primary rounded-full w-4" />
                               </div>
                             )}
                           <Image src={item.image} width="110" height="110" />
