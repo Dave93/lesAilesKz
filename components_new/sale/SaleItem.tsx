@@ -17,11 +17,16 @@ const SaleItem: FC<SaleListProps> = ({ SaleItems }) => {
   const { t: tr } = useTranslation('common')
   const router = useRouter()
   const { locale } = router
+  console.log(SaleItems)
   return (
     <>
       <div className="mx-5 md:mx-0">
-        <div className="text-3xl mb-1">{tr('sale')}</div>
-        <div className="border-b-2 w-24 border-primary mb-10"></div>
+        {SaleItems.length !== 0 && (
+          <>
+            <div className="text-3xl mb-1">{tr('sale')}</div>
+            <div className="border-b-2 w-24 border-primary mb-10"></div>
+          </>
+        )}
         <div className="md:grid gap-10 mb-8">
           {SaleItems.map((item, key) => (
             <div

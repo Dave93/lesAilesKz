@@ -77,7 +77,7 @@ export default function Sale({ sale }: { sale: any }) {
                 pathname.indexOf(item.href) >= 0 ? item.activeIcon : item.icon
               }`}
             /> */}
-            <Link href={item.href} locale={locale} prefetch={false}>
+            {/* <Link href={item.href} locale={locale} prefetch={false}>
               <a
                 className={`${
                   pathname.indexOf(item.href) >= 0
@@ -87,7 +87,7 @@ export default function Sale({ sale }: { sale: any }) {
               >
                 {item.name}
               </a>
-            </Link>
+            </Link> */}
           </div>
         ))}
       </div>
