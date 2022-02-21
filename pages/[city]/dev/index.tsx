@@ -127,7 +127,7 @@ export default function Dev() {
       <div className="xl:flex">
         <div>
           <div className="md:mt-20 text-5xl">
-            <span className="text-yellow">CHOPAR</span> ДАРИТ
+            <span className="text-primary">CHOPAR</span> ДАРИТ
           </div>
           <div className="md:text-8xl text-2xl font-black text-white mt-2">
             ПОДАРКИ

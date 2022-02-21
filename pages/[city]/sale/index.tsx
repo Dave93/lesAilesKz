@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import SaleItem from '@components_new/sale/SaleItem'
 import useTranslation from 'next-translate/useTranslation'
+import { useUI } from '@components/ui/context'
 
 export async function getServerSideProps({
   preview,
@@ -58,6 +59,8 @@ export default function Sale({ sale }: { sale: any }) {
   const { t: tr } = useTranslation('common')
   const router = useRouter()
   const { locale, pathname } = router
+  const { activeCity } = useUI()
+
   let items = menuItems.map((item) => {
     return {
       ...item,

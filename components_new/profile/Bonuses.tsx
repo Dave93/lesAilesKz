@@ -10,7 +10,7 @@ const Bonuses: FC = () => {
         <div className="font-bold">
           {tr('profile_bounuses_current_balance')}
         </div>
-        <div className="text-yellow">0 {tr('profile_bounuses_score')} </div>
+        <div className="text-primary">0 {tr('profile_bounuses_score')} </div>
       </div>
     </div>
   )

@@ -13,7 +13,7 @@ type SaleListProps = {
   SaleItems: AnyObject[]
 }
 
-const SaleItem: FC<SaleListProps> = ({ SaleItems }) => {  
+const SaleItem: FC<SaleListProps> = ({ SaleItems }) => {
   const { t: tr } = useTranslation('common')
   const router = useRouter()
   const { locale } = router
@@ -21,7 +21,7 @@ const SaleItem: FC<SaleListProps> = ({ SaleItems }) => {
     <>
       <div className="mx-5 md:mx-0">
         <div className="text-3xl mb-1">{tr('sale')}</div>
-        <div className="border-b-2 w-24 border-yellow mb-10"></div>
+        <div className="border-b-2 w-24 border-primary mb-10"></div>
         <div className="md:grid gap-10 mb-8">
           {SaleItems.map((item, key) => (
             <div
@@ -72,7 +72,7 @@ const SaleItem: FC<SaleListProps> = ({ SaleItems }) => {
                 </div>
                 <Link href={`${'/sale/' + item.id}`} prefetch={false}>
                   <a className="text-xs text-gray-400 hover:underline">
-                    {tr("more")}
+                    {tr('more')}
                   </a>
                 </Link>
               </div>
