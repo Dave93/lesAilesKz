@@ -146,7 +146,10 @@ const Layout: FC<Props> = ({
                   <div className="md:flex justify-between mb-1 md:py-10">
                     <div className="">
                       <div className="pb-10">
-                        <div>Колл-центр</div>
+                        <div>
+                          <div>Колл-центр</div>
+                          <div>{'+998 (71) 200-42-42'}</div>
+                        </div>
                         <div className="text-[30px] font-bold">
                           {currentCity?.phone && (
                             <a
@@ -247,7 +250,7 @@ const Layout: FC<Props> = ({
                           )
                         })}
                       </ul>
-                      <div className="flex md:absolute ">
+                      {/* <div className="flex md:absolute ">
                         <a href="" className="flex">
                           <div className=" bg-gray-700 flex items-center mt-11 p-2 rounded-lg">
                             <img
@@ -269,7 +272,7 @@ const Layout: FC<Props> = ({
                             </div>
                           </div>
                         </a>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
