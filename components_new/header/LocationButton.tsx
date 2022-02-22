@@ -168,7 +168,7 @@ const LocationButton: FC = () => {
 
   const locationLabel = useMemo(() => {
     let res = ''
-    if (locationData) {
+    if (locationData && (locationData.label || locationData.address)) {
       res = locationData.label ? locationData.label : locationData.address
     } else {
       res = tr('chooseLocation')
@@ -266,7 +266,7 @@ const LocationButton: FC = () => {
                     addNewAddress()
                   }}
                 >
-                  Добавить новый адрес
+                  {tr('add_new_address')}
                 </div>
               </Listbox.Options>
             </Transition>

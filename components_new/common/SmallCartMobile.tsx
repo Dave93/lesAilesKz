@@ -264,7 +264,7 @@ const SmallCartMobile: FC = () => {
         className="md:hidden fixed outline-none focus:outline-none bottom-20 right-4 divide-x flex  px-2 bg-primary h-12 items-center justify-around rounded-xl text-white"
         onClick={goToCheckout}
       >
-        <div className="pr-2">Корзина</div>
+        <div className="pr-2">{tr('basket')}</div>
         <div className="text-xl pl-2 ">
           {data && data.lineItems ? data.lineItems.length : 0}
         </div>

@@ -151,7 +151,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
   }
 
   const router = useRouter()
-  const { locale, query } = router
+  const { locale, query, pathname } = router
   const downshiftControl = useRef<any>(null)
   const { data, isLoading, isEmpty, mutate } = useCart({
     cartId,
@@ -159,6 +159,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
 
   const [deliveryPrice, setDeliveryPrice] = useState(0)
   const [deliveryDistance, setDeliveryDistance] = useState(0)
+  const [userBalance, setUserBalance] = useState(0)
   const [yandexGeoKey, setYandexGeoKey] = useState('')
   const [ymaps, setYmaps] = useState<any>(null)
   const map = useRef<any>(null)
@@ -365,6 +366,29 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     }
   }
 
+  const getUserBalance = async () => {
+    try {
+      await setCredentials()
+      const otpToken = Cookies.get('opt_token')
+
+      const { data } = await axios.get(`${webAddress}/api/cashback/balance`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${otpToken}`,
+        },
+        withCredentials: true,
+      })
+      if (data.data && data.data.balance) {
+        setUserBalance(data.data.balance)
+      } else {
+        setUserBalance(0)
+      }
+    } catch (e) {
+      setUserBalance(0)
+    }
+    // setUserBalance();
+  }
+
   useEffect(() => {
     stopList()
     fetchConfig()
@@ -403,6 +427,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
         addressId: addressId,
       })
     }
+
+    getUserBalance()
 
     return
   }, [locationData])
@@ -473,10 +499,38 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       location: [selection.coordinates.lat, selection.coordinates.long],
     })
   }
+  const changeCity = (city: City) => {
+    let link = pathname
+    Object.keys(query).map((k: string) => {
+      if (k == 'city') {
+        link = link.replace('[city]', city.slug)
+      } else {
+        link = link.replace(`[${k}]`, query[k]!.toString())
+      }
+    })
+    router.push(link)
+    setActiveCity(city)
+  }
 
   const clickOnMap = async (event: any) => {
-    const coords = event.get('coords')
-    setMapCenter(coords)
+    const coords = event.get('coords') || event.get('position')
+    let polygon = objects.current.searchContaining(coords).get(0)
+    if (!polygon) {
+      toast.warn(tr('point_delivery_not_available'), {
+        position: toast.POSITION.BOTTOM_RIGHT,
+        hideProgressBar: true,
+      })
+      return
+    } else {
+      let pickedCity = cities.find(
+        (city: City) => city.slug == polygon.properties._data.slug
+      )
+
+      if (pickedCity.id != activeCity.id) {
+        changeCity(pickedCity)
+      }
+    }
+    // setMapCenter(coords)
     // console.log(window.ymaps)
     setSelectedCoordinates([
       {
@@ -956,23 +1010,26 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     resetField('change')
   }
 
-  console.log(query)
+  const setPayTypeCashBack = () => {
+    setOpenTab(4)
+    setPayType('cashback')
+  }
 
   return (
     <div className="md:mx-0 pt-1 md:pt-0 pb-1">
       {/* Contacts */}
       <div className="md:flex justify-between md:mt-12 md:px-0 px-5">
-        <div className="text-3xl">Оформление заказа</div>
+        <div className="text-3xl">{tr('checkout')}</div>
         <div
           className="cursor-pointer"
           onClick={() => router.push(`/${activeCity.slug}/cart`)}
         >
-          Вернуться в корзину
+          {tr('back_to_basket')}
         </div>
       </div>
       <div className="w-full bg-white md:my-10 md:rounded-2xl shadow-xl my-3">
         <div className="py-7 md:px-10 px-5 ">
-          <div className="text-3xl mb-5">Контакты</div>
+          <div className="text-3xl mb-5">{tr('contacts')}</div>
           <form onSubmit={handleSubmit(onSubmit)} className="md:flex mt-8 ">
             <div className="bg-gray-100 rounded-xl py-2 px-4 relative md:w-72 h-16 mb-2 md:mb-0">
               <label className="text-sm text-gray-400 block">
@@ -1089,7 +1146,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
         {tabIndex == 'deliver' && (
           <div className="bg-white py-7 md:px-10 px-5  rounded-2xl">
             <div className="flex justify-between">
-              <div className="text-3xl mb-5">Адрес доставки</div>
+              <div className="text-3xl mb-5">{tr('delivery_address')}</div>
               <div>
                 <Menu as="div" className="relative inline-block text-left">
                   <div>
@@ -1315,7 +1372,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 <div className="md:flex mt-2">
                   <div className="bg-gray-100 px-4 py-3 rounded-xl md:w-96 w-full mr-2 mb-2 md:mb-0">
                     <div className="text-gray-400 text-xs">
-                      Комментарий к адресу
+                      {tr('comment_to_address')}
                     </div>
                     <textarea
                       {...register('comment_to_address')}
@@ -1325,7 +1382,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
 
                   <div className="bg-gray-100 px-4 py-3 rounded-xl w-full">
                     <div className="text-gray-400 text-xs">
-                      Комментарий к заказу
+                      {tr('comment_on_the_order')}
                     </div>
                     <textarea
                       {...register('comment_to_order')}
@@ -1507,7 +1564,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       </div>
       {/* time of delivery */}
       <div className="w-full bg-white md:mb-10 mb-5 md:rounded-2xl py-7 md:px-10 px-5  shadow-xl">
-        <div className="text-3xl mb-5">Время доставки</div>
+        <div className="text-3xl mb-5">{tr('order_time_of_delivery')}</div>
         <div className="md:flex  md:space-x-2 justify-between">
           <div className="flex  space-x-2 mb-2 md:mb-0">
             <div
@@ -1578,7 +1635,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
           ) : (
             <div className="flex items-center bg-gray-100 p-4 md:pr-14 rounded-2xl">
               <ClockIcon className="w-5 mr-3" />
-              <div>Доставим в течение 30 минут</div>
+              <div>{tr('deliver_within')}</div>
             </div>
           )}
         </div>
@@ -1592,7 +1649,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             </div>
           </div>
         )}
-        <div className="text-3xl mb-5">Способы оплаты</div>
+        <div className="text-3xl mb-5">{tr('payment_method')}</div>
         <div className="md:flex justify-between">
           <div className="space-y-2 mb-2 md:mb-0">
             <div
@@ -1637,6 +1694,40 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               />
               <div>{tr('by_card')}</div>
             </div>
+            <div
+              className="bg-gray-100 flex items-center w-64 rounded-2xl p-4  cursor-pointer"
+              onClick={() => userBalance >= totalPrice && setPayTypeCashBack()}
+            >
+              <input
+                type="checkbox"
+                className={`${
+                  openTab !== 4 ? '' : 'border'
+                } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                defaultChecked={false}
+                checked={openTab == 4}
+                disabled={userBalance < totalPrice}
+              />
+              <div>
+                <div>{tr('cashBack')}</div>
+                <div>
+                  <div className="text-xs text-gray-500">
+                    {tr('your_balance')}:{' '}
+                    {currency(userBalance, {
+                      pattern: '# !',
+                      separator: ' ',
+                      decimal: '.',
+                      symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                      precision: 0,
+                    }).format()}
+                  </div>
+                </div>
+                {userBalance < totalPrice && (
+                  <div className="text-red-500 text-xs">
+                    {tr('not_enough_money')}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
           <div>
             <div
@@ -1655,7 +1746,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                   defaultChecked={false}
                   checked={noChange}
                 />
-                <div>Без сдачи</div>
+                <div>{tr('no_change')}</div>
               </div>
               <div
                 className="bg-gray-100 flex items-center md:justify-between rounded-2xl p-4  cursor-pointer mt-2 md:mt-0 w-max"
@@ -1677,7 +1768,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                   step="1000"
                   className="border border-gray-400 focus:outline-none outline-none  py-2 px-2 rounded-xl  bg-gray-100 mx-3 w-24"
                 />
-                <div>сум</div>
+                <div>{tr('sum')}</div>
               </div>
             </div>
             <div className={openTab === 2 ? 'block' : 'hidden'} id="link2">
@@ -1947,7 +2038,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <div className="text-lg">Доставка:</div>
+                <div className="text-lg">{tr('delivery')}:</div>
                 <div className="ml-7 text-lg">
                   {currency(deliveryPrice, {
                     pattern: '# !',
@@ -1964,7 +2055,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <div className="text-lg font-medium">Итого:</div>
+                <div className="text-lg font-medium">{tr('total')}:</div>
                 <div className="ml-7 text-2xl font-medium">
                   {currency(totalPrice + deliveryPrice, {
                     pattern: '# !',

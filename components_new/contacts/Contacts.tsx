@@ -127,7 +127,7 @@ const Contacts: FC = () => {
     <div className="mx-5 md:mx-0">
       <div>
         <div className="text-3xl mb-1">{tr('contacts')}</div>
-        <div className="border-b-2 w-24 border-yellow mb-10"></div>
+        <div className="border-b-2 w-24 border-primary mb-10"></div>
       </div>
       <div className="md:grid grid-cols-2 gap-24 mb-16">
         <div>
@@ -177,7 +177,7 @@ const Contacts: FC = () => {
                   {...register('name', {
                     required: true,
                   })}
-                  className="bg-gray-100 px-8 py-2 rounded-full outline-none focus:outline-none w-full"
+                  className="bg-gray-100 px-8 py-2 rounded-xl outline-none focus:outline-none w-full"
                 />
                 {name && (
                   <button
@@ -207,7 +207,7 @@ const Contacts: FC = () => {
                       international
                       withCountryCallingCode
                       value={value}
-                      className="bg-gray-100 px-8 py-2 rounded-full outline-none focus:outline-none w-full"
+                      className="bg-gray-100 px-8 py-2 rounded-xl outline-none focus:outline-none w-full"
                       onChange={(e: any) => onChange(e)}
                     />
                   )}
@@ -242,7 +242,7 @@ const Contacts: FC = () => {
                 <input
                   type="text"
                   {...register('email')}
-                  className="bg-gray-100 px-8 py-2 rounded-full outline-none focus:outline-none w-full"
+                  className="bg-gray-100 px-8 py-2 rounded-xl outline-none focus:outline-none w-full"
                 />
                 {email && (
                   <button
@@ -262,7 +262,7 @@ const Contacts: FC = () => {
                 <input
                   type="text"
                   {...register('order_id')}
-                  className="bg-gray-100 px-8 py-2 rounded-full outline-none focus:outline-none w-full"
+                  className="bg-gray-100 px-8 py-2 rounded-xl outline-none focus:outline-none w-full"
                 />
                 {order_id && (
                   <button
@@ -321,7 +321,7 @@ const Contacts: FC = () => {
             </div>
           )}
           <div className="ml-auto md:w-80">
-            <button className="bg-yellow rounded-full flex items-center md:w-80 w-full justify-evenly py-2 mt-10 text-white">
+            <button className="bg-primary rounded-xl flex items-center md:w-80 w-full justify-evenly py-2 mt-10 text-white">
               {isSubmitting ? (
                 <svg
                   className="animate-spin h-5 mx-auto text-center text-white w-5"

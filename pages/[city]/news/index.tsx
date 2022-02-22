@@ -67,16 +67,16 @@ export default function News({ news }: { news: any }) {
       <div className="flex items-center justify-center md:my-10 space-x-6 py-6 md:py-0">
         {items.map((item, id) => (
           <div key={id} className="flex items-center md:ml-10 ">
-            <img
+            {/* <img
               src={`${
                 pathname.indexOf(item.href) >= 0 ? item.activeIcon : item.icon
               }`}
-            />
+            /> */}
             <Link href={item.href} locale={locale} prefetch={false}>
               <a
                 className={`${
                   pathname.indexOf(item.href) >= 0
-                    ? 'text-yellow'
+                    ? 'text-primary'
                     : 'text-gray-400'
                 } ml-1 text-sm`}
               >

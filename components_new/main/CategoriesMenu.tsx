@@ -56,7 +56,7 @@ const CategoriesMenu: FC<{ categories: any[]; channelName: string }> = ({
               return (
                 <div
                   className="text-black text-lg text-center  cursor-pointer min-w-max  bg-gray-200 rounded-lg"
-                  key={item.id}
+                  key={`productSection_${item.id}`}
                 >
                   <Link
                     to={`productSection_${item.id}`}

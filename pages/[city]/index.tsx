@@ -84,7 +84,7 @@ export async function getServerSideProps({
       footerInfoMenu,
       socials,
       cities,
-      currentCity
+      currentCity,
     },
   }
 }
@@ -244,7 +244,7 @@ export default function Home({
     <>
       <div className="container mx-auto">
         <MainSlider />
-        </div>
+      </div>
       <CategoriesMenu categories={categories} channelName={channelName} />
       <div className="container mx-auto">
         <div className="">
@@ -252,7 +252,7 @@ export default function Home({
             {halfModeProds.map((sec: any) => (
               <div
                 key={sec.id}
-                className="border border-yellow mt-4 p-3 mx-4 relative rounded-[15px] bg-white shadow-sm hover:shadow-xl"
+                className="border border-primary mt-4 p-3 mx-4 relative rounded-[15px] bg-white shadow-sm hover:shadow-xl"
               >
                 <HalfPizzaNoSSR sec={sec} channelName={channelName} />
               </div>
@@ -262,13 +262,16 @@ export default function Home({
             {readyProducts.map((sec: any) =>
               sec.half_mode ? (
                 <div
-                  key={sec.id}
+                  key={`productSectionList_${sec.id}`}
                   className="grid grid-cols-4 md:gap-10 divide-y md:divide-y-0 px-4 md:px-0"
                 >
                   <HalfPizzaNoSSR sec={sec} channelName={channelName} />
                 </div>
               ) : (
-                <div key={sec.id} id={`productSection_${sec.id}`}>
+                <div
+                  key={`productSectionList_${sec.id}`}
+                  id={`productSection_${sec.id}`}
+                >
                   <ProductListSectionTitle
                     title={
                       sec?.attribute_data?.name[channelName][locale || 'ru']
@@ -287,7 +290,6 @@ export default function Home({
               )
             )}
           </div>
-          
         </div>
       </div>
       <MobileCartWithNoSSR />

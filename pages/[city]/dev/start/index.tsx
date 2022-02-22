@@ -190,7 +190,7 @@ export default function Dev() {
       {!shuffle ? (
         <div className="font-bold mt-5 text-4xl text-center text-white uppercase">
           Перемешайте чтобы{' '}
-          <span className="text-yellow"> получить подарок</span>
+          <span className="text-primary"> получить подарок</span>
         </div>
       ) : (
         !isOpenCard && (
@@ -228,7 +228,7 @@ export default function Dev() {
             onClick={() => {
               startShuffle()
             }}
-            className="text-white md:text-4xl text-2xl px-3 font-bold bg-yellow border-white border-2 rounded-full md:px-32 pt-1 pb-3"
+            className="text-white md:text-4xl text-2xl px-3 font-bold bg-primary border-white border-2 rounded-full md:px-32 pt-1 pb-3"
           >
             перемешать
           </button>
@@ -269,7 +269,7 @@ export default function Dev() {
               </Dialog.Title>
               <img className="m-auto" src={chosenCard?.image} alt="" />
               <div className="md:w-72 m-auto">
-                <span className="text-yellow">Поздравляем!</span>{' '}
+                <span className="text-primary">Поздравляем!</span>{' '}
                 <span className="font-bold">ваш выиграш</span> автоматическии
                 добавлен в корзину, что-бы продолжить покупку нажмите кнопку
                 “перейти в меню”

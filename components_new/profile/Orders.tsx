@@ -47,22 +47,22 @@ const Orders: FC<OrdersListProps> = ({ orders }) => {
       {orders.length === 0 && (
         <div className="flex justify-around">
           <div className="space-y-4 text-center">
-            <ShoppingCartIcon className="h-48 w-48 text-yellow mx-auto" />
+            <ShoppingCartIcon className="h-48 w-48 text-primary mx-auto" />
             <span className="font-bold uppercase text-5xl">
-              Заказы отсутсвуют
+              {tr('no_orders')}
             </span>
           </div>
         </div>
       )}
 
-      {orders.length && (
+      {orders?.length && (
         <div>
           <div className="bg-gray-200 flex items-center md:w-max m-auto md:p-1 p-[2px] rounded-full mb-12 mx-4 md:mx-auto justify-center">
             <div className="rounded-full md:py-4 py-2 md:px-12 px-5 cursor-pointer w-full md:w-auto text-center">
-              Текущие заказы
+              {tr('current_orders')}
             </div>
             <div className="bg-white rounded-full md:py-4 py-2 md:px-12 px-5 cursor-pointer w-full md:w-auto text-center">
-              История заказов
+              {tr('purchase_history')}
             </div>
           </div>
           {orders.map((order: any) => (
@@ -81,14 +81,20 @@ const Orders: FC<OrdersListProps> = ({ orders }) => {
                         .toLocaleString(DateTime.DATETIME_MED)}
                     </div>
                   </div>
-                  <div className="bg-green-500 text-sm md:rounded-lg rounded-full py-2 px-7 text-white">
+                  <div
+                    className={`${
+                      order.status == 'cancelled'
+                        ? 'bg-red-600'
+                        : 'bg-green-500'
+                    } text-sm md:rounded-lg rounded-full py-2 px-7 text-white`}
+                  >
                     <div className="">{tr(`order_status_${order.status}`)}</div>
                   </div>
                 </div>
                 <div className="text-xl my-10 md:mx-12">
-                  {order?.basket?.lines.length} {tr('product')}
+                  {order?.basket?.lines?.length} {tr('product')}
                 </div>
-                {order?.basket?.lines.map((item: any) => (
+                {order?.basket?.lines?.map((item: any) => (
                   <div
                     className="flex items-center justify-between border-b border-gray-300 mt-4 md:pb-4 md:mx-12"
                     key={item.id}
@@ -213,9 +219,11 @@ const Orders: FC<OrdersListProps> = ({ orders }) => {
                     </div>
                   </div>
                   <div className="md:p-5 md:rounded-2xl text-xl mt-5 md:bg-white md:border border-gray-200 md:w-1/4 md:ml-2">
-                    <div className="text-xl mb-8">Сумма заказа</div>
+                    <div className="text-xl mb-8">
+                      {tr('basket_order_price')}
+                    </div>
                     <div>
-                      <div className="text-base">Оплата картой </div>
+                      <div className="text-base">{tr('payment_by_card')} </div>
                       {currency(order?.order_total / 100, {
                         pattern: '# !',
                         separator: ' ',

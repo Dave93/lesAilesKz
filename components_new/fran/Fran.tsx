@@ -5,11 +5,11 @@ const Fran: FC = () => {
   return (
     <div className="mx-5 md:mx-0">
       <div className="text-3xl mb-1">Франшиза</div>
-      <div className="border-b-2 w-24 border-yellow mb-10"></div>
+      <div className="border-b-2 w-24 border-primary mb-10"></div>
       <div className="mb-16">
         <div className="md:grid grid-cols-3">
           <div className="col-span-2 md:md:text-xl">
-            <div className="text-2xl md:text-5xl text-yellow font-bold mb-10">
+            <div className="text-2xl md:text-5xl text-primary font-bold mb-10">
               Льготные условия франчайзинга на 2021 год
             </div>
             <div className="mb-6 font-bold">Открыть пиццерию</div>
@@ -31,7 +31,7 @@ const Fran: FC = () => {
         </div>
       </div>
       <div className="mb-16">
-        <div className="text-2xl md:text-5xl text-yellow font-bold mb-10">
+        <div className="text-2xl md:text-5xl text-primary font-bold mb-10">
           форматы ресторанов на выбор:
         </div>
         <div className="md:grid grid-cols-3">
@@ -109,7 +109,7 @@ const Fran: FC = () => {
         </div>
       </div>
       <div className="mb-16">
-        <div className="text-2xl md:text-5xl text-yellow font-bold mb-10">
+        <div className="text-2xl md:text-5xl text-primary font-bold mb-10">
           О нашей пицце
         </div>
         <div className="md:grid grid-cols-3 mb-10">
@@ -131,7 +131,7 @@ const Fran: FC = () => {
         </div>
       </div>
       <div className="mb-16">
-        <div className="text-2xl md:text-5xl text-yellow font-bold mb-10 md:w-7/12">
+        <div className="text-2xl md:text-5xl text-primary font-bold mb-10 md:w-7/12">
           А самые главные секреты восхитительного вкуса
         </div>
         <div className="md:grid md:grid-cols-3">
@@ -191,7 +191,7 @@ const Fran: FC = () => {
         </div>
       </div>
       <div className="mb-16">
-        <div className="text-2xl md:text-5xl text-yellow font-bold mb-10">
+        <div className="text-2xl md:text-5xl text-primary font-bold mb-10">
           форматы продукта
         </div>
         <div className="md:text-xl grid grid-cols-3 mb-7">
@@ -210,7 +210,7 @@ const Fran: FC = () => {
               <Image src="/35sm.png" width="160" height="160" />
             </div>
             <div className="ml-5 md:text-xl w-48">
-              <div className="text-4xl text-yellow">35 см</div>
+              <div className="text-4xl text-primary">35 см</div>
               <div>Большая 4 персоны 12 кусков</div>
             </div>
           </div>
@@ -219,7 +219,7 @@ const Fran: FC = () => {
               <Image src="/32sm.png" width="160" height="160" />
             </div>
             <div className="ml-5 md:text-xl w-48">
-              <div className="text-4xl text-yellow">32 см</div>
+              <div className="text-4xl text-primary">32 см</div>
               <div>Средняя 3 персоны 8 кусков</div>
             </div>
           </div>
@@ -228,14 +228,14 @@ const Fran: FC = () => {
               <Image src="/25sm.png" width="160" height="160" />
             </div>
             <div className="ml-5 md:text-xl w-48">
-              <div className="text-4xl text-yellow">25 см</div>
+              <div className="text-4xl text-primary">25 см</div>
               <div>Маленькая 2 персоны 6 кусков</div>
             </div>
           </div>
         </div>
       </div>
       <div className="mb-16">
-        <div className="text-2xl md:text-5xl text-yellow font-bold mb-10">
+        <div className="text-2xl md:text-5xl text-primary font-bold mb-10">
           Узнаваемый бренд
         </div>
         <div className="mb-10">

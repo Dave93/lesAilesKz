@@ -423,7 +423,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                     <div
                       className={`w-full text-center cursor-pointer rounded-2xl outline-none ${
                         v.active
-                          ? 'bg-yellow text-white'
+                          ? 'bg-primary text-white'
                           : 'bg-gray-200 text-gray-400'
                       }`}
                       onClick={() => updateOptionSelection(v.id)}
@@ -469,10 +469,12 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
             </div>
           ) : (
             <div className="flex justify-between items-center mt-3">
-              {store.weight && (
+              {store.weight && store.weight > 0 ? (
                 <div>
                   {store.weight} {tr('weight')}
                 </div>
+              ) : (
+                <div></div>
               )}
               <button
                 className="bg-primary focus:outline-none outline-none rounded-xl md:w-10 w-8 text-white uppercase md:inline-flex items-center"

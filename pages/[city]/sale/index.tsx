@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import SaleItem from '@components_new/sale/SaleItem'
 import useTranslation from 'next-translate/useTranslation'
+import { useUI } from '@components/ui/context'
 
 export async function getServerSideProps({
   preview,
@@ -58,6 +59,8 @@ export default function Sale({ sale }: { sale: any }) {
   const { t: tr } = useTranslation('common')
   const router = useRouter()
   const { locale, pathname } = router
+  const { activeCity } = useUI()
+
   let items = menuItems.map((item) => {
     return {
       ...item,
@@ -69,22 +72,22 @@ export default function Sale({ sale }: { sale: any }) {
       <div className="flex items-center justify-center md:my-10 space-x-6 py-6 md:py-0">
         {items.map((item, id) => (
           <div key={id} className="flex items-center md:ml-10 ">
-            <img
+            {/* <img
               src={`${
                 pathname.indexOf(item.href) >= 0 ? item.activeIcon : item.icon
               }`}
-            />
-            <Link href={item.href} locale={locale} prefetch={false}>
+            /> */}
+            {/* <Link href={item.href} locale={locale} prefetch={false}>
               <a
                 className={`${
                   pathname.indexOf(item.href) >= 0
-                    ? 'text-yellow'
+                    ? 'text-primary'
                     : 'text-gray-400'
                 } ml-1 text-sm`}
               >
                 {item.name}
               </a>
-            </Link>
+            </Link> */}
           </div>
         ))}
       </div>
