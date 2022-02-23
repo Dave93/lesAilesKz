@@ -1,9 +1,4 @@
-import React, {
-  useState,
-  FC,
-  useEffect,
-  useMemo,
-} from 'react'
+import React, { useState, FC, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import {
   ChevronRightIcon,
@@ -141,7 +136,9 @@ const Header: FC<{
             </div>
             <div
               className={`${
-                router.asPath == '/' + activeCity.slug ? 'md:hidden block' : 'hidden'
+                router.asPath == '/' + activeCity.slug
+                  ? 'md:hidden block'
+                  : 'hidden'
               }`}
             >
               <MobSetLocation />
