@@ -10,7 +10,8 @@ import Cookies from 'js-cookie'
 import axios from 'axios'
 import getConfig from 'next/config'
 import { DateTime } from 'luxon'
-import { toast } from 'react-toastify'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const { publicRuntimeConfig } = getConfig()
 let webAddress = publicRuntimeConfig.apiUrl
@@ -216,6 +217,10 @@ const PersonalData: FC = () => {
           withCredentials: true,
         }
       )
+      toast.success(tr('saved'), {
+        position: toast.POSITION.BOTTOM_RIGHT,
+        hideProgressBar: true,
+      })
       setUserData({
         user: {
           ...user?.user,
@@ -410,6 +415,7 @@ const PersonalData: FC = () => {
                 </div>
               </div>
             </div>
+            <ToastContainer />
             <div className="mt-2">
               <button className="text-white font-bold text-xl rounded-xl bg-green-500 w-full py-5 px-32">
                 {tr('personal_save_button')}
