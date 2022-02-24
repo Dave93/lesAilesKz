@@ -11,7 +11,6 @@ import axios from 'axios'
 import getConfig from 'next/config'
 import { DateTime } from 'luxon'
 import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
 
 const { publicRuntimeConfig } = getConfig()
 let webAddress = publicRuntimeConfig.apiUrl
