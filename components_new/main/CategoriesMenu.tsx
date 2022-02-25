@@ -65,6 +65,7 @@ const CategoriesMenu: FC<{ categories: any[]; channelName: string }> = ({
                     activeClass="text-primary rounded-lg"
                     offset={-100}
                     className=""
+                    hashSpy
                   >
                     <div className="p-3 leading-4">
                       {item?.attribute_data?.name[channelName][locale || 'ru']}
