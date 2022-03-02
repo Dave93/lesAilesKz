@@ -869,24 +869,28 @@ const LocationTabs: FC = () => {
                   </div>
                 </div>
                 <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl mt-2">
-                  <div className="text-xs text-gray-400">Название адреса</div>
+                  {/* <label className="text-xs text-gray-400">
+                    Название адреса
+                  </label> */}
                   <div className="flex">
                     <input
                       type="text"
                       {...register('label')}
-                      className="bg-gray-100 mt-2 w-full outline-none focus:outline-none"
+                      placeholder="Название адреса"
+                      className="bg-gray-100 w-full outline-none focus:outline-none text-sm"
                     />
                   </div>
                 </div>
-                <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl mt-2">
-                  <div className="text-xs text-gray-400">
+                <div className="bg-gray-100 focus:outline-none outline-none px-4 py-2 rounded-xl mt-2 ">
+                  {/* <div className="text-xs text-gray-400">
                     Комментарий к адресу
-                  </div>
+                  </div> */}
                   <div className="flex">
                     <input
                       type="text"
+                      placeholder="Комментарий к адресу"
                       {...register('comments')}
-                      className="bg-gray-100 mt-2 w-full outline-none focus:outline-none"
+                      className="bg-gray-100 mt-1 w-full outline-none focus:outline-none text-sm"
                     />
                   </div>
                 </div>

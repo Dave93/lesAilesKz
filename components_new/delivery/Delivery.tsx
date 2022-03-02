@@ -12,7 +12,7 @@ const Delivery: FC = () => {
         <div className="text-3xl mb-1">{tr('delivery_pay')}</div>
         <div className="border-b-2 w-24 border-primary mb-10"></div>
         <div
-          className="md:grid gap-10 mb-8"
+          className="md:grid gap-5"
           dangerouslySetInnerHTML={{ __html: tr('delivery_text') }}
         ></div>
       </div>
