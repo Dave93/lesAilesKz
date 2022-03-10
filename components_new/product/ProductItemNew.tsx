@@ -513,7 +513,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
           <Dialog
             as="div"
             static
-            className="fixed z-50 inset-0"
+            className="fixed z-50 inset-0 unselectable"
             initialFocus={cancelButtonRef}
             open={open}
             onClose={setOpen}
@@ -547,7 +547,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <div className="inline-block align-bottom bg-white md:pt-12 pb-8 md:px-8 px-3 md:rounded-lg text-left shadow-xl transform transition-all sm:my-8 sm:align-middle h-full md:h-auto">
+                <div className="inline-block align-bottom bg-white md:pt-12 pb-8 md:px-8 px-3 md:rounded-lg text-left shadow-xl transform transition-all sm:my-8 sm:align-middle h-full md:h-auto unselectable">
                   <div
                     className="md:hidden bg-gray-100 rounded-lg p-3 w-max my-5"
                     onClick={() => setOpen(false)}
@@ -606,16 +606,16 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                           <div className="w-36 ml-14 bg-gray-200 rounded-lg flex items-center p-1">
                             <div className="items-center flex justify-around bg-white text-gray-500 rounded-md p-1 ">
                               <MinusIcon
-                                className="cursor-pointer w-4 "
+                                className="cursor-pointer w-4 unselectable"
                                 onClick={() => decreaseQuantity(productLine)}
                               />
                             </div>
-                            <div className="flex-grow text-center text-gray-500 font-medium">
+                            <div className="flex-grow text-center text-gray-500 font-medium unselectable">
                               {productLine.quantity}
                             </div>
                             <div className=" items-center flex justify-around bg-white text-gray-500 rounded-md p-1">
                               <PlusIcon
-                                className="cursor-pointer w-4 "
+                                className="cursor-pointer w-4 unselectable "
                                 onClick={() => increaseQuantity(productLine.id)}
                               />
                             </div>
@@ -624,16 +624,16 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                           <div className="w-36 ml-14 bg-gray-200 rounded-lg flex items-center p-1">
                             <div className="items-center flex justify-around bg-white text-gray-500 rounded-md p-1 ">
                               <MinusIcon
-                                className="cursor-pointer w-4 "
+                                className="cursor-pointer w-4 unselectable "
                                 onClick={() => modalDecreaseQuantity(quantity)}
                               />
                             </div>
-                            <div className="flex-grow text-center text-gray-500 font-medium">
+                            <div className="flex-grow text-center text-gray-500 font-medium unselectable">
                               {quantity}
                             </div>
                             <div className=" items-center flex justify-around bg-white text-gray-500 rounded-md p-1">
                               <PlusIcon
-                                className="cursor-pointer w-4 "
+                                className="cursor-pointer w-4 unselectable"
                                 onClick={() => modalIncreaseQuantity(quantity)}
                               />
                             </div>
@@ -642,12 +642,12 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                       </div>
                       <div className="md:ml-auto md:w-96 hidden md:block">
                         {productLine ? (
-                          <button className="text-lg font-medium md:bg-primary bg-green-500 rounded-lg py-5 px-32 text-white mt-8 outline-none w-full">
+                          <button className="text-lg font-medium md:bg-primary bg-green-500 rounded-lg py-5 px-32 text-white mt-8 outline-none w-full unselectable">
                             Добавлено
                           </button>
                         ) : (
                           <button
-                            className="text-lg font-medium md:bg-primary bg-green-500 rounded-lg py-5 px-32 text-white mt-8 outline-none w-full"
+                            className="text-lg font-medium md:bg-primary bg-green-500 rounded-lg py-5 px-32 text-white mt-8 outline-none w-full unselectable"
                             onClick={popapAddToBasket}
                           >
                             В корзину
@@ -658,12 +658,12 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                   </div>
                   <div className="bottom-3 fixed left-0 md:hidden mx-3 right-0 w-auto">
                     {productLine ? (
-                      <button className="text-lg font-medium md:bg-primary bg-green-500 rounded-lg py-5 px-32 text-white mt-8 outline-none w-full">
+                      <button className="text-lg font-medium md:bg-primary bg-green-500 rounded-lg py-5 px-32 text-white mt-8 outline-none w-full unselectable">
                         Добавлено
                       </button>
                     ) : (
                       <button
-                        className="text-lg font-medium md:bg-primary bg-green-500 rounded-lg py-5 px-32 text-white mt-8 outline-none w-full"
+                        className="text-lg font-medium md:bg-primary bg-green-500 rounded-lg py-5 px-32 text-white mt-8 outline-none w-full unselectable"
                         onClick={popapAddToBasket}
                       >
                         В корзину
