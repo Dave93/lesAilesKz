@@ -132,6 +132,12 @@ const SignInButton: FC = () => {
     axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
     axios.defaults.headers.common['X-CSRF-TOKEN'] = csrf
     axios.defaults.headers.common['XCSRF-TOKEN'] = csrf
+
+    let sourceType = 'web'
+    if (window.innerWidth < 768) {
+      sourceType = 'mobile_web'
+    }
+    data.source_type = sourceType
     let ress = await axios.post(
       `${publicRuntimeConfig.apiUrl}/api/send_otp`,
       data,
