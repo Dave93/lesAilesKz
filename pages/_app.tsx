@@ -20,6 +20,7 @@ import { Head } from '@components/common'
 import { ManagedUIContext } from '@components/ui/context'
 import { ToastContainer } from 'react-toastify'
 import { pwaTrackingListeners } from '../scripts/pwaEventlisteners'
+import FacebookPixel from '@components/common/FacebookPixel'
 
 const isBrowser = typeof window !== 'undefined'
 
@@ -39,6 +40,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head />
+      <FacebookPixel />
       <ManagedUIContext pageProps={pageProps}>
         <Layout pageProps={pageProps}>
           <Component {...pageProps} />
