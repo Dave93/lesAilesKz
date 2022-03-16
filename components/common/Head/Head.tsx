@@ -27,6 +27,10 @@ const Head: FC = () => {
           sizes="180x180"
           href="/apple-touch-icon.png"
         />
+        <meta
+          name="facebook-domain-verification"
+          content="i41eu3eb4t4ax1i62qvj25w58jmioz"
+        />
       </NextHead>
     </>
   )

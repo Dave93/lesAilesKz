@@ -22,6 +22,7 @@ import CreateYourPizza from '@components_new/product/CreateYourPizza'
 import { useUI } from '@components/ui/context'
 import getConfig from 'next/config'
 import axios from 'axios'
+import Head from 'next/head'
 
 const { publicRuntimeConfig } = getConfig()
 
