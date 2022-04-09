@@ -1598,9 +1598,10 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             </div>
           </div>
 
-          {deliveryActive == 'later' ? (
-            <div className="">
-              {/* <Controller
+          {
+            deliveryActive == 'later' && (
+              <div className="">
+                {/* <Controller
               render={({ field: { onChange } }) => (
                 <Select
                   items={dayOptions}
@@ -1616,28 +1617,30 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               control={control}
             /> */}
 
-              <Controller
-                render={({ field: { onChange } }) => (
-                  <Select
-                    items={deliveryTimeOptions}
-                    placeholder={tr('time')}
-                    onChange={(e: any) => onChange(e)}
-                  />
-                )}
-                rules={{
-                  required: true,
-                }}
-                key="delivery_time"
-                name="delivery_time"
-                control={control}
-              />
-            </div>
-          ) : (
-            <div className="flex items-center bg-gray-100 p-4 md:pr-14 rounded-2xl">
-              <ClockIcon className="w-5 mr-3" />
-              <div>{tr('deliver_within')}</div>
-            </div>
-          )}
+                <Controller
+                  render={({ field: { onChange } }) => (
+                    <Select
+                      items={deliveryTimeOptions}
+                      placeholder={tr('time')}
+                      onChange={(e: any) => onChange(e)}
+                    />
+                  )}
+                  rules={{
+                    required: true,
+                  }}
+                  key="delivery_time"
+                  name="delivery_time"
+                  control={control}
+                />
+              </div>
+            )
+            // : (
+            // <div className="flex items-center bg-gray-100 p-4 md:pr-14 rounded-2xl">
+            //   <ClockIcon className="w-5 mr-3" />
+            //   <div>{tr('deliver_within')}</div>
+            // </div>
+            // )
+          }
         </div>
       </div>
       {/* pay */}
