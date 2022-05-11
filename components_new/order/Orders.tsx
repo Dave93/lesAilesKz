@@ -1,4 +1,4 @@
-import { XIcon } from '@heroicons/react/outline'
+import { XIcon, PlusIcon, BookmarkIcon } from '@heroicons/react/outline'
 import { useForm, Controller } from 'react-hook-form'
 import useTranslation from 'next-translate/useTranslation'
 import { useUI } from '@components/ui/context'
@@ -19,8 +19,6 @@ import {
   ChevronRightIcon,
   LocationMarkerIcon,
 } from '@heroicons/react/solid'
-
-import { ClockIcon } from '@heroicons/react/outline'
 import {
   YMaps,
   Map,
@@ -46,6 +44,8 @@ import { DateTime } from 'luxon'
 import Input from 'react-phone-number-input/input'
 import { City } from '@commerce/types/cities'
 import { chunk, sortBy } from 'lodash'
+import { Address } from '@commerce/types/address'
+import getAddressList from '@lib/load_addreses'
 
 const { publicRuntimeConfig } = getConfig()
 let webAddress = publicRuntimeConfig.apiUrl
@@ -75,6 +75,7 @@ type FormData = {
   comment_to_order: string
   addressId: number | null
   additional_phone: string
+  label?: string
 }
 
 interface SelectItem {
@@ -144,6 +145,10 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     addressId,
     setStopProducts,
     stopProducts,
+    addressList,
+    setAddressId,
+    selectAddress,
+    setAddressList,
   } = useUI()
   let cartId: string | null = null
   if (typeof window !== 'undefined') {
@@ -392,6 +397,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
   useEffect(() => {
     stopList()
     fetchConfig()
+    loadAddresses()
     if (locationData && locationData.deliveryType == 'pickup') {
       loadPickupItems()
     }
@@ -690,18 +696,26 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     })
   }
 
-  const searchTerminal = async (locationData: any = {}) => {
+  const searchTerminal = async (
+    locationData: any = {},
+    returnResult: boolean = false
+  ) => {
     if (!locationData || !locationData.location) {
       toast.warn(tr('no_address_specified'), {
         position: toast.POSITION.BOTTOM_RIGHT,
         hideProgressBar: true,
       })
-      setLocationData({
-        ...locationData,
-        terminal_id: undefined,
-        terminalData: undefined,
-      })
-      return
+      // if returnResult is true, return object else return setLocationData
+      return returnResult
+        ? {
+            terminal_id: undefined,
+            terminalData: undefined,
+          }
+        : setLocationData({
+            ...locationData,
+            terminal_id: undefined,
+            terminalData: undefined,
+          })
     }
 
     const { data: terminalsData } = await axios.get(
@@ -718,20 +732,50 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
           hideProgressBar: true,
         }
       )
-      setLocationData({
-        ...locationData,
-        terminal_id: undefined,
-        terminalData: undefined,
-      })
-      return
+
+      // if returnResult is true, return object else return setLocationData
+      return returnResult
+        ? {
+            terminal_id: undefined,
+            terminalData: undefined,
+          }
+        : setLocationData({
+            ...locationData,
+            terminal_id: undefined,
+            terminalData: undefined,
+          })
+    } else {
+      let currentTerminal = terminalsData.data.items[0]
+      if (!currentTerminal.isWorking) {
+        toast.warn(tr('nearest_terminal_is_closed'), {
+          position: toast.POSITION.BOTTOM_RIGHT,
+          hideProgressBar: true,
+        })
+        return returnResult
+          ? {
+              terminal_id: undefined,
+              terminalData: undefined,
+            }
+          : setLocationData({
+              ...locationData,
+              terminal_id: undefined,
+              terminalData: undefined,
+            })
+      }
     }
 
     if (terminalsData.data) {
-      setLocationData({
-        ...locationData,
-        terminal_id: terminalsData.data.items[0].id,
-        terminalData: terminalsData.data.items[0],
-      })
+      // if returnResult is true, return object else return setLocationData
+      return returnResult
+        ? {
+            terminal_id: terminalsData.data.items[0].id,
+            terminalData: terminalsData.data.items[0],
+          }
+        : setLocationData({
+            ...locationData,
+            terminal_id: terminalsData.data.items[0].id,
+            terminalData: terminalsData.data.items[0],
+          })
     }
   }
 
@@ -915,6 +959,31 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     setCutlery(e.target.value)
   }
 
+  const loadAddresses = async () => {
+    const addresses = await getAddressList()
+    if (!addresses) {
+      setAddressList(null)
+    } else {
+      setAddressList(addresses)
+    }
+  }
+
+  const deleteAddress = async (addressId: number) => {
+    await setCredentials()
+    const otpToken = Cookies.get('opt_token')
+    const response = await axios.delete(
+      `${webAddress}/api/address/${addressId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${otpToken}`,
+        },
+      }
+    )
+    if (response.status === 200) {
+      loadAddresses()
+    }
+  }
+
   const otpTimerText = useMemo(() => {
     let text = 'Получить новый код через '
     const minutes: number = parseInt((otpShowCode / 60).toString(), 0)
@@ -1015,6 +1084,85 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     setPayType('cashback')
   }
 
+  const selectAddressLocal = async (address: Address) => {
+    if (address.id == addressId) {
+      setAddressId(null)
+    } else {
+      if (address.lat && address.lon) {
+        setSelectedCoordinates([
+          {
+            key: `${address.lat}${address.lon}`,
+            coordinates: {
+              lat: address.lat,
+              long: address.lon,
+            },
+          },
+        ])
+        setMapZoom(17)
+        setMapCenter([address.lat, address.lon])
+        let terminalData = await searchTerminal(
+          {
+            location: [address.lat, address.lon],
+          },
+          true
+        )
+
+        let formValues = getValues()
+        reset({
+          ...formValues,
+          address: address?.address || currentAddress,
+          flat: address?.flat || '',
+          house: address?.house || '',
+          entrance: address?.entrance || '',
+          door_code: address?.door_code || '',
+          label: address?.label || '',
+          addressId: address.id || null,
+        })
+        selectAddress({
+          locationData: {
+            ...address,
+            location: [address.lat, address.lon],
+            terminal_id: terminalData.terminal_id,
+            terminalData: terminalData.terminalData,
+          },
+          addressId: address.id,
+        })
+      } else {
+        selectAddress({
+          locationData: {
+            ...address,
+            location: [],
+            terminal_id: undefined,
+            terminalData: undefined,
+          },
+          addressId: address.id,
+        })
+      }
+    }
+  }
+
+  const addNewAddress = async () => {
+    const newFields: any = {
+      ...getValues(),
+    }
+    newFields['address'] = null
+    newFields['flat'] = null
+    newFields['house'] = null
+    newFields['entrance'] = null
+    newFields['door_code'] = null
+    newFields['label'] = null
+    newFields['addressId'] = null
+    setAddressId(null)
+    selectAddress({
+      locationData: {
+        location: [],
+        terminal_id: undefined,
+        terminalData: undefined,
+      },
+      addressId: null,
+    })
+    reset(newFields)
+  }
   return (
     <div className="md:mx-0 pt-1 md:pt-0 pb-1">
       {/* Contacts */}
@@ -1196,7 +1344,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                     apikey: yandexGeoKey,
                   }}
                 >
-                  <div>
+                  <div className="relative">
                     <Map
                       state={mapState}
                       onLoad={(ymaps: any) => loadPolygonsToMap(ymaps)}
@@ -1211,6 +1359,10 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                         'geoQuery',
                       ]}
                     >
+                      <span className="flex absolute h-3 w-3 left-1 top-1 z-10">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                      </span>
                       {selectedCoordinates.map((item: any, index: number) => (
                         <Placemark
                           modules={['geoObject.addon.balloon']}
@@ -1234,6 +1386,61 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 </YMaps>
               )}
             </div>
+            {addressList && addressList.length > 0 && (
+              <div className="mt-3">
+                <div className="font-bold text-[18px]">
+                  {tr('profile_address')}
+                </div>
+                <div className="mt-2">
+                  <div className="grid md:grid-cols-2 grid-cols-1 gap-1">
+                    <div
+                      className="w-max flex items-center cursor-pointer rounded-full bg-gray-100 px-4 py-2"
+                      onClick={() => addNewAddress()}
+                    >
+                      <PlusIcon className="h-5 text-gray-400 w-5  hover:text-yellow-light mr-2" />
+                      <div className=" ">{tr('add_new_address')}</div>
+                    </div>
+                    {addressList.map((item: Address) => (
+                      <div
+                        key={item.id}
+                        className={`px-4 py-1 rounded-full cursor-pointer relative pr-6 capitalize flex items-center ${
+                          addressId == item.id
+                            ? 'bg-primary text-white'
+                            : 'bg-gray-100'
+                        }`}
+                        onClick={() => selectAddressLocal(item)}
+                      >
+                        <div className="">
+                          <BookmarkIcon
+                            className={`h-5  w-5  hover:text-yellow-light mr-2 ${
+                              addressId == item.id
+                                ? ' text-white'
+                                : 'text-gray-400'
+                            }`}
+                          />
+                        </div>
+                        <div className="">
+                          <div>{item.label ? item.label : item.address}</div>
+                          <div
+                            className={`text-sm  ${
+                              addressId == item.id ? ' text-white' : ''
+                            }`}
+                          >
+                            {item.label && item.address}
+                          </div>
+                        </div>
+                        <button
+                          className="absolute focus:outline-none inset-y-0 outline-none right-2 text-gray-400"
+                          onClick={() => deleteAddress(item.id)}
+                        >
+                          <XIcon className="cursor-pointer h-5 text-gray-400 w-5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="mt-3">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="mt-3">

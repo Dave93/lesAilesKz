@@ -20,8 +20,6 @@ const getAddressList = async () => {
       },
     })
 
-    console.log('getAddressList', data)
-
     if (!data.success) {
       return null
     } else {
