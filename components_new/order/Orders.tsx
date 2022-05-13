@@ -1997,7 +1997,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                     className="hidden"
                   />
                 </label>
-                <label
+                {/* <label
                   className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
                     payType == 'humo' ? 'border-primary' : 'border-gray-200'
                   } border cursor-pointer`}
@@ -2010,7 +2010,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                     checked={payType === 'humo'}
                     className="hidden"
                   />
-                </label>
+                </label> */}
               </div>
             </div>
             <div className={openTab === 3 ? 'block' : 'hidden'} id="link3">
