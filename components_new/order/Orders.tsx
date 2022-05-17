@@ -814,6 +814,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
         },
         basket_id: cartId,
       })
+
       if (!data.success) {
         toast.error(data.message, {
           position: toast.POSITION.BOTTOM_RIGHT,
@@ -927,6 +928,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             sms_sub: sms,
             email_sub: newsletter,
             sourceType,
+            need_napkins: cutlery == 'Y',
           },
           code: otpCode,
           basket_id: cartId,
