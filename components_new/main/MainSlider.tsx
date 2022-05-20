@@ -24,8 +24,8 @@ const settings = {
       breakpoint: 1024,
       settings: {
         infinite: true,
-        dots: false
-      }
+        dots: false,
+      },
     },
     {
       breakpoint: 480,
@@ -33,30 +33,34 @@ const settings = {
         dots: true,
         // nextArrow: null,
         // prevArrow: null
-      }
-    }
-  ]
-};
-
+      },
+    },
+  ],
+}
 
 function SampleNextArrow(props: any) {
-  const { className, style, onClick } = props;
+  const { className, style, onClick } = props
   return (
-    <img src="/rightArrow.webp" className={className}
-      style={{ ...style, display: "block", height: "40px" }}
-      onClick={onClick} />
-  );
+    <img
+      src="/rightArrow.webp"
+      className={className}
+      style={{ ...style, display: 'block', height: '40px' }}
+      onClick={onClick}
+    />
+  )
 }
 
 function SamplePrevArrow(props: any) {
-  const { className, style, onClick } = props;
+  const { className, style, onClick } = props
   return (
-    <img src="/leftArrow.webp" className={className}
-      style={{ ...style, display: "block", height: "40px" }}
-      onClick={onClick} />
-  );
+    <img
+      src="/leftArrow.webp"
+      className={className}
+      style={{ ...style, display: 'block', height: '40px' }}
+      onClick={onClick}
+    />
+  )
 }
-
 
 const MainSlider: FC = () => {
   let router = useRouter()
@@ -97,7 +101,7 @@ const MainSlider: FC = () => {
   return (
     <div className="mt-5 mx-4 md:mx-0">
       {sliders && sliders.length > 0 && (
-        <Slider  {...settings}>
+        <Slider {...settings}>
           {sliders.map((item: any) => (
             <div
               className="rounded-[15px] overflow-hidden flex mb-[10px]"
@@ -112,7 +116,7 @@ const MainSlider: FC = () => {
                         width={1160}
                         height={340}
                         data-href={item.link}
-                        className="hidden md:flex "
+                        className="!hidden md:!flex "
                       />
                       <img
                         src={
@@ -123,7 +127,7 @@ const MainSlider: FC = () => {
                         width="100%"
                         height={176}
                         data-href={item.link}
-                        className="md:hidden flex"
+                        className="md:!hidden !flex"
                       />
                     </>
                   )}
@@ -132,11 +136,7 @@ const MainSlider: FC = () => {
                 item.asset && (
                   <>
                     <div className="hidden md:flex">
-                      <img
-                        src={item.asset[0].link}
-                        width={1160}
-                        height={340}
-                      />
+                      <img src={item.asset[0].link} width={1160} height={340} />
                     </div>
                     <div className="md:hidden flex">
                       <img
