@@ -434,7 +434,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       })
     }
 
-    getUserBalance()
+    // getUserBalance()
 
     return
   }, [locationData])
@@ -1906,7 +1906,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               />
               <div>{tr('by_card')}</div>
             </div>
-            <div
+            {/* <div
               className="bg-gray-100 flex items-center w-64 rounded-2xl p-4  cursor-pointer"
               onClick={() => userBalance >= totalPrice && setPayTypeCashBack()}
             >
@@ -1939,7 +1939,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                   </div>
                 )}
               </div>
-            </div>
+            </div> */}
           </div>
           <div>
             <div
