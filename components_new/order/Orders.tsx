@@ -401,6 +401,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     if (locationData && locationData.deliveryType == 'pickup') {
       loadPickupItems()
     }
+    console.log('selected')
+    console.log(locationData.deliveryType)
     if (locationData && locationData.deliveryType == 'deliver' && data) {
       getDeliveryPrice()
     }
@@ -569,6 +571,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       house,
     })
     searchTerminal({ ...locationData, location: coords })
+    setAddressId(null)
   }
 
   const mapState = useMemo<MapState>(() => {
@@ -1087,6 +1090,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
   }
 
   const selectAddressLocal = async (address: Address) => {
+    console.log(address)
     if (address.id == addressId) {
       setAddressId(null)
     } else {
@@ -1126,6 +1130,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             location: [address.lat, address.lon],
             terminal_id: terminalData.terminal_id,
             terminalData: terminalData.terminalData,
+            deliveryType: 'deliver',
           },
           addressId: address.id,
         })
@@ -1136,6 +1141,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             location: [],
             terminal_id: undefined,
             terminalData: undefined,
+            deliveryType: '',
           },
           addressId: address.id,
         })

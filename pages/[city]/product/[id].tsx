@@ -14,6 +14,10 @@ import getConfig from 'next/config'
 import Hashids from 'hashids'
 import { useCart } from '@framework/cart'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
+import { IconDefinition } from '@fortawesome/free-brands-svg-icons'
 
 export async function getServerSideProps({
   preview,
@@ -81,7 +85,7 @@ export default function Product({
   const [open, setOpen] = useState(false)
   const cancelButtonRef = useRef(null)
   const [quantity, setQuantity] = useState(1)
-  const { stopProducts } = useUI()
+  const { stopProducts, activeCity } = useUI()
 
   let cartId: string | null = null
   if (typeof window !== 'undefined') {
@@ -335,11 +339,19 @@ export default function Product({
       mobHeightImg = 250
     }
   }
-
-  console.log(store?.attribute_data?.name)
+  console.log(activeCity)
   return (
     <div>
       <div className="py-12">
+        <Link prefetch={false} href={`/${activeCity.slug}/`}>
+          <FontAwesomeIcon
+            className="cursor-pointer"
+            width={30}
+            height={30}
+            size="sm"
+            icon={faAngleLeft as IconDefinition}
+          />
+        </Link>
         <div className="md:flex mx-auto overflow-y-auto md:w-max">
           <div>
             <img

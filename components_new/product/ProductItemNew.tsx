@@ -28,6 +28,7 @@ import styles from './ProductItemNew.module.css'
 import { ChevronDownIcon, MinusIcon } from '@heroicons/react/outline'
 import Hashids from 'hashids'
 import { useUI } from '@components/ui/context'
+import Link from 'next/link'
 // import SessionContext from 'react-storefront/session/SessionContext'
 
 type ProductItem = {
@@ -46,7 +47,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
   const [open, setOpen] = useState(false)
   const cancelButtonRef = useRef(null)
   const [quantity, setQuantity] = useState(1)
-  const { stopProducts } = useUI()
+  const { stopProducts, activeCity } = useUI()
 
   let cartId: string | null = null
   if (typeof window !== 'undefined') {
@@ -369,29 +370,35 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
       >
         <div>
           <div className="text-center overflow-hidden">
-            {store.image ? (
-              <img
-                src={store.image}
-                width={275}
-                height={275}
-                alt={store?.attribute_data?.name[channelName][locale || 'ru']}
-                className="transform motion-safe:group-hover:scale-105 transition duration-500 cursor-pointer"
-                onClick={() => {
-                  if (isProductInStop) {
-                    return
-                  }
-                  setOpen(true)
-                }}
-              />
-            ) : (
-              <img
-                src="/no_photo.svg"
-                width={250}
-                height={250}
-                alt={store?.attribute_data?.name[channelName][locale || 'ru']}
-                className="rounded-full transform motion-safe:group-hover:scale-105 transition duration-500"
-              />
-            )}
+            <Link
+              prefetch={false}
+              href={`/${activeCity.slug}/product/${store.id}`}
+            >
+              {store.image ? (
+                <img
+                  src={store.image}
+                  width={275}
+                  height={275}
+                  alt={store?.attribute_data?.name[channelName][locale || 'ru']}
+                  className="transform motion-safe:group-hover:scale-105 transition duration-500 cursor-pointer"
+                  onClick={() => {
+                    if (isProductInStop) {
+                      return
+                    }
+                    // router.push(`${activeCity.slug}/product/${store.id}`)
+                    // setOpen(true)
+                  }}
+                />
+              ) : (
+                <img
+                  src="/no_photo.svg"
+                  width={250}
+                  height={250}
+                  alt={store?.attribute_data?.name[channelName][locale || 'ru']}
+                  className="rounded-full transform motion-safe:group-hover:scale-105 transition duration-500"
+                />
+              )}
+            </Link>
           </div>
         </div>
         <div className="flex flex-col flex-grow w-full md:px-3 px-3">
@@ -509,7 +516,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
             </div>
           )}
         </div>
-        <Transition.Root show={open} as={Fragment}>
+        {/* <Transition.Root show={open} as={Fragment}>
           <Dialog
             as="div"
             static
@@ -531,7 +538,6 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                 <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
               </Transition.Child>
 
-              {/* This element is to trick the browser into centering the modal contents. */}
               <span
                 className="hidden sm:inline-block sm:align-middle sm:h-screen"
                 aria-hidden="true"
@@ -674,7 +680,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
               </Transition.Child>
             </div>
           </Dialog>
-        </Transition.Root>
+        </Transition.Root> */}
       </div>
     </>
   )
