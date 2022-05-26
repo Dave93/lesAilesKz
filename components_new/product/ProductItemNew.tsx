@@ -574,7 +574,7 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
                         className="m-auto transform motion-safe:group-hover:scale-105 transition duration-500"
                       />
                     </div>
-                    <div className="flex flex-col md:ml-8 ">
+                    <div className="flex flex-col md:ml-8">
                       <div className="font-bold text-2xl mt-10 md:mt-0">
                         {
                           store?.attribute_data?.name[channelName][
