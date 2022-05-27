@@ -551,7 +551,7 @@ const LocationTabs: FC = () => {
         mapStateAutoApply: true,
       })
       .then((result: any) => {
-        console.log(result)
+        // console.log(result)
       })
     let geoObjects: any = {
       type: 'FeatureCollection',

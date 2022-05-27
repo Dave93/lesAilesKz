@@ -401,8 +401,6 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
     if (locationData && locationData.deliveryType == 'pickup') {
       loadPickupItems()
     }
-    console.log('selected')
-    console.log(locationData.deliveryType)
     if (locationData && locationData.deliveryType == 'deliver' && data) {
       getDeliveryPrice()
     }
@@ -1090,7 +1088,6 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
   }
 
   const selectAddressLocal = async (address: Address) => {
-    console.log(address)
     if (address.id == addressId) {
       setAddressId(null)
     } else {
