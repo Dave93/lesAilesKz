@@ -234,7 +234,9 @@ const LocationTabs: FC = () => {
       return []
     }
     const { data: getCodeData } = await axios.get(
-      `/api/geocode?text=${encodeURI(event.target.value)}`
+      `/api/geocode?text=${encodeURI(event.target.value)}&bounds=${
+        activeCity.bounds
+      }`
     )
 
     setGeoSuggestions(getCodeData)
