@@ -91,14 +91,13 @@ export default function Sale({ sale }: { sale: any }) {
           </div>
         ))}
       </div>
-      <div className="md:grid grid-cols-3 gap-10 mx-5 md:mx-0">
-        {!sale.length && (
-          <div className="col-span-3 text-2xl text-center">
-            {tr('yet_no_sale')}
-          </div>
-        )}
-        <SaleItem SaleItems={sale} />
-      </div>
+
+      {!sale.length && (
+        <div className="col-span-3 text-2xl text-center">
+          {tr('yet_no_sale')}
+        </div>
+      )}
+      <SaleItem SaleItems={sale} />
     </>
   )
 }

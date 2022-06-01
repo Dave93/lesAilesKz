@@ -16,6 +16,7 @@ interface IParams extends ParsedUrlQuery {
 }
 
 import menuItems from '@commerce/data/newsMenu'
+import { useUI } from '@components/ui/context'
 
 export async function getServerSideProps({
   preview,
@@ -83,6 +84,7 @@ export default function SaleId({
 }) {
   const { t: tr } = useTranslation('common')
   const router = useRouter()
+  const { activeCity } = useUI()
   const { locale, pathname } = router
   let items = menuItems.map((item) => {
     return {
@@ -94,7 +96,7 @@ export default function SaleId({
     <>
       <div>
         <div className="flex items-center justify-center my-10">
-          {items.map((item, id) => (
+          {/* {items.map((item, id) => (
             <div key={id} className="flex items-center ml-10">
               <img
                 src={`${
@@ -113,12 +115,15 @@ export default function SaleId({
                 </a>
               </Link>
             </div>
-          ))}
+          ))} */}
         </div>
         <div className="bg-white rounded-3xl flex p-5">
           <div className="">
             {SaleItem.asset && SaleItem.asset.length ? (
-              <Link href={`${'/sale/' + SaleItem.id}`} prefetch={false}>
+              <Link
+                href={`/${activeCity.slug}${'/sale/' + SaleItem.id}`}
+                prefetch={false}
+              >
                 <a>
                   <Image
                     src={SaleItem.asset[0].link}
@@ -129,7 +134,10 @@ export default function SaleId({
                 </a>
               </Link>
             ) : (
-              <Link href={`${'/sale/' + SaleItem.id}`} prefetch={false}>
+              <Link
+                href={`/${activeCity.slug}${'/sale/' + SaleItem.id}`}
+                prefetch={false}
+              >
                 <a>
                   <Image
                     src="/no_photo.svg"
@@ -165,7 +173,10 @@ export default function SaleId({
               <div key={item.id}>
                 <div className="relative rounded-t-lg overflow-hidden">
                   {item.asset && item.asset.length ? (
-                    <Link href={`${'/sale/' + item.id}`} prefetch={false}>
+                    <Link
+                      href={`/${activeCity.slug}${'/sale/' + item.id}`}
+                      prefetch={false}
+                    >
                       <a>
                         <Image
                           src={item.asset[0].link}
@@ -176,7 +187,10 @@ export default function SaleId({
                       </a>
                     </Link>
                   ) : (
-                    <Link href={`${'/sale/' + item.id}`} prefetch={false}>
+                    <Link
+                      href={`/${activeCity.slug}${'/sale/' + item.id}`}
+                      prefetch={false}
+                    >
                       <a>
                         <Image
                           src="/no_photo.svg"
@@ -200,11 +214,17 @@ export default function SaleId({
                 </div>
                 <div className="flex flex-col justify-between p-5 flex-grow">
                   <div className="text-lg mb-3">
-                    <Link href={`${'/sale/' + item.id}`} prefetch={false}>
+                    <Link
+                      href={`/${activeCity.slug}${'/sale/' + item.id}`}
+                      prefetch={false}
+                    >
                       {locale == 'ru' ? item.name : item.name_uz}
                     </Link>
                   </div>
-                  <Link href={`${'/sale/' + item.id}`} prefetch={false}>
+                  <Link
+                    href={`/${activeCity.slug}${'/sale/' + item.id}`}
+                    prefetch={false}
+                  >
                     <a className="text-xs text-gray-400 hover:underline">
                       {tr('more')}
                     </a>

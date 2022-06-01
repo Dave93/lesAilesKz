@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { ClockIcon, CalendarIcon } from '@heroicons/react/solid'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useUI } from '@components/ui/context'
 
 type AnyObject = {
   [key: string]: any
@@ -16,8 +17,8 @@ type SaleListProps = {
 const SaleItem: FC<SaleListProps> = ({ SaleItems }) => {
   const { t: tr } = useTranslation('common')
   const router = useRouter()
+  const { activeCity } = useUI()
   const { locale } = router
-  console.log(SaleItems)
   return (
     <>
       <div className="mx-5 md:mx-0">
@@ -27,7 +28,7 @@ const SaleItem: FC<SaleListProps> = ({ SaleItems }) => {
             <div className="border-b-2 w-24 border-primary mb-10"></div>
           </>
         )}
-        <div className="md:grid gap-10 mb-8">
+        <div className="md:grid grid-cols-3 gap-10 mx-5 md:mx-0 mb-8">
           {SaleItems.map((item, key) => (
             <div
               className="bg-white rounded-3xl flex flex-col overflow-hidden mb-4 md:mb-0"
@@ -35,7 +36,10 @@ const SaleItem: FC<SaleListProps> = ({ SaleItems }) => {
             >
               <div className="relative">
                 {item.asset && item.asset.length ? (
-                  <Link href={`${'/sale/' + item.id}`} prefetch={false}>
+                  <Link
+                    href={`/${activeCity.slug}/sale/${item.id}`}
+                    prefetch={false}
+                  >
                     <a>
                       <Image
                         src={item.asset[0].link}
@@ -46,7 +50,10 @@ const SaleItem: FC<SaleListProps> = ({ SaleItems }) => {
                     </a>
                   </Link>
                 ) : (
-                  <Link href={`${'/sale/' + item.id}`} prefetch={false}>
+                  <Link
+                    href={`/${activeCity.slug}/sale/${item.id}`}
+                    prefetch={false}
+                  >
                     <a>
                       <Image
                         src="/no_photo.svg"
@@ -71,11 +78,17 @@ const SaleItem: FC<SaleListProps> = ({ SaleItems }) => {
               </div>
               <div className="flex flex-col justify-between p-5 flex-grow">
                 <div className="md:text-lg mb-3">
-                  <Link href={`${'/sale/' + item.id}`} prefetch={false}>
+                  <Link
+                    href={`/${activeCity.slug}/sale/${item.id}`}
+                    prefetch={false}
+                  >
                     {locale == 'ru' ? item.name : item.name_uz}
                   </Link>
                 </div>
-                <Link href={`${'/sale/' + item.id}`} prefetch={false}>
+                <Link
+                  href={`/${activeCity.slug}/sale/${item.id}`}
+                  prefetch={false}
+                >
                   <a className="text-xs text-gray-400 hover:underline">
                     {tr('more')}
                   </a>
