@@ -470,177 +470,90 @@ export default function Cart() {
             </div>
             <div className="mt-10 space-y-3">
               {data &&
-                data?.lineItems.map((lineItem: any) => (
-                  <div
-                    className="flex md:justify-between md:items-center border-b pb-3"
-                    key={lineItem.id}
-                  >
-                    <div className="flex  md:items-center text-center">
-                      {lineItem.child &&
-                      lineItem.child.length &&
-                      lineItem.child[0].variant?.product?.id !=
-                        lineItem?.variant?.product?.box_id ? (
-                        <div className="h-28 w-28 flex relative">
-                          <div className="w-12 relative overflow-hidden">
-                            <div>
-                              <Image
-                                src={
-                                  lineItem?.variant?.product?.assets?.length
-                                    ? `${webAddress}/storage/${lineItem?.variant?.product?.assets[0]?.location}/${lineItem?.variant?.product?.assets[0]?.filename}`
-                                    : '/no_photo.svg'
-                                }
-                                width="100"
-                                height="100"
-                                layout="fixed"
-                                className="absolute rounded-xl w-max"
-                              />
+                data?.lineItems
+                  .map((lineItem: any) => (
+                    <div
+                      className="flex md:justify-between md:items-center border-b pb-3"
+                      key={lineItem.id}
+                    >
+                      <div className="flex  md:items-center text-center">
+                        {lineItem.child &&
+                        lineItem.child.length &&
+                        lineItem.child[0].variant?.product?.id !=
+                          lineItem?.variant?.product?.box_id ? (
+                          <div className="h-28 w-28 flex relative">
+                            <div className="w-12 relative overflow-hidden">
+                              <div>
+                                <Image
+                                  src={
+                                    lineItem?.variant?.product?.assets?.length
+                                      ? `${webAddress}/storage/${lineItem?.variant?.product?.assets[0]?.location}/${lineItem?.variant?.product?.assets[0]?.filename}`
+                                      : '/no_photo.svg'
+                                  }
+                                  width="100"
+                                  height="100"
+                                  layout="fixed"
+                                  className="absolute rounded-xl w-max"
+                                />
+                              </div>
+                            </div>
+                            <div className="w-12 relative overflow-hidden">
+                              <div className="absolute right-0">
+                                <Image
+                                  src={
+                                    lineItem?.child[0].variant?.product?.assets
+                                      ?.length
+                                      ? `${webAddress}/storage/${lineItem?.child[0].variant?.product?.assets[0]?.location}/${lineItem?.child[0].variant?.product?.assets[0]?.filename}`
+                                      : '/no_photo.svg'
+                                  }
+                                  width="100"
+                                  height="100"
+                                  layout="fixed"
+                                  className="rounded-xl"
+                                />
+                              </div>
                             </div>
                           </div>
-                          <div className="w-12 relative overflow-hidden">
-                            <div className="absolute right-0">
-                              <Image
-                                src={
-                                  lineItem?.child[0].variant?.product?.assets
-                                    ?.length
-                                    ? `${webAddress}/storage/${lineItem?.child[0].variant?.product?.assets[0]?.location}/${lineItem?.child[0].variant?.product?.assets[0]?.filename}`
-                                    : '/no_photo.svg'
-                                }
-                                width="100"
-                                height="100"
-                                layout="fixed"
-                                className="rounded-xl"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="md:w-24 md:h-24 flex relative mr-4 w-max">
-                          <Image
-                            src={
-                              lineItem?.variant?.product?.assets?.length
-                                ? `${webAddress}/storage/${lineItem?.variant?.product?.assets[0]?.location}/${lineItem?.variant?.product?.assets[0]?.filename}`
-                                : '/no_photo.svg'
-                            }
-                            width={120}
-                            height={120}
-                            className="rounded-xl"
-                          />
-                        </div>
-                      )}
-                      <div className="md:ml-7 ml-1 space-y-2 md:w-72 md:text-left md:block hidden">
-                        <div className="md:text-xl font-medium text-base">
-                          {lineItem.child && lineItem.child.length > 1
-                            ? `${
-                                lineItem?.variant?.product?.attribute_data
-                                  ?.name[channelName][locale || 'ru']
-                              } + ${lineItem?.child
-                                .filter(
-                                  (v: any) =>
-                                    lineItem?.variant?.product?.box_id !=
-                                    v?.variant?.product?.id
-                                )
-                                .map(
-                                  (v: any) =>
-                                    v?.variant?.product?.attribute_data?.name[
-                                      channelName
-                                    ][locale || 'ru']
-                                )
-                                .join(' + ')}`
-                            : lineItem?.variant?.product?.attribute_data?.name[
-                                channelName
-                              ][locale || 'ru']}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="md:flex md:space-x-20 items-center hidden">
-                      <div className="md:text-xl text-base md:font-medium text-center w-max mx-auto">
-                        {currency(lineItem.total, {
-                          pattern: '# !',
-                          separator: ' ',
-                          decimal: '.',
-                          symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                          precision: 0,
-                        }).format()}
-                        <div className="text-xs">Цена за 1 шт</div>
-                      </div>
-                      <div className="md:w-32 w-24 md:ml-14 bg-gray-200 rounded-lg flex items-center p-1">
-                        <div className="items-center flex justify-around bg-white text-gray-500 rounded-md p-1 ">
-                          <MinusIcon
-                            className="cursor-pointer w-4 "
-                            onClick={() => decreaseQuantity(lineItem)}
-                          />
-                        </div>
-                        <div className="flex-grow text-center text-gray-500 font-medium">
-                          {lineItem.quantity}
-                        </div>
-                        <div className=" items-center flex justify-around bg-white text-gray-500 rounded-md p-1">
-                          <PlusIcon
-                            className="cursor-pointer w-4 "
-                            onClick={() => increaseQuantity(lineItem.id)}
-                          />
-                        </div>
-                      </div>
-                      <div className="m-auto md:font-medium md:text-xl text-base w-max">
-                        {lineItem.child && lineItem.child.length
-                          ? currency(
-                              (+lineItem.total + +lineItem.child[0].total) *
-                                lineItem.quantity,
-                              {
-                                pattern: '# !',
-                                separator: ' ',
-                                decimal: '.',
-                                symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                                precision: 0,
+                        ) : (
+                          <div className="md:w-24 md:h-24 flex relative mr-4 w-max">
+                            <Image
+                              src={
+                                lineItem?.variant?.product?.assets?.length
+                                  ? `${webAddress}/storage/${lineItem?.variant?.product?.assets[0]?.location}/${lineItem?.variant?.product?.assets[0]?.filename}`
+                                  : '/no_photo.svg'
                               }
-                            ).format()
-                          : currency(lineItem.total * lineItem.quantity, {
-                              pattern: '# !',
-                              separator: ' ',
-                              decimal: '.',
-                              symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                              precision: 0,
-                            }).format()}
-                      </div>
-                      <div className="bg-gray-200 p-2 rounded-md w-max md:block hidden">
-                        <XIcon
-                          className="cursor-pointer text-gray-400 w-5 "
-                          onClick={() => destroyLine(lineItem.id)}
-                        />
-                      </div>
-                    </div>
-                    <div className="md:hidden w-full space-y-3">
-                      <div className="flex justify-between">
-                        <div className="md:text-xl font-medium text-base">
-                          {lineItem.child && lineItem.child.length > 1
-                            ? `${
-                                lineItem?.variant?.product?.attribute_data
-                                  ?.name[channelName][locale || 'ru']
-                              } + ${lineItem?.child
-                                .filter(
-                                  (v: any) =>
-                                    lineItem?.variant?.product?.box_id !=
-                                    v?.variant?.product?.id
-                                )
-                                .map(
-                                  (v: any) =>
-                                    v?.variant?.product?.attribute_data?.name[
-                                      channelName
-                                    ][locale || 'ru']
-                                )
-                                .join(' + ')}`
-                            : lineItem?.variant?.product?.attribute_data?.name[
-                                channelName
-                              ][locale || 'ru']}
-                        </div>
-                        <div className="bg-gray-200 p-1 rounded-md w-max md:hidden">
-                          <XIcon
-                            className="cursor-pointer text-gray-400 w-5 "
-                            onClick={() => destroyLine(lineItem.id)}
-                          />
+                              width={120}
+                              height={120}
+                              className="rounded-xl"
+                            />
+                          </div>
+                        )}
+                        <div className="md:ml-7 ml-1 space-y-2 md:w-72 md:text-left md:block hidden">
+                          <div className="md:text-xl font-medium text-base">
+                            {lineItem.child && lineItem.child.length > 1
+                              ? `${
+                                  lineItem?.variant?.product?.attribute_data
+                                    ?.name[channelName][locale || 'ru']
+                                } + ${lineItem?.child
+                                  .filter(
+                                    (v: any) =>
+                                      lineItem?.variant?.product?.box_id !=
+                                      v?.variant?.product?.id
+                                  )
+                                  .map(
+                                    (v: any) =>
+                                      v?.variant?.product?.attribute_data?.name[
+                                        channelName
+                                      ][locale || 'ru']
+                                  )
+                                  .join(' + ')}`
+                              : lineItem?.variant?.product?.attribute_data
+                                  ?.name[channelName][locale || 'ru']}
+                          </div>
                         </div>
                       </div>
-                      <div className="flex justify-between">
-                        <div className="md:text-xl text-base md:font-medium">
+                      <div className="md:flex md:space-x-20 items-center hidden">
+                        <div className="md:text-xl text-base md:font-medium text-center w-max mx-auto">
                           {currency(lineItem.total, {
                             pattern: '# !',
                             separator: ' ',
@@ -667,39 +580,126 @@ export default function Cart() {
                             />
                           </div>
                         </div>
-                      </div>
-                      <div></div>
-
-                      <div className="ml-auto md:font-medium md:text-xl text-base w-max">
-                        {lineItem.child && lineItem.child.length
-                          ? currency(
-                              (+lineItem.total + +lineItem.child[0].total) *
-                                lineItem.quantity,
-                              {
+                        <div className="m-auto md:font-medium md:text-xl text-base w-max">
+                          {lineItem.child && lineItem.child.length
+                            ? currency(
+                                (+lineItem.total + +lineItem.child[0].total) *
+                                  lineItem.quantity,
+                                {
+                                  pattern: '# !',
+                                  separator: ' ',
+                                  decimal: '.',
+                                  symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                                  precision: 0,
+                                }
+                              ).format()
+                            : currency(lineItem.total * lineItem.quantity, {
                                 pattern: '# !',
                                 separator: ' ',
                                 decimal: '.',
                                 symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
                                 precision: 0,
-                              }
-                            ).format()
-                          : currency(lineItem.total * lineItem.quantity, {
+                              }).format()}
+                        </div>
+                        <div className="bg-gray-200 p-2 rounded-md w-max md:block hidden">
+                          <XIcon
+                            className="cursor-pointer text-gray-400 w-5 "
+                            onClick={() => destroyLine(lineItem.id)}
+                          />
+                        </div>
+                      </div>
+                      <div className="md:hidden w-full space-y-3">
+                        <div className="flex justify-between">
+                          <div className="md:text-xl font-medium text-base">
+                            {lineItem.child && lineItem.child.length > 1
+                              ? `${
+                                  lineItem?.variant?.product?.attribute_data
+                                    ?.name[channelName][locale || 'ru']
+                                } + ${lineItem?.child
+                                  .filter(
+                                    (v: any) =>
+                                      lineItem?.variant?.product?.box_id !=
+                                      v?.variant?.product?.id
+                                  )
+                                  .map(
+                                    (v: any) =>
+                                      v?.variant?.product?.attribute_data?.name[
+                                        channelName
+                                      ][locale || 'ru']
+                                  )
+                                  .join(' + ')}`
+                              : lineItem?.variant?.product?.attribute_data
+                                  ?.name[channelName][locale || 'ru']}
+                          </div>
+                          <div className="bg-gray-200 p-1 rounded-md w-max md:hidden">
+                            <XIcon
+                              className="cursor-pointer text-gray-400 w-5 "
+                              onClick={() => destroyLine(lineItem.id)}
+                            />
+                          </div>
+                        </div>
+                        <div className="flex justify-between">
+                          <div className="md:text-xl text-base md:font-medium">
+                            {currency(lineItem.total, {
                               pattern: '# !',
                               separator: ' ',
                               decimal: '.',
                               symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
                               precision: 0,
                             }).format()}
-                      </div>
-                      <div className="bg-gray-200 p-2 rounded-md w-max md:block hidden">
-                        <XIcon
-                          className="cursor-pointer text-gray-400 w-5 "
-                          onClick={() => destroyLine(lineItem.id)}
-                        />
+                            <div className="text-xs">Цена за 1 шт</div>
+                          </div>
+                          <div className="md:w-32 w-24 md:ml-14 bg-gray-200 rounded-lg flex items-center p-1">
+                            <div className="items-center flex justify-around bg-white text-gray-500 rounded-md p-1 ">
+                              <MinusIcon
+                                className="cursor-pointer w-4 "
+                                onClick={() => decreaseQuantity(lineItem)}
+                              />
+                            </div>
+                            <div className="flex-grow text-center text-gray-500 font-medium">
+                              {lineItem.quantity}
+                            </div>
+                            <div className=" items-center flex justify-around bg-white text-gray-500 rounded-md p-1">
+                              <PlusIcon
+                                className="cursor-pointer w-4 "
+                                onClick={() => increaseQuantity(lineItem.id)}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div></div>
+
+                        <div className="ml-auto md:font-medium md:text-xl text-base w-max">
+                          {lineItem.child && lineItem.child.length
+                            ? currency(
+                                (+lineItem.total + +lineItem.child[0].total) *
+                                  lineItem.quantity,
+                                {
+                                  pattern: '# !',
+                                  separator: ' ',
+                                  decimal: '.',
+                                  symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                                  precision: 0,
+                                }
+                              ).format()
+                            : currency(lineItem.total * lineItem.quantity, {
+                                pattern: '# !',
+                                separator: ' ',
+                                decimal: '.',
+                                symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                                precision: 0,
+                              }).format()}
+                        </div>
+                        <div className="bg-gray-200 p-2 rounded-md w-max md:block hidden">
+                          <XIcon
+                            className="cursor-pointer text-gray-400 w-5 "
+                            onClick={() => destroyLine(lineItem.id)}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                  .reverse()}
             </div>
           </div>
           {recomendedItems.length > 0 && (
