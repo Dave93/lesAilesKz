@@ -22,6 +22,7 @@ module.exports =
       commerce,
       publicRuntimeConfig: {
         apiUrl: process.env.API_URL,
+        citySlug: process.env.CITY_SLUG,
       },
       rewrites() {
         return [

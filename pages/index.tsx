@@ -8,6 +8,8 @@ import { City } from '@commerce/types/cities'
 import cookies from 'next-cookies'
 import router, { useRouter } from 'next/router'
 import useTranslation from 'next-translate/useTranslation'
+import getConfig from 'next/config'
+const { publicRuntimeConfig } = getConfig()
 
 export async function getServerSideProps({
   preview,
@@ -30,7 +32,7 @@ export async function getServerSideProps({
   } else {
     return {
       redirect: {
-        destination: `/tashkent`,
+        destination: `/${publicRuntimeConfig.citySlug}`,
       },
     }
   }
