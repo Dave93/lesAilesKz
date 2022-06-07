@@ -25,6 +25,9 @@ import styles from './SmallCartMobile.module.css'
 import { createPopper } from '@popperjs/core'
 import Hashids from 'hashids'
 import SimpleBar from 'simplebar-react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTengeSign, faTenge } from '@fortawesome/free-solid-svg-icons'
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 
 const { publicRuntimeConfig } = getConfig()
 let webAddress = publicRuntimeConfig.apiUrl
@@ -617,7 +620,7 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
                         )}
                       </div>
                       <div className="flex items-center justify-between">
-                        <div className=" font-medium">
+                        <div className=" font-medium  flex-grow text-sm flex items-center">
                           {lineItem.child && lineItem.child.length
                             ? currency(
                                 (+lineItem.total + +lineItem.child[0].total) *
@@ -626,7 +629,7 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
                                   pattern: '# !',
                                   separator: ' ',
                                   decimal: '.',
-                                  symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                                  symbol: ``,
                                   precision: 0,
                                 }
                               ).format()
@@ -634,9 +637,14 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
                                 pattern: '# !',
                                 separator: ' ',
                                 decimal: '.',
-                                symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                                symbol: ``,
                                 precision: 0,
                               }).format()}
+                          <FontAwesomeIcon
+                            icon={faTengeSign as IconDefinition}
+                            size={'xs'}
+                            className="w-3 h-3"
+                          />
                         </div>
                         <div className="w-20 ml-14 bg-gray-200 rounded-lg flex items-center p-1">
                           <div className="items-center flex justify-around bg-white text-gray-500 rounded-md p-1 ">
@@ -663,14 +671,19 @@ const SmallCart: FC<SmallCartProps> = ({ channelName }) => {
             {!isEmpty && (
               <div className="flex items-center justify-between pt-4">
                 <div className="text-sm">{tr('basket_order_price')}</div>
-                <div className="text-xl font-medium">
+                <div className="text-xl font-medium flex items-center">
                   {currency(data.totalPrice, {
                     pattern: '# !',
                     separator: ' ',
                     decimal: '.',
-                    symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                    symbol: ``,
                     precision: 0,
                   }).format()}
+                  <FontAwesomeIcon
+                    icon={faTengeSign as IconDefinition}
+                    size={'xs'}
+                    className="w-4 h-4"
+                  />
                 </div>
               </div>
             )}

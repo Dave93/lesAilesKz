@@ -18,6 +18,9 @@ import { useUI } from '@components/ui/context'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTengeSign } from '@fortawesome/free-solid-svg-icons'
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 
 export async function getServerSideProps({
   preview,
@@ -26,26 +29,11 @@ export async function getServerSideProps({
   query,
 }: GetServerSidePropsContext) {
   const config = { locale, locales, queryParams: query }
-  const productsPromise = commerce.getAllProducts({
-    variables: { first: 6 },
-    config,
-    preview,
-    // Saleor provider only
-    ...({ featured: true } as any),
-  })
   const pagesPromise = commerce.getAllPages({ config, preview })
   const siteInfoPromise = commerce.getSiteInfo({ config, preview })
-  const { products } = await productsPromise
   const { pages } = await pagesPromise
-  const {
-    categories,
-    brands,
-    topMenu,
-    footerInfoMenu,
-    socials,
-    cities,
-    currentCity,
-  } = await siteInfoPromise
+  const { brands, topMenu, footerInfoMenu, socials, cities, currentCity } =
+    await siteInfoPromise
   if (!currentCity) {
     return {
       notFound: true,
@@ -54,8 +42,6 @@ export async function getServerSideProps({
 
   return {
     props: {
-      products,
-      categories,
       brands,
       pages,
       topMenu,
@@ -554,13 +540,21 @@ export default function Cart() {
                       </div>
                       <div className="md:flex md:space-x-20 items-center hidden">
                         <div className="md:text-xl text-base md:font-medium text-center w-max mx-auto">
-                          {currency(lineItem.total, {
-                            pattern: '# !',
-                            separator: ' ',
-                            decimal: '.',
-                            symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                            precision: 0,
-                          }).format()}
+                          <div className="flex items-center">
+                            {currency(lineItem.total, {
+                              pattern: '# !',
+                              separator: ' ',
+                              decimal: '.',
+                              symbol: ``,
+                              precision: 0,
+                            }).format()}
+
+                            <FontAwesomeIcon
+                              icon={faTengeSign as IconDefinition}
+                              size={'xs'}
+                              className="ml-1 w-4 h-4"
+                            />
+                          </div>
                           <div className="text-xs">Цена за 1 шт</div>
                         </div>
                         <div className="md:w-32 w-24 md:ml-14 bg-gray-200 rounded-lg flex items-center p-1">
@@ -580,7 +574,7 @@ export default function Cart() {
                             />
                           </div>
                         </div>
-                        <div className="m-auto md:font-medium md:text-xl text-base w-max">
+                        <div className="m-auto md:font-medium md:text-xl text-base w-max flex items-center">
                           {lineItem.child && lineItem.child.length
                             ? currency(
                                 (+lineItem.total + +lineItem.child[0].total) *
@@ -589,7 +583,7 @@ export default function Cart() {
                                   pattern: '# !',
                                   separator: ' ',
                                   decimal: '.',
-                                  symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                                  symbol: ``,
                                   precision: 0,
                                 }
                               ).format()
@@ -597,9 +591,15 @@ export default function Cart() {
                                 pattern: '# !',
                                 separator: ' ',
                                 decimal: '.',
-                                symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                                symbol: ``,
                                 precision: 0,
                               }).format()}
+
+                          <FontAwesomeIcon
+                            icon={faTengeSign as IconDefinition}
+                            size={'xs'}
+                            className="ml-1 w-4 h-4"
+                          />
                         </div>
                         <div className="bg-gray-200 p-2 rounded-md w-max md:block hidden">
                           <XIcon
@@ -640,13 +640,20 @@ export default function Cart() {
                         </div>
                         <div className="flex justify-between">
                           <div className="md:text-xl text-base md:font-medium">
-                            {currency(lineItem.total, {
-                              pattern: '# !',
-                              separator: ' ',
-                              decimal: '.',
-                              symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
-                              precision: 0,
-                            }).format()}
+                            <div className="flex items-center">
+                              {currency(lineItem.total, {
+                                pattern: '# !',
+                                separator: ' ',
+                                decimal: '.',
+                                symbol: ``,
+                                precision: 0,
+                              }).format()}
+                              <FontAwesomeIcon
+                                icon={faTengeSign as IconDefinition}
+                                size={'xs'}
+                                className="ml-1 w-4 h-4"
+                              />
+                            </div>
                             <div className="text-xs">Цена за 1 шт</div>
                           </div>
                           <div className="md:w-32 w-24 md:ml-14 bg-gray-200 rounded-lg flex items-center p-1">
@@ -669,7 +676,7 @@ export default function Cart() {
                         </div>
                         <div></div>
 
-                        <div className="ml-auto md:font-medium md:text-xl text-base w-max">
+                        <div className="ml-auto md:font-medium md:text-xl text-base w-max flex items-center">
                           {lineItem.child && lineItem.child.length
                             ? currency(
                                 (+lineItem.total + +lineItem.child[0].total) *
@@ -678,7 +685,7 @@ export default function Cart() {
                                   pattern: '# !',
                                   separator: ' ',
                                   decimal: '.',
-                                  symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                                  symbol: ``,
                                   precision: 0,
                                 }
                               ).format()
@@ -686,9 +693,14 @@ export default function Cart() {
                                 pattern: '# !',
                                 separator: ' ',
                                 decimal: '.',
-                                symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                                symbol: ``,
                                 precision: 0,
                               }).format()}
+                          <FontAwesomeIcon
+                            icon={faTengeSign as IconDefinition}
+                            size={'xs'}
+                            className="ml-1 w-4 h-4"
+                          />
                         </div>
                         <div className="bg-gray-200 p-2 rounded-md w-max md:block hidden">
                           <XIcon
@@ -749,16 +761,21 @@ export default function Cart() {
                         </div>
                       </div>
                       <div
-                        className="rounded-xl bg-primary text-white font-normal py-1"
+                        className="rounded-xl bg-primary text-white font-normal py-1 flex items-center"
                         onClick={() => addToBasket(item.id)}
                       >
                         {currency(parseInt(item.price, 0) || 0, {
                           pattern: '# !',
                           separator: ' ',
                           decimal: '.',
-                          symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                          symbol: ``,
                           precision: 0,
                         }).format()}
+                        <FontAwesomeIcon
+                          icon={faTengeSign as IconDefinition}
+                          size={'xs'}
+                          className="ml-1 w-4 h-4"
+                        />
                       </div>
                     </div>
                   ))}
@@ -782,14 +799,19 @@ export default function Cart() {
               </div> */}
             <div className="flex font-bold items-center justify-between bg-gray-200 rounded-xl p-4 md:p-0">
               <div className="text-lg">{tr('basket_order_price')}</div>
-              <div className="ml-7 md:text-3xl text-xl text-medium">
+              <div className="ml-7 md:text-3xl text-xl text-medium flex items-center">
                 {currency(data.totalPrice, {
                   pattern: '# !',
                   separator: ' ',
                   decimal: '.',
-                  symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                  symbol: ``,
                   precision: 0,
                 }).format()}
+                <FontAwesomeIcon
+                  icon={faTengeSign as IconDefinition}
+                  size={'xs'}
+                  className="ml-1 w-6 h-6"
+                />
               </div>
             </div>
             <button

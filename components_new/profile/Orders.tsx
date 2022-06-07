@@ -13,6 +13,9 @@ import currency from 'currency.js'
 import defaultChannel from '@lib/defaultChannel'
 import Image from 'next/image'
 import getConfig from 'next/config'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTengeSign, faTenge } from '@fortawesome/free-solid-svg-icons'
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 
 type OrdersListProps = {
   orders: any[]
@@ -172,15 +175,20 @@ const Orders: FC<OrdersListProps> = ({ orders }) => {
                       <div className="text-green-500 mr-10">
                         {item.quantity} шт
                       </div>
-                      <div>
+                      <div className="flex items-center">
                         {item.child &&
                           currency(item.total * item.quantity, {
                             pattern: '# !',
                             separator: ' ',
                             decimal: '.',
-                            symbol: 'сум',
+                            symbol: '',
                             precision: 0,
                           }).format()}
+                        <FontAwesomeIcon
+                          icon={faTengeSign as IconDefinition}
+                          size={'xs'}
+                          className="ml-1 w-4 h-4"
+                        />
                       </div>
                     </div>
                   </div>
@@ -224,13 +232,20 @@ const Orders: FC<OrdersListProps> = ({ orders }) => {
                     </div>
                     <div>
                       <div className="text-base">{tr('payment_by_card')} </div>
-                      {currency(order?.order_total / 100, {
-                        pattern: '# !',
-                        separator: ' ',
-                        decimal: '.',
-                        symbol: `${tr('sum')}`,
-                        precision: 0,
-                      }).format()}
+                      <div className="flex items-center">
+                        {currency(order?.order_total / 100, {
+                          pattern: '# !',
+                          separator: ' ',
+                          decimal: '.',
+                          symbol: ``,
+                          precision: 0,
+                        }).format()}
+                        <FontAwesomeIcon
+                          icon={faTengeSign as IconDefinition}
+                          size={'xs'}
+                          className="ml-1 w-4 h-4"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>

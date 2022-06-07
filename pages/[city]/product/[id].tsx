@@ -18,6 +18,9 @@ import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
 import { IconDefinition } from '@fortawesome/free-brands-svg-icons'
+const { publicRuntimeConfig } = getConfig()
+let webAddress = publicRuntimeConfig.apiUrl
+axios.defaults.withCredentials = true
 
 export async function getServerSideProps({
   preview,
@@ -44,7 +47,7 @@ export async function getServerSideProps({
     }
   }
 
-  const res = await fetch('https://api.lesailes.uz/api/products/' + query.id)
+  const res = await fetch(webAddress + '/api/products/' + query.id)
   const data = await res.json()
   const product = data.data
 
@@ -62,10 +65,6 @@ export async function getServerSideProps({
     },
   }
 }
-
-const { publicRuntimeConfig } = getConfig()
-let webAddress = publicRuntimeConfig.apiUrl
-axios.defaults.withCredentials = true
 
 type Product = {
   product: Product

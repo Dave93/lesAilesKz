@@ -14,26 +14,11 @@ export async function getServerSideProps({
   query,
 }: GetServerSidePropsContext) {
   const config = { locale, locales, queryParams: query }
-  const productsPromise = commerce.getAllProducts({
-    variables: { first: 6 },
-    config,
-    preview,
-    // Saleor provider only
-    ...({ featured: true } as any),
-  })
   const pagesPromise = commerce.getAllPages({ config, preview })
   const siteInfoPromise = commerce.getSiteInfo({ config, preview })
-  const { products } = await productsPromise
   const { pages } = await pagesPromise
-  const {
-    categories,
-    brands,
-    topMenu,
-    footerInfoMenu,
-    socials,
-    cities,
-    currentCity,
-  } = await siteInfoPromise
+  const { brands, topMenu, footerInfoMenu, socials, cities, currentCity } =
+    await siteInfoPromise
   if (!currentCity) {
     return {
       notFound: true,
@@ -42,8 +27,6 @@ export async function getServerSideProps({
 
   return {
     props: {
-      products,
-      categories,
       brands,
       pages,
       topMenu,

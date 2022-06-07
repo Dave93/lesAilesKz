@@ -46,6 +46,9 @@ import { City } from '@commerce/types/cities'
 import { chunk, sortBy } from 'lodash'
 import { Address } from '@commerce/types/address'
 import getAddressList from '@lib/load_addreses'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTengeSign, faTenge } from '@fortawesome/free-solid-svg-icons'
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 
 const { publicRuntimeConfig } = getConfig()
 let webAddress = publicRuntimeConfig.apiUrl
@@ -1883,20 +1886,6 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             </div>
             <div
               className="bg-gray-100 flex items-center w-64 rounded-2xl p-4  cursor-pointer"
-              onClick={() => setOpenTab(3)}
-            >
-              <input
-                type="checkbox"
-                className={`${
-                  openTab !== 3 ? '' : 'border'
-                } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
-                defaultChecked={false}
-                checked={openTab == 3}
-              />
-              <div>{tr('online')}</div>
-            </div>
-            <div
-              className="bg-gray-100 flex items-center w-64 rounded-2xl p-4  cursor-pointer"
               onClick={() => setOpenTab(2)}
             >
               <input
@@ -1907,7 +1896,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 defaultChecked={false}
                 checked={openTab == 2}
               />
-              <div>{tr('by_card')}</div>
+              <div>{tr('payment_type_card')}</div>
             </div>
             {/* <div
               className="bg-gray-100 flex items-center w-64 rounded-2xl p-4  cursor-pointer"
@@ -1990,14 +1979,14 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               <div className="grid grid-cols-2 gap-2 pt-8 items-center">
                 <label
                   className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
-                    payType == 'uzcard' ? 'border-primary' : 'border-gray-200'
+                    payType == 'ioka' ? 'border-yellow' : 'border-gray-200'
                   } border cursor-pointer`}
                 >
-                  <img src="/assets/uzcard.png" />
+                  <img src="/assets/ioka_new.png" />
                   <input
                     type="radio"
-                    defaultValue="uzcard"
-                    checked={payType === 'uzcard'}
+                    defaultValue="ioka"
+                    checked={payType === 'ioka'}
                     onChange={onValueChange}
                     className="hidden"
                   />
@@ -2170,7 +2159,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               <div
                 className={`${
                   isProductInStop.includes(lineItem.id) ? 'opacity-25' : ''
-                }  text-xl`}
+                }  text-xl flex items-center`}
               >
                 {lineItem.child && lineItem.child.length
                   ? (lineItem.total > 0 ? lineItem.quantity + ' X ' : '') +
@@ -2178,7 +2167,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                       pattern: '# !',
                       separator: ' ',
                       decimal: '.',
-                      symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                      symbol: ``,
                       precision: 0,
                     }).format()
                   : (lineItem.total > 0 ? lineItem.quantity + ' X ' : '') +
@@ -2186,9 +2175,14 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                       pattern: '# !',
                       separator: ' ',
                       decimal: '.',
-                      symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                      symbol: ``,
                       precision: 0,
                     }).format()}
+                <FontAwesomeIcon
+                  icon={faTengeSign as IconDefinition}
+                  size={'xs'}
+                  className="ml-1 w-4 h-4"
+                />
               </div>
             </div>
           ))}
@@ -2242,26 +2236,36 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             <>
               <div className="flex items-center justify-between">
                 <div className="text-lg">{tr('basket_order_price')}</div>
-                <div className="ml-7 text-lg">
+                <div className="ml-7 text-lg flex items-center">
                   {currency(totalPrice, {
                     pattern: '# !',
                     separator: ' ',
                     decimal: '.',
-                    symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                    symbol: ``,
                     precision: 0,
                   }).format()}
+                  <FontAwesomeIcon
+                    icon={faTengeSign as IconDefinition}
+                    size={'xs'}
+                    className="ml-1 w-4 h-4"
+                  />
                 </div>
               </div>
               <div className="flex items-center justify-between">
                 <div className="text-lg">{tr('delivery')}:</div>
-                <div className="ml-7 text-lg">
+                <div className="ml-7 text-lg flex items-center">
                   {currency(deliveryPrice, {
                     pattern: '# !',
                     separator: ' ',
                     decimal: '.',
-                    symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                    symbol: ``,
                     precision: 0,
                   }).format()}
+                  <FontAwesomeIcon
+                    icon={faTengeSign as IconDefinition}
+                    size={'xs'}
+                    className="ml-1 w-4 h-4"
+                  />
                   {query && query.debug && (
                     <div className="text-xs text-gray-600">
                       {deliveryDistance} км
@@ -2271,14 +2275,19 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               </div>
               <div className="flex items-center justify-between">
                 <div className="text-lg font-medium">{tr('total')}:</div>
-                <div className="ml-7 text-2xl font-medium">
+                <div className="ml-7 text-2xl font-medium flex items-center">
                   {currency(totalPrice + deliveryPrice, {
                     pattern: '# !',
                     separator: ' ',
                     decimal: '.',
-                    symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                    symbol: ``,
                     precision: 0,
                   }).format()}
+                  <FontAwesomeIcon
+                    icon={faTengeSign as IconDefinition}
+                    size={'xs'}
+                    className="ml-1 w-4 h-4"
+                  />
                 </div>
               </div>
             </>

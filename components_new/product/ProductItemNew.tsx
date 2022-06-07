@@ -29,6 +29,9 @@ import { ChevronDownIcon, MinusIcon } from '@heroicons/react/outline'
 import Hashids from 'hashids'
 import { useUI } from '@components/ui/context'
 import Link from 'next/link'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTengeSign, faTenge } from '@fortawesome/free-solid-svg-icons'
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 // import SessionContext from 'react-storefront/session/SessionContext'
 
 type ProductItem = {
@@ -445,14 +448,19 @@ const ProductItemNew: FC<ProductItem> = ({ product, channelName }) => {
               )}
             </div> */}
           <div className=" mt-2 justify-between items-center">
-            <span className="md:text-xl md:w-auto text-primary md:px-0 md:py-0 font-medium">
+            <span className="md:text-xl md:w-auto text-primary md:px-0 md:py-0 font-medium flex items-center">
               {currency(prodPriceDesktop, {
                 pattern: '# !',
                 separator: ' ',
                 decimal: '.',
-                symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                symbol: ``,
                 precision: 0,
               }).format()}
+              <FontAwesomeIcon
+                icon={faTengeSign as IconDefinition}
+                size={'xs'}
+                className="ml-1 w-4 h-4"
+              />
             </span>
           </div>
 

@@ -15,6 +15,9 @@ import { DateTime } from 'luxon'
 import Cookies from 'js-cookie'
 import axios from 'axios'
 import { log } from 'console'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTengeSign, faTenge } from '@fortawesome/free-solid-svg-icons'
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 
 axios.defaults.withCredentials = true
 
@@ -215,15 +218,20 @@ const OrderAccept: FC<OrderDetailProps> = ({ order, orderStatuses }) => {
             </div>
             <div className="md:flex items-center justify-between md:w-64">
               <div className="text-green-500 mr-10">{item.quantity} шт</div>
-              <div>
+              <div className="flex items-center">
                 {item.child &&
                   currency(item.total * item.quantity, {
                     pattern: '# !',
                     separator: ' ',
                     decimal: '.',
-                    symbol: 'сум',
+                    symbol: '',
                     precision: 0,
                   }).format()}
+                <FontAwesomeIcon
+                  icon={faTengeSign as IconDefinition}
+                  size={'xs'}
+                  className="ml-1 w-4 h-4"
+                />
               </div>
             </div>
           </div>
@@ -259,13 +267,20 @@ const OrderAccept: FC<OrderDetailProps> = ({ order, orderStatuses }) => {
             <div className="text-xl mb-8">Сумма заказа</div>
             <div>
               <div className="text-base">Оплата картой </div>
-              {currency(order?.order_total / 100, {
-                pattern: '# !',
-                separator: ' ',
-                decimal: '.',
-                symbol: `${tr('sum')}`,
-                precision: 0,
-              }).format()}
+              <div className="flex items-center">
+                {currency(order?.order_total / 100, {
+                  pattern: '# !',
+                  separator: ' ',
+                  decimal: '.',
+                  symbol: ``,
+                  precision: 0,
+                }).format()}
+                <FontAwesomeIcon
+                  icon={faTengeSign as IconDefinition}
+                  size={'xs'}
+                  className="ml-1 w-4 h-4"
+                />
+              </div>
             </div>
           </div>
         </div>
