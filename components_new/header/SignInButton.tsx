@@ -454,8 +454,8 @@ const SignInButton: FC = () => {
                                       field: { onChange, value },
                                     }) => (
                                       <Input
-                                        defaultCountry="UZ"
-                                        country="UZ"
+                                        defaultCountry="KZ"
+                                        country="KZ"
                                         international
                                         withCountryCallingCode
                                         value={value}
