@@ -16,7 +16,7 @@ import { useCart } from '@framework/cart'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
+import { faAngleLeft, faTengeSign } from '@fortawesome/free-solid-svg-icons'
 import { IconDefinition } from '@fortawesome/free-brands-svg-icons'
 const { publicRuntimeConfig } = getConfig()
 let webAddress = publicRuntimeConfig.apiUrl
@@ -374,14 +374,19 @@ export default function Product({
               }}
             ></div>
             <div className="flex items-center justify-between pt-5">
-              <div className=" font-bold text-2xl md:text-3xl">
+              <div className=" font-bold text-2xl md:text-3xl flex items-center">
                 {currency(store.price, {
                   pattern: '# !',
                   separator: ' ',
                   decimal: '.',
-                  symbol: `${locale == 'uz' ? "so'm" : 'сум'}`,
+                  symbol: ``,
                   precision: 0,
                 }).format()}
+                <FontAwesomeIcon
+                  icon={faTengeSign as IconDefinition}
+                  size={'xs'}
+                  className="ml-1 w-5 h-5"
+                />
               </div>
               {productLine ? (
                 <div className="w-36 ml-14 bg-gray-200 rounded-lg flex items-center p-1">

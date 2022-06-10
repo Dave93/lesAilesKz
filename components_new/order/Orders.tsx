@@ -1220,8 +1220,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 <Controller
                   render={({ field: { onChange, value } }) => (
                     <Input
-                      defaultCountry="UZ"
-                      country="UZ"
+                      defaultCountry="KZ"
+                      country="KZ"
                       international
                       withCountryCallingCode
                       value={value}
@@ -1251,8 +1251,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 {tr('additional_phone')}
               </div>
               <Input
-                defaultCountry="UZ"
-                country="UZ"
+                defaultCountry="KZ"
+                country="KZ"
                 international
                 withCountryCallingCode
                 value={additionalPhone}
