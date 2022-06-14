@@ -113,9 +113,9 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
   let currentAddress = ''
   if (activeCity.active) {
     if (locale == 'ru') {
-      currentAddress = 'Узбекистан, ' + activeCity.name + ','
+      currentAddress = 'Казахстан, ' + activeCity.name + ','
     } else {
-      currentAddress = "O'zbekiston, " + activeCity.name_uz + ','
+      currentAddress = "Qozog'iston, " + activeCity.name_uz + ','
     }
   }
 
@@ -277,9 +277,9 @@ const MobLocationTabs: FC<MobLocationTabProps> = ({ setOpen }) => {
         inputValue: "O'zbekiston, " + city.name_uz + ',',
       })
     } else {
-      setValue('address', 'Узбекистан, ' + city.name)
+      setValue('address', 'Казахстан, ' + city.name)
       downshiftControl?.current?.reset({
-        inputValue: 'Узбекистан, ' + city.name + ',',
+        inputValue: 'Казахстан, ' + city.name + ',',
       })
     }
     let link = pathname

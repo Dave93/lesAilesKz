@@ -176,7 +176,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
   let currentAddress = ''
   if (activeCity.active) {
     if (locale == 'ru') {
-      currentAddress = 'Узбекистан, ' + activeCity.name + ','
+      currentAddress = 'Казахстан, ' + activeCity.name + ','
     } else {
       currentAddress = "O'zbekiston, " + activeCity.name_uz + ','
     }
@@ -471,9 +471,9 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
         inputValue: "O'zbekiston, " + city.name_uz + ',',
       })
     } else {
-      setValue('address', 'Узбекистан, ' + city.name)
+      setValue('address', 'Казахстан, ' + city.name)
       downshiftControl?.current?.reset({
-        inputValue: 'Узбекистан, ' + city.name + ',',
+        inputValue: 'Казахстан, ' + city.name + ',',
       })
     }
     setActiveCity(city)
