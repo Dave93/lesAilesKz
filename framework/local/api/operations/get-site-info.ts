@@ -53,18 +53,18 @@ export default function getSiteInfoOperation({
       cities,
       currentCity,
       socials: [
-        {
-          code: 'fb',
-          link: '',
-        },
+        // {
+        //   code: 'fb',
+        //   link: '',
+        // },
         {
           code: 'inst',
           link: 'https://www.instagram.com/lesaileskz/',
         },
-        {
-          code: 'tg',
-          link: '',
-        },
+        // {
+        //   code: 'tg',
+        //   link: '',
+        // },
       ],
     })
   }

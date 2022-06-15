@@ -239,14 +239,14 @@ const Layout: FC<Props> = ({
                               >
                                 <FontAwesomeIcon
                                   icon={socIcons[soc.code]}
-                                  className="text-white w-5 h-5"
+                                  className="text-white w-10 h-10"
                                 />
                               </a>
                             </li>
                           )
                         })}
                       </ul>
-                      <div className="flex md:absolute ">
+                      <div className="flex">
                         <a
                           href="https://play.google.com/store/apps/details?id=com.havoqandpeople.les"
                           className="flex"
