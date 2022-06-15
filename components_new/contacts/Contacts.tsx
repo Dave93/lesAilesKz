@@ -38,7 +38,7 @@ const Contacts: FC = () => {
       configData = configData.toString()
       configData = JSON.parse(configData)
       setConfigData(configData)
-    } catch (e) {}
+    } catch (e) { }
   }
 
   useEffect(() => {
@@ -131,33 +131,10 @@ const Contacts: FC = () => {
       </div>
       <div className="md:grid grid-cols-2 gap-24 mb-16">
         <div>
-          <div className="mb-3">ООО « Havoqand People »</div>
-          <div className="w-60">
-            <div className="flex justify-between">
-              <div>{tr('toshkent')}:</div>{' '}
-              <a href="tel:+998712004242">+998 (71) 200-42-42</a>
-            </div>
-            <div className="flex justify-between">
-              <div>{tr('andijon')}:</div>
-              <a href="tel:+998952004242">+998 (95) 200-42-42</a>
-            </div>
-            <div className="flex justify-between">
-              <div>{tr('fargona')}:</div>
-              <a href="tel:+998999114242">+998 (99) 911-42-42</a>
-            </div>
-            <div className="flex justify-between">
-              <div>{tr('samarqand')}:</div>{' '}
-              <a href="tel:+998973994242">+998 (97) 399-42-42</a>
-            </div>
-            <div className="flex justify-between">
-              <div>{tr('qoqon')}:</div>{' '}
-              <a href="tel:+998907034040">+998 (90) 703-40-40</a>
-            </div>
-            <div className="flex justify-between">
-              <div>{tr('bukhara')}:</div>{' '}
-              <a href="tel:+998917984242">+998 (91) 798-42-42</a>
-            </div>
-          </div>
+          <div
+            className="md:grid gap-5"
+            dangerouslySetInnerHTML={{ __html: tr('contacts_text') }}
+          ></div>
           <div className="mt-3">
             {tr('work_time')}
             {': '}

@@ -55,15 +55,15 @@ export default function getSiteInfoOperation({
       socials: [
         {
           code: 'fb',
-          link: 'https://www.facebook.com/lesailesuz',
+          link: '',
         },
         {
           code: 'inst',
-          link: 'https://instagram.com/lesailesuz',
+          link: 'https://www.instagram.com/lesaileskz/',
         },
         {
           code: 'tg',
-          link: 'https://t.me/lesailesbestbot',
+          link: '',
         },
       ],
     })

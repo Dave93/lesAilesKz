@@ -104,7 +104,7 @@ const Layout: FC<Props> = ({
       configData = configData.toString()
       configData = JSON.parse(configData)
       setConfigData(configData)
-    } catch (e) {}
+    } catch (e) { }
   }
 
   // const fetchGeo = async () => {
@@ -126,9 +126,8 @@ const Layout: FC<Props> = ({
         <div className="md:flex md:flex-col h-screen">
           <Header menu={topMenu} />
           <main
-            className={`${
-              cleanBackground == true ? 'bg-gray-100' : ''
-            } flex-grow pb-14 relative`}
+            className={`${cleanBackground == true ? 'bg-gray-100' : ''
+              } flex-grow pb-14 relative`}
           >
             {addressModal ? (
               <SetLocation />
@@ -144,7 +143,7 @@ const Layout: FC<Props> = ({
               <div className="md:border-b  px-4">
                 <div className="container mx-auto md:my-6">
                   <div className="md:flex justify-between mb-1 md:py-10">
-                    <div className="">
+                    {/* <div className="">
                       <div className="pb-10">
                         <div>{tr('call_center')}</div>
                         <div className="text-[18px] font-bold">
@@ -172,9 +171,9 @@ const Layout: FC<Props> = ({
                           </a>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                     <div className="flex-grow md:border-0 mt-5 md:mt-0 pb-5 md:pb-0">
-                      <div className="md:flex justify-center">
+                      <div className="">
                         <div>
                           {newFooterMenu && newFooterMenu.length > 0 && (
                             <>
