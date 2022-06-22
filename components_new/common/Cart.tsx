@@ -214,8 +214,8 @@ const Cart: FC<CartProps> = ({ channelName }: { channelName: any }) => {
                 <div key={lineItem.id} className="py-3">
                   <div className="flex mb-2">
                     {lineItem.child &&
-                    lineItem.child.length &&
-                    lineItem.child[0].variant?.product?.id !=
+                      lineItem.child.length &&
+                      lineItem.child[0].variant?.product?.id !=
                       lineItem?.variant?.product?.box_id ? (
                       <div className="h-11 w-11 flex relative">
                         <div className="w-5 relative overflow-hidden">
@@ -266,21 +266,20 @@ const Cart: FC<CartProps> = ({ channelName }: { channelName: any }) => {
                     )}
                     <div className="font-bold text-sm flex-grow mx-1">
                       {lineItem.child && lineItem.child.length
-                        ? `${
-                            lineItem?.variant?.product?.attribute_data?.name[
+                        ? `${lineItem?.variant?.product?.attribute_data?.name[
+                        channelName
+                        ][locale || 'ru']
+                        } + ${lineItem?.child
+                          .map(
+                            (v: any) =>
+                              v?.variant?.product?.attribute_data?.name[
                               channelName
-                            ][locale || 'ru']
-                          } + ${lineItem?.child
-                            .map(
-                              (v: any) =>
-                                v?.variant?.product?.attribute_data?.name[
-                                  channelName
-                                ][locale || 'ru']
-                            )
-                            .join(' + ')}`
+                              ][locale || 'ru']
+                          )
+                          .join(' + ')}`
                         : lineItem?.variant?.product?.attribute_data?.name[
-                            channelName
-                          ][locale || 'ru']}
+                        channelName
+                        ][locale || 'ru']}
                     </div>
                     <div>
                       <XIcon
@@ -312,23 +311,23 @@ const Cart: FC<CartProps> = ({ channelName }: { channelName: any }) => {
                     <div className="text-right flex-grow text-sm">
                       {lineItem.child && lineItem.child.length
                         ? currency(
-                            (+lineItem.total + +lineItem.child[0].total) *
-                              lineItem.quantity,
-                            {
-                              pattern: '# !',
-                              separator: ' ',
-                              decimal: '.',
-                              symbol: 'сум',
-                              precision: 0,
-                            }
-                          ).format()
-                        : currency(lineItem.total * lineItem.quantity, {
+                          (+lineItem.total + +lineItem.child[0].total) *
+                          lineItem.quantity,
+                          {
                             pattern: '# !',
                             separator: ' ',
                             decimal: '.',
-                            symbol: 'сум',
+                            symbol: '',
                             precision: 0,
-                          }).format()}
+                          }
+                        ).format()
+                        : currency(lineItem.total * lineItem.quantity, {
+                          pattern: '# !',
+                          separator: ' ',
+                          decimal: '.',
+                          symbol: '',
+                          precision: 0,
+                        }).format()}
                     </div>
                   </div>
                 </div>
@@ -345,7 +344,7 @@ const Cart: FC<CartProps> = ({ channelName }: { channelName: any }) => {
                 pattern: '# !',
                 separator: ' ',
                 decimal: '.',
-                symbol: 'сум',
+                symbol: '',
                 precision: 0,
               }).format()}
             </div>
