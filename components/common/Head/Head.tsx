@@ -3,8 +3,8 @@ import NextHead from 'next/head'
 import { DefaultSeo } from 'next-seo'
 import config from '@config/seo.json'
 
-const APP_NAME = 'Chopar Pizza'
-const APP_DESCRIPTION = 'Chopar Pizza'
+const APP_NAME = 'Les Ailes Kz'
+const APP_DESCRIPTION = 'Les Ailes Kz'
 
 const Head: FC = () => {
   return (
