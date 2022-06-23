@@ -149,8 +149,8 @@ const OrderAccept: FC<OrderDetailProps> = ({ order, orderStatuses }) => {
           >
             <div className="flex items-center">
               {item.child &&
-              item.child.length &&
-              item.child[0].variant?.product?.id !=
+                item.child.length &&
+                item.child[0].variant?.product?.id !=
                 item?.variant?.product?.box_id ? (
                 <div className="h-24 w-24 flex relative">
                   <div className="w-12 relative overflow-hidden">
@@ -201,18 +201,16 @@ const OrderAccept: FC<OrderDetailProps> = ({ order, orderStatuses }) => {
               <div className="ml-5">
                 <div className="md:text-xl text-sm font-bold">
                   {item.child && item.child.length > 1
-                    ? `${
-                        item?.variant?.product?.attribute_data?.name[
-                          channelName
-                        ][locale || 'ru']
-                      } + ${
-                        item?.child[0].variant?.product?.attribute_data?.name[
-                          channelName
-                        ][locale || 'ru']
-                      }`
+                    ? `${item?.variant?.product?.attribute_data?.name[
+                    channelName
+                    ][locale || 'ru']
+                    } + ${item?.child[0].variant?.product?.attribute_data?.name[
+                    channelName
+                    ][locale || 'ru']
+                    }`
                     : item?.variant?.product?.attribute_data?.name[channelName][
-                        locale || 'ru'
-                      ]}
+                    locale || 'ru'
+                    ]}
                 </div>
               </div>
             </div>
@@ -237,6 +235,21 @@ const OrderAccept: FC<OrderDetailProps> = ({ order, orderStatuses }) => {
           </div>
         ))}
         <div className="md:flex justify-between mt-14">
+          {order.type == 'ioka' && order.status == 'awaiting-payment' && (
+            <div className="md:p-10 p-5 rounded-2xl text-xl mt-5 bg-white">
+              <div className="text-4xl mb-7 font-bold text-center">
+                {tr('order_pay')}
+              </div>
+              <div className="text-center items-center flex justify-around">
+                <a
+                  className="bg-primary rounded-full flex items-center md:w-40 w-full justify-evenly py-2 mt-10 text-white"
+                  href={order.transaction.payment_link}
+                >
+                  {tr('pay')}
+                </a>
+              </div>
+            </div>
+          )}
           <div className="md:p-5 pb-5 md:rounded-2xl text-xl mt-5 md:bg-white md:border md:border-gray-200 md:w-3/4 border-b border-gray-300">
             <div className="text-lg mb-7 font-bold">
               {tr('delivery_address')}
@@ -251,15 +264,15 @@ const OrderAccept: FC<OrderDetailProps> = ({ order, orderStatuses }) => {
                 : ''}
               {order.entrance
                 ? ', ' +
-                  tr('entrance').toLocaleLowerCase() +
-                  ': ' +
-                  order.entrance
+                tr('entrance').toLocaleLowerCase() +
+                ': ' +
+                order.entrance
                 : ''}
               {order.door_code
                 ? ', ' +
-                  tr('code_on_doors').toLocaleLowerCase() +
-                  ': ' +
-                  order.door_code
+                tr('code_on_doors').toLocaleLowerCase() +
+                ': ' +
+                order.door_code
                 : ''}
             </div>
           </div>
