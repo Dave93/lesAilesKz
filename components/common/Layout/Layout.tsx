@@ -248,7 +248,7 @@ const Layout: FC<Props> = ({
                       </ul>
                       <div className="flex">
                         <a
-                          href="https://play.google.com/store/apps/details?id=com.havoqandpeople.les"
+                          href="https://play.google.com/store/apps/details?id=com.havoqandpeople.les.kz"
                           className="flex"
                         >
                           <div className=" bg-gray-700 flex items-center mt-11 p-2 rounded-lg">
@@ -262,7 +262,7 @@ const Layout: FC<Props> = ({
                             </div>
                           </div>
                         </a>
-                        <a href="https://apps.apple.com/uz/app/les-ailes-uzb/id1616011426">
+                        <a href="">
                           <div className=" bg-gray-700 flex items-center ml-1 mt-11 p-2 px-2 rounded-lg">
                             <img src="/apple.png" alt="" />
                             <div className="text-white ml-2">
