@@ -23,6 +23,7 @@ import { useUI } from '@components/ui/context'
 import getConfig from 'next/config'
 import axios from 'axios'
 import Head from 'next/head'
+import { DateTime } from 'luxon'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -157,15 +158,78 @@ export default function Home({
     // }, 400)
   }
 
+  const loadPickupItems = async () => {
+    const { data } = await axios.get(
+      `${webAddress}/api/terminals/pickup?city_id=${activeCity.id}`
+    )
+    let res: any[] = []
+    let currentTime = DateTime.now()
+    // currentTime = currentTime.set({ hour: 23 }) // TODO: remove this line
+    let weekDay = currentTime.weekday
+    data.data.map((item: any) => {
+      if (item.latitude) {
+        item.isWorking = false
+        if (weekDay >= 1 && weekDay < 6) {
+          let openWork = DateTime.fromISO(item.open_work)
+          openWork = openWork.set({ day: currentTime.day })
+          openWork = openWork.set({ year: currentTime.year })
+          openWork = openWork.set({ month: currentTime.month })
+          let closeWork = DateTime.fromISO(item.close_work)
+          closeWork = closeWork.set({ day: currentTime.day })
+          closeWork = closeWork.set({ year: currentTime.year })
+          closeWork = closeWork.set({ month: currentTime.month })
+          if (closeWork.hour < openWork.hour) {
+            closeWork = closeWork.set({ day: currentTime.day + 1 })
+          }
+
+          if (currentTime >= openWork && currentTime < closeWork) {
+            item.isWorking = true
+          }
+          item.workTimeStart = openWork.toFormat('HH:mm')
+          item.workTimeEnd = closeWork.toFormat('HH:mm')
+        } else {
+          let openWork = DateTime.fromISO(item.open_weekend)
+          openWork = openWork.set({ day: currentTime.day })
+          openWork = openWork.set({ year: currentTime.year })
+          openWork = openWork.set({ month: currentTime.month })
+          let closeWork = DateTime.fromISO(item.close_weekend)
+          closeWork = closeWork.set({ day: currentTime.day })
+          closeWork = closeWork.set({ year: currentTime.year })
+          closeWork = closeWork.set({ month: currentTime.month })
+          if (closeWork.hour < openWork.hour) {
+            closeWork = closeWork.set({ day: currentTime.day + 1 })
+          }
+
+          if (currentTime >= openWork && currentTime < closeWork) {
+            item.isWorking = true
+          }
+          item.workTimeStart = openWork.toFormat('HH:mm')
+          item.workTimeEnd = closeWork.toFormat('HH:mm')
+        }
+
+        res.push(item)
+      }
+    })
+    if (res.length == 1) {
+
+      const { data: terminalStock } = await axios.get(
+        `${webAddress}/api/terminals/get_stock?terminal_id=${res[0].id}`
+      )
+
+      setStopProducts(terminalStock.data)
+    }
+  }
+
   useEffect(() => {
     getChannel()
 
     window.addEventListener('scroll', hideCreatePizza)
     showLocationTabsController()
+
+    loadPickupItems()
     return () => {
       window.removeEventListener('scroll', hideCreatePizza)
     }
-
     // return () => document.removeEventListener('sticky-change', handleKeyUp)
   }, [])
 
