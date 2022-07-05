@@ -68,6 +68,7 @@ export async function getServerSideProps({
     socials,
     cities,
     currentCity,
+    configs,
   } = await siteInfoPromise
   if (!currentCity) {
     return {
@@ -75,6 +76,21 @@ export async function getServerSideProps({
     }
   }
 
+  if (
+    typeof configs.site_is_closed != 'undefined' &&
+    configs.site_is_closed == 1 &&
+    currentCity != null &&
+    currentCity.slug
+  ) {
+    return {
+      redirect: {
+        destination: `/${currentCity.slug}/closed`,
+        permanent: false,
+      },
+      // props: {},
+      // revalidate: 10,
+    }
+  }
   return {
     props: {
       products,
@@ -171,74 +187,78 @@ export default function Home({
 
   const readyProducts = useMemo(() => {
     return products
-      .map((prod: any) => {
-        if (prod.half_mode) {
-          return null
-        }
-        if (prod.variants && prod.variants.length) {
-          prod.variants = prod.variants.map((v: any, index: number) => {
-            if (index === 1) {
-              v.active = true
-            } else {
-              v.active = false
+      ? products
+          .map((prod: any) => {
+            if (prod.half_mode) {
+              return null
             }
+            if (prod.variants && prod.variants.length) {
+              prod.variants = prod.variants.map((v: any, index: number) => {
+                if (index === 1) {
+                  v.active = true
+                } else {
+                  v.active = false
+                }
 
-            return v
+                return v
+              })
+            } else if (prod.items && prod.items.length) {
+              prod.items = prod.items.map((item: any) => {
+                item.variants = item.variants.map((v: any, index: number) => {
+                  if (index === 1) {
+                    v.active = true
+                  } else {
+                    v.active = false
+                  }
+
+                  return v
+                })
+
+                return item
+              })
+            }
+            return prod
           })
-        } else if (prod.items && prod.items.length) {
-          prod.items = prod.items.map((item: any) => {
-            item.variants = item.variants.map((v: any, index: number) => {
-              if (index === 1) {
-                v.active = true
-              } else {
-                v.active = false
-              }
-
-              return v
-            })
-
-            return item
-          })
-        }
-        return prod
-      })
-      .filter((prod: any) => prod != null)
+          .filter((prod: any) => prod != null)
+      : []
   }, [products])
 
   const halfModeProds = useMemo(() => {
     return products
-      .map((prod: any) => {
-        if (!prod.half_mode) {
-          return null
-        }
-        if (prod.variants && prod.variants.length) {
-          prod.variants = prod.variants.map((v: any, index: number) => {
-            if (index === 1) {
-              v.active = true
-            } else {
-              v.active = false
+      ? products
+          .map((prod: any) => {
+            if (!prod.half_mode) {
+              return null
             }
+            if (prod.variants && prod.variants.length) {
+              prod.variants = prod.variants.map((v: any, index: number) => {
+                if (index === 1) {
+                  v.active = true
+                } else {
+                  v.active = false
+                }
 
-            return v
+                return v
+              })
+            } else if (prod.items && prod.items.length) {
+              prod.items = prod.items.map((item: any) => {
+                item.variants = item.variants.map((v: any, index: number) => {
+                  if (index === 1) {
+                    v.active = true
+                  } else {
+                    v.active = false
+                  }
+
+                  return v
+                })
+
+                return item
+              })
+            }
+            return prod
           })
-        } else if (prod.items && prod.items.length) {
-          prod.items = prod.items.map((item: any) => {
-            item.variants = item.variants.map((v: any, index: number) => {
-              if (index === 1) {
-                v.active = true
-              } else {
-                v.active = false
-              }
-
-              return v
-            })
-
-            return item
-          })
-        }
-        return prod
-      })
-      .filter((prod: any) => prod != null)
+          .filter((prod: any) => prod != null)
+      : []
   }, [products])
 
   return (

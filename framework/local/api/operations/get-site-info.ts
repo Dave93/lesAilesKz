@@ -9,6 +9,7 @@ import getCities from '../utils/fetch-cities'
 import { City } from '@commerce/types/cities'
 import useSWR from 'swr'
 import fetch from 'isomorphic-unfetch'
+import getConfigs from './fetch-configs'
 
 export type GetSiteInfoResult<
   T extends { categories: any[]; brands: any[] } = {
@@ -45,6 +46,11 @@ export default function getSiteInfoOperation({
 
     const categories = await getCategories(cfg)
 
+    const configs = await getConfigs(cfg)
+
+    let configData = Buffer.from(configs, 'base64').toString()
+    configData = JSON.parse(configData)
+
     return Promise.resolve({
       categories: categories.filter((cat: any) => !cat.half_mode),
       brands: [],
@@ -52,6 +58,7 @@ export default function getSiteInfoOperation({
       footerInfoMenu: footerInfoMenu || [],
       cities,
       currentCity,
+      configs: configData,
       socials: [
         {
           code: 'fb',

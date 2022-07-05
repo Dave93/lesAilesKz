@@ -9,6 +9,7 @@ import getCustomerWishlist from './operations/get-customer-wishlist'
 import getAllProductPaths from './operations/get-all-product-paths'
 import getAllProducts from './operations/get-all-products'
 import getProduct from './operations/get-product'
+import getAllCities from './operations/get-all-cities'
 
 export interface LocalConfig extends CommerceAPIConfig {}
 const config: LocalConfig = {
@@ -29,6 +30,7 @@ const operations = {
   getAllProductPaths,
   getAllProducts,
   getProduct,
+  getAllCities,
 }
 
 export const provider = { config, operations }
