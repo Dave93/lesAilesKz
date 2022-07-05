@@ -295,14 +295,14 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
   const [selectedCoordinates, setSelectedCoordinates] = useState(
     locationData && locationData.location
       ? [
-          {
-            coordinates: {
-              lat: locationData.location[0],
-              long: locationData.location[1],
-            },
-            key: `${locationData.location[0]}${locationData.location[1]}`,
+        {
+          coordinates: {
+            lat: locationData.location[0],
+            long: locationData.location[1],
           },
-        ]
+          key: `${locationData.location[0]}${locationData.location[1]}`,
+        },
+      ]
       : ([] as any)
   )
 
@@ -339,7 +339,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       configData = configData.toString('ascii')
       configData = JSON.parse(configData)
       setConfigData(configData)
-    } catch (e) {}
+    } catch (e) { }
     let yandexGeoKey = configData.yandexGeoKey
     yandexGeoKey = yandexGeoKey.split(',')
     // get random item from yandexGeoKey
@@ -451,8 +451,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       return []
     }
     const { data: getCodeData } = await axios.get(
-      `/api/geocode?text=${encodeURI(event.target.value)}&bounds=${
-        activeCity.bounds
+      `/api/geocode?text=${encodeURI(event.target.value)}&bounds=${activeCity.bounds
       }`
     )
 
@@ -712,14 +711,14 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       // if returnResult is true, return object else return setLocationData
       return returnResult
         ? {
-            terminal_id: undefined,
-            terminalData: undefined,
-          }
+          terminal_id: undefined,
+          terminalData: undefined,
+        }
         : setLocationData({
-            ...locationData,
-            terminal_id: undefined,
-            terminalData: undefined,
-          })
+          ...locationData,
+          terminal_id: undefined,
+          terminalData: undefined,
+        })
     }
 
     const { data: terminalsData } = await axios.get(
@@ -740,14 +739,14 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       // if returnResult is true, return object else return setLocationData
       return returnResult
         ? {
-            terminal_id: undefined,
-            terminalData: undefined,
-          }
+          terminal_id: undefined,
+          terminalData: undefined,
+        }
         : setLocationData({
-            ...locationData,
-            terminal_id: undefined,
-            terminalData: undefined,
-          })
+          ...locationData,
+          terminal_id: undefined,
+          terminalData: undefined,
+        })
     } else {
       let currentTerminal = terminalsData.data.items[0]
       if (!currentTerminal.isWorking) {
@@ -757,14 +756,14 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
         })
         return returnResult
           ? {
-              terminal_id: undefined,
-              terminalData: undefined,
-            }
+            terminal_id: undefined,
+            terminalData: undefined,
+          }
           : setLocationData({
-              ...locationData,
-              terminal_id: undefined,
-              terminalData: undefined,
-            })
+            ...locationData,
+            terminal_id: undefined,
+            terminalData: undefined,
+          })
       }
     }
 
@@ -772,14 +771,14 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
       // if returnResult is true, return object else return setLocationData
       return returnResult
         ? {
-            terminal_id: terminalsData.data.items[0].id,
-            terminalData: terminalsData.data.items[0],
-          }
+          terminal_id: terminalsData.data.items[0].id,
+          terminalData: terminalsData.data.items[0],
+        }
         : setLocationData({
-            ...locationData,
-            terminal_id: terminalsData.data.items[0].id,
-            terminalData: terminalsData.data.items[0],
-          })
+          ...locationData,
+          terminal_id: terminalsData.data.items[0].id,
+          terminalData: terminalsData.data.items[0],
+        })
     }
   }
 
@@ -1278,21 +1277,19 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
         <div className="bg-white flex rounded-2xl w-full items-center py-7 md:px-10 px-5 h-32 mb-5">
           <div className="bg-gray-100 flex  w-full rounded-xl">
             <button
-              className={`${
-                tabIndex == 'deliver'
-                  ? 'bg-green-600 text-white'
-                  : ' text-gray-400'
-              } flex-1 font-bold py-3 text-[18px] rounded-xl outline-none focus:outline-none`}
+              className={`${tabIndex == 'deliver'
+                ? 'bg-green-600 text-white'
+                : ' text-gray-400'
+                } flex-1 font-bold py-3 text-[18px] rounded-xl outline-none focus:outline-none`}
               onClick={() => changeTabIndex('deliver')}
             >
               {tr('delivery')}
             </button>
             <button
-              className={`${
-                tabIndex == 'pickup'
-                  ? 'bg-green-600 text-white'
-                  : ' text-gray-400'
-              } flex-1 font-bold py-3 text-[18px] rounded-xl outline-none focus:outline-none`}
+              className={`${tabIndex == 'pickup'
+                ? 'bg-green-600 text-white'
+                : ' text-gray-400'
+                } flex-1 font-bold py-3 text-[18px] rounded-xl outline-none focus:outline-none`}
               onClick={() => changeTabIndex('pickup')}
             >
               {tr('pickup')}
@@ -1328,11 +1325,10 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                         <Menu.Item key={city.id}>
                           <span
                             onClick={() => setActive(city)}
-                            className={`block px-4 py-2 text-sm cursor-pointer ${
-                              city.id == chosenCity.id
-                                ? 'bg-secondary text-white'
-                                : 'text-secondary'
-                            }`}
+                            className={`block px-4 py-2 text-sm cursor-pointer ${city.id == chosenCity.id
+                              ? 'bg-secondary text-white'
+                              : 'text-secondary'
+                              }`}
                           >
                             {locale == 'uz' ? city.name_uz : city.name}
                           </span>
@@ -1405,34 +1401,31 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                       className="w-max flex items-center cursor-pointer rounded-full bg-gray-100 px-4 py-2"
                       onClick={() => addNewAddress()}
                     >
-                      <PlusIcon className="h-5 text-gray-400 w-5  hover:text-yellow-light mr-2" />
+                      <PlusIcon className="h-5 text-gray-400 w-5  hover:text-primary mr-2" />
                       <div className=" ">{tr('add_new_address')}</div>
                     </div>
                     {addressList.map((item: Address) => (
                       <div
                         key={item.id}
-                        className={`px-4 py-1 rounded-full cursor-pointer relative pr-6 capitalize flex items-center ${
-                          addressId == item.id
-                            ? 'bg-primary text-white'
-                            : 'bg-gray-100'
-                        }`}
+                        className={`px-4 py-1 rounded-full cursor-pointer relative pr-6 capitalize flex items-center ${addressId == item.id
+                          ? 'bg-primary text-white'
+                          : 'bg-gray-100'
+                          }`}
                         onClick={() => selectAddressLocal(item)}
                       >
                         <div className="">
                           <BookmarkIcon
-                            className={`h-5  w-5  hover:text-yellow-light mr-2 ${
-                              addressId == item.id
-                                ? ' text-white'
-                                : 'text-gray-400'
-                            }`}
+                            className={`h-5  w-5  hover:text-yellow-light mr-2 ${addressId == item.id
+                              ? ' text-white'
+                              : 'text-gray-400'
+                              }`}
                           />
                         </div>
                         <div className="">
                           <div>{item.label ? item.label : item.address}</div>
                           <div
-                            className={`text-sm  ${
-                              addressId == item.id ? ' text-white' : ''
-                            }`}
+                            className={`text-sm  ${addressId == item.id ? ' text-white' : ''
+                              }`}
                           >
                             {item.label && item.address}
                           </div>
@@ -1500,35 +1493,33 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                             >
                               {isOpen
                                 ? geoSuggestions.map(
-                                    (item: any, index: number) => (
-                                      <li
-                                        {...getItemProps({
-                                          key: index,
-                                          index,
-                                          item,
-                                          className: `py-2 px-4 flex items-center ${
-                                            highlightedIndex == index
-                                              ? 'bg-gray-100'
-                                              : 'bg-white'
+                                  (item: any, index: number) => (
+                                    <li
+                                      {...getItemProps({
+                                        key: index,
+                                        index,
+                                        item,
+                                        className: `py-2 px-4 flex items-center ${highlightedIndex == index
+                                          ? 'bg-gray-100'
+                                          : 'bg-white'
                                           }`,
-                                        })}
-                                      >
-                                        <CheckIcon
-                                          className={`w-5 text-primary font-bold mr-2 ${
-                                            highlightedIndex == index
-                                              ? ''
-                                              : 'invisible'
+                                      })}
+                                    >
+                                      <CheckIcon
+                                        className={`w-5 text-primary font-bold mr-2 ${highlightedIndex == index
+                                          ? ''
+                                          : 'invisible'
                                           }`}
-                                        />
-                                        <div>
-                                          <div>{item.title}</div>
-                                          <div className="text-sm">
-                                            {item.description}
-                                          </div>
+                                      />
+                                      <div>
+                                        <div>{item.title}</div>
+                                        <div className="text-sm">
+                                          {item.description}
                                         </div>
-                                      </li>
-                                    )
+                                      </div>
+                                    </li>
                                   )
+                                )
                                 : null}
                             </ul>
                           </div>
@@ -1712,26 +1703,23 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 {pickupPoints.map((point) => (
                   <div
                     key={point.id}
-                    className={`border flex items-start p-3 rounded-[15px] cursor-pointer ${
-                      activePoint && activePoint == point.id
-                        ? 'border-primary'
-                        : 'border-gray-400'
-                    }`}
+                    className={`border flex items-start p-3 rounded-[15px] cursor-pointer ${activePoint && activePoint == point.id
+                      ? 'border-primary'
+                      : 'border-gray-400'
+                      }`}
                     onClick={() => choosePickupPoint(point.id)}
                   >
                     <div
-                      className={`border mr-4 mt-1 rounded-xl ${
-                        activePoint && activePoint == point.id
-                          ? 'border-primary'
-                          : 'border-gray-400'
-                      }`}
+                      className={`border mr-4 mt-1 rounded-xl ${activePoint && activePoint == point.id
+                        ? 'border-primary'
+                        : 'border-gray-400'
+                        }`}
                     >
                       <div
-                        className={`h-3 m-1 rounded-xl w-3 ${
-                          activePoint && activePoint == point.id
-                            ? 'bg-primary'
-                            : 'bg-gray-400'
-                        }`}
+                        className={`h-3 m-1 rounded-xl w-3 ${activePoint && activePoint == point.id
+                          ? 'bg-primary'
+                          : 'bg-gray-400'
+                          }`}
                       ></div>
                     </div>
                     <div>
@@ -1788,9 +1776,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             >
               <input
                 type="checkbox"
-                className={`${
-                  deliveryActive == 'now' ? '' : 'border'
-                } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                className={`${deliveryActive == 'now' ? '' : 'border'
+                  } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
                 defaultChecked={false}
                 checked={deliveryActive == 'now'}
               />
@@ -1803,9 +1790,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             >
               <input
                 type="checkbox"
-                className={`${
-                  deliveryActive == 'later' ? '' : 'border'
-                } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                className={`${deliveryActive == 'later' ? '' : 'border'
+                  } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
                 defaultChecked={false}
                 checked={deliveryActive == 'later'}
               />
@@ -1876,9 +1862,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             >
               <input
                 type="checkbox"
-                className={`${
-                  openTab !== 1 ? '' : 'border'
-                } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                className={`${openTab !== 1 ? '' : 'border'
+                  } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
                 defaultChecked={false}
                 checked={openTab == 1}
               />
@@ -1890,9 +1875,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             >
               <input
                 type="checkbox"
-                className={`${
-                  openTab !== 2 ? '' : 'border'
-                } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                className={`${openTab !== 2 ? '' : 'border'
+                  } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
                 defaultChecked={false}
                 checked={openTab == 2}
               />
@@ -1944,9 +1928,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               >
                 <input
                   type="checkbox"
-                  className={`${
-                    openTab !== 1 ? '' : 'border'
-                  } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                  className={`${openTab !== 1 ? '' : 'border'
+                    } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
                   defaultChecked={false}
                   checked={noChange}
                 />
@@ -1958,9 +1941,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               >
                 <input
                   type="checkbox"
-                  className={`${
-                    openTab !== 1 ? '' : 'border'
-                  } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
+                  className={`${openTab !== 1 ? '' : 'border'
+                    } text-green-500 form-checkbox rounded-md w-5 h-5 mr-4`}
                   defaultChecked={false}
                   checked={!noChange}
                 />
@@ -1972,15 +1954,18 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                   step="1000"
                   className="border border-gray-400 focus:outline-none outline-none  py-2 px-2 rounded-xl  bg-gray-100 mx-3 w-24"
                 />
-                <div>{tr('sum')}</div>
+                <FontAwesomeIcon
+                  icon={faTengeSign as IconDefinition}
+                  size={'xs'}
+                  className="ml-1 w-4 h-4"
+                />
               </div>
             </div>
             <div className={openTab === 2 ? 'block' : 'hidden'} id="link2">
               <div className="grid grid-cols-2 gap-2 pt-8 items-center">
                 <label
-                  className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
-                    payType == 'ioka' ? 'border-yellow' : 'border-gray-200'
-                  } border cursor-pointer`}
+                  className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${payType == 'ioka' ? 'border-yellow' : 'border-gray-200'
+                    } border cursor-pointer`}
                 >
                   <img src="/assets/ioka_new.png" />
                   <input
@@ -2017,11 +2002,10 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                     )
                     .map((payment: string) => (
                       <label
-                        className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${
-                          payType == payment
-                            ? 'border-primary'
-                            : 'border-gray-200'
-                        } border cursor-pointer`}
+                        className={`flex justify-around items-center w-24 h-24 p-3 rounded-2xl ${payType == payment
+                          ? 'border-primary'
+                          : 'border-gray-200'
+                          } border cursor-pointer`}
                         key={payment}
                       >
                         <img src={`/assets/${payment}.png`} />
@@ -2051,13 +2035,12 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               key={lineItem.id}
             >
               {lineItem.child &&
-              lineItem.child.length &&
-              lineItem.child[0].variant?.product?.id !=
+                lineItem.child.length &&
+                lineItem.child[0].variant?.product?.id !=
                 lineItem?.variant?.product?.box_id ? (
                 <div
-                  className={`${
-                    isProductInStop.includes(lineItem.id) ? 'opacity-25' : ''
-                  } h-11 w-11 flex relative`}
+                  className={`${isProductInStop.includes(lineItem.id) ? 'opacity-25' : ''
+                    } h-11 w-11 flex relative`}
                 >
                   <div className="w-5 relative overflow-hidden">
                     <div>
@@ -2092,9 +2075,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                 </div>
               ) : (
                 <div
-                  className={`${
-                    isProductInStop.includes(lineItem.id) ? 'opacity-25' : ''
-                  } flex items-center`}
+                  className={`${isProductInStop.includes(lineItem.id) ? 'opacity-25' : ''
+                    } flex items-center`}
                 >
                   <Image
                     src={
@@ -2111,10 +2093,9 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
               <div className="flex flex-grow items-center mx-2">
                 <div className="font-bold text-xl">
                   {lineItem.child && lineItem.child.length > 1 ? (
-                    `${
-                      lineItem?.variant?.product?.attribute_data?.name[
-                        channelName
-                      ][locale || 'ru']
+                    `${lineItem?.variant?.product?.attribute_data?.name[
+                    channelName
+                    ][locale || 'ru']
                     } + ${lineItem?.child
                       .filter(
                         (v: any) =>
@@ -2124,7 +2105,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                       .map(
                         (v: any) =>
                           v?.variant?.product?.attribute_data?.name[
-                            channelName
+                          channelName
                           ][locale || 'ru']
                       )
                       .join(' + ')}`
@@ -2139,8 +2120,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                       {isProductInStop.includes(lineItem.id)
                         ? tr('stop_product')
                         : lineItem?.variant?.product?.attribute_data?.name[
-                            channelName
-                          ][locale || 'ru']}
+                        channelName
+                        ][locale || 'ru']}
                     </div>
                   )}
                 </div>
@@ -2157,27 +2138,26 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                     ))}
               </div>
               <div
-                className={`${
-                  isProductInStop.includes(lineItem.id) ? 'opacity-25' : ''
-                }  text-xl flex items-center`}
+                className={`${isProductInStop.includes(lineItem.id) ? 'opacity-25' : ''
+                  }  text-xl flex items-center`}
               >
                 {lineItem.child && lineItem.child.length
                   ? (lineItem.total > 0 ? lineItem.quantity + ' X ' : '') +
-                    currency(+lineItem.total + +lineItem.child[0].total, {
-                      pattern: '# !',
-                      separator: ' ',
-                      decimal: '.',
-                      symbol: ``,
-                      precision: 0,
-                    }).format()
+                  currency(+lineItem.total + +lineItem.child[0].total, {
+                    pattern: '# !',
+                    separator: ' ',
+                    decimal: '.',
+                    symbol: ``,
+                    precision: 0,
+                  }).format()
                   : (lineItem.total > 0 ? lineItem.quantity + ' X ' : '') +
-                    currency(lineItem.total * lineItem.quantity, {
-                      pattern: '# !',
-                      separator: ' ',
-                      decimal: '.',
-                      symbol: ``,
-                      precision: 0,
-                    }).format()}
+                  currency(lineItem.total * lineItem.quantity, {
+                    pattern: '# !',
+                    separator: ' ',
+                    decimal: '.',
+                    symbol: ``,
+                    precision: 0,
+                  }).format()}
                 <FontAwesomeIcon
                   icon={faTengeSign as IconDefinition}
                   size={'xs'}
@@ -2195,9 +2175,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             type="radio"
             value={'N'}
             checked={cutlery === 'N'}
-            className={` ${
-              cutlery ? 'text-primary' : 'bg-gray-200'
-            } border-2 border-primary form-checkbox rounded-md text-primary outline-none focus:outline-none active:outline-none focus:border-primary`}
+            className={` ${cutlery ? 'text-primary' : 'bg-gray-200'
+              } border-2 border-primary form-checkbox rounded-md text-primary outline-none focus:outline-none active:outline-none focus:border-primary`}
             onChange={cutleryHandler}
             id="N"
           />
@@ -2209,9 +2188,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
             type="radio"
             value={'Y'}
             checked={cutlery === 'Y'}
-            className={` ${
-              cutlery ? 'text-primary' : 'bg-gray-200'
-            } border-2 border-primary form-checkbox rounded-md text-primary outline-none focus:outline-none active:outline-none focus:border-primary`}
+            className={` ${cutlery ? 'text-primary' : 'bg-gray-200'
+              } border-2 border-primary form-checkbox rounded-md text-primary outline-none focus:outline-none active:outline-none focus:border-primary`}
             onChange={cutleryHandler}
             id="Y"
           />
@@ -2294,9 +2272,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
           )}
         </div>
         <button
-          className={`bg-green-600 md:text-xl rounded-2xl text-white md:w-64 w-full py-5 px-12 font-medium mt-5 md:mt-0 ${
-            !locationData?.terminal_id ? 'opacity-25 cursor-not-allowed' : ''
-          }`}
+          className={`bg-green-600 md:text-xl rounded-2xl text-white md:w-64 w-full py-5 px-12 font-medium mt-5 md:mt-0 ${!locationData?.terminal_id ? 'opacity-25 cursor-not-allowed' : ''
+            }`}
           onClick={handleSubmit(saveOrder)}
           disabled={!locationData?.terminal_id || isSavingOrder}
         >
@@ -2330,7 +2307,7 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
         <Dialog
           as="div"
           className="fixed inset-0 z-50 overflow-y-auto"
-          onClose={() => {}}
+          onClose={() => { }}
           initialFocus={authButtonRef}
         >
           <div className="min-h-screen px-4 text-center">
@@ -2409,9 +2386,8 @@ const Orders: FC<OrdersProps> = ({ channelName }: { channelName: any }) => {
                         </div>
                         <div className="mt-10">
                           <button
-                            className={`py-3 px-20 text-white font-bold text-xl text-center rounded-xl w-full outline-none focus:outline-none ${
-                              otpCode.length >= 4 ? 'bg-primary' : 'bg-gray-400'
-                            }`}
+                            className={`py-3 px-20 text-white font-bold text-xl text-center rounded-xl w-full outline-none focus:outline-none ${otpCode.length >= 4 ? 'bg-primary' : 'bg-gray-400'
+                              }`}
                             disabled={otpCode.length < 4}
                             ref={authButtonRef}
                           >

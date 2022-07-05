@@ -3,8 +3,8 @@ import NextHead from 'next/head'
 import { DefaultSeo } from 'next-seo'
 import config from '@config/seo.json'
 
-const APP_NAME = 'Chopar Pizza'
-const APP_DESCRIPTION = 'Chopar Pizza'
+const APP_NAME = 'Les Ailes Kz'
+const APP_DESCRIPTION = 'Les Ailes Kz'
 
 const Head: FC = () => {
   return (
@@ -27,10 +27,7 @@ const Head: FC = () => {
           sizes="180x180"
           href="/apple-touch-icon.png"
         />
-        <meta
-          name="facebook-domain-verification"
-          content="i41eu3eb4t4ax1i62qvj25w58jmioz"
-        />
+        <meta name="facebook-domain-verification" content="b11ukvlkd0toxvt9l43kdmjcnslkye" />
       </NextHead>
     </>
   )

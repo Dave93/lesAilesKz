@@ -60,18 +60,18 @@ export default function getSiteInfoOperation({
       currentCity,
       configs: configData,
       socials: [
-        {
-          code: 'fb',
-          link: 'https://www.facebook.com/lesailesuz',
-        },
+        // {
+        //   code: 'fb',
+        //   link: '',
+        // },
         {
           code: 'inst',
-          link: 'https://instagram.com/lesailesuz',
+          link: 'https://www.instagram.com/lesaileskz/',
         },
-        {
-          code: 'tg',
-          link: 'https://t.me/lesailesbestbot',
-        },
+        // {
+        //   code: 'tg',
+        //   link: '',
+        // },
       ],
     })
   }
